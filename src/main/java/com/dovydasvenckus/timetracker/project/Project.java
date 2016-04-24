@@ -1,11 +1,7 @@
 package com.dovydasvenckus.timetracker.project;
 
 import com.dovydasvenckus.timetracker.entry.TimeEntry;
-import com.dovydasvenckus.timetracker.helper.date.LocalDateTimeDeserializer;
-import com.dovydasvenckus.timetracker.helper.date.LocalDateTimeSerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -19,8 +15,6 @@ public class Project {
 
     private String name;
 
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dateCreated;
 
     @JsonIgnore

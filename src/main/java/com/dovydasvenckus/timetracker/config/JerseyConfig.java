@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JerseyConfig extends ResourceConfig {
     public JerseyConfig() {
+        register(ObjectMapperContextResolver.class);
         register(ProjectController.class);
     }
 }
