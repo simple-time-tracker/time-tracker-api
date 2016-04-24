@@ -1,6 +1,7 @@
 package com.dovydasvenckus.timetracker.project;
 
 import com.dovydasvenckus.timetracker.entry.TimeEntry;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class Project {
 
     private Date dateCreated;
 
+    @JsonIgnore
     private List<TimeEntry> timeEntries = new ArrayList<>();
 
     @Id
