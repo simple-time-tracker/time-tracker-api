@@ -1,11 +1,15 @@
 package com.dovydasvenckus.timetracker.project;
 
 import com.dovydasvenckus.timetracker.entry.TimeEntry;
+import com.dovydasvenckus.timetracker.helper.date.LocalDateTimeDeserializer;
+import com.dovydasvenckus.timetracker.helper.date.LocalDateTimeSerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -15,7 +19,9 @@ public class Project {
 
     private String name;
 
-    private Date dateCreated;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime dateCreated;
 
     @JsonIgnore
     private List<TimeEntry> timeEntries = new ArrayList<>();
@@ -40,13 +46,12 @@ public class Project {
         this.name = name;
     }
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_created", nullable = false)
-    public Date getDateCreated() {
+    public LocalDateTime getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(LocalDateTime dateCreated) {
         this.dateCreated = dateCreated;
     }
 

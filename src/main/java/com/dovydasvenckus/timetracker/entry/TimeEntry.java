@@ -3,7 +3,7 @@ package com.dovydasvenckus.timetracker.entry;
 import com.dovydasvenckus.timetracker.project.Project;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "time_entries")
@@ -14,9 +14,9 @@ public class TimeEntry {
 
     private String description;
 
-    private Date startTime;
+    private LocalDateTime startDate;
 
-    private Date endTime;
+    private LocalDateTime endDate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,23 +48,21 @@ public class TimeEntry {
         this.description = description;
     }
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_time", nullable = false)
-    public Date getStartTime() {
-        return startTime;
+    public LocalDateTime getStartDate() {
+        return startDate;
     }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
     }
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_time")
-    public Date getEndTime() {
-        return endTime;
+    public LocalDateTime getEndDate() {
+        return endDate;
     }
 
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
     }
 }
