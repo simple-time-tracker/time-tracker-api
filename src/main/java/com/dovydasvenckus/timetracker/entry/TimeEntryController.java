@@ -1,4 +1,4 @@
-package com.dovydasvenckus.timetracker.project;
+package com.dovydasvenckus.timetracker.entry;
 
 import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +10,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-import static javax.ws.rs.core.Response.Status.*;
+import static javax.ws.rs.core.Response.Status.CREATED;
 
 @Component
-@Path("/projects")
-public class ProjectController {
+@Path("/timeEntries")
+public class TimeEntryController {
+
     @Context
     UriInfo uriInfo;
 
@@ -22,24 +23,24 @@ public class ProjectController {
     RestUrlGenerator restUrlGenerator;
 
     @Autowired
-    ProjectRepository projectRepository;
+    TimeEntryRepository timeEntryRepository;
 
     @GET
     @Produces("application/json")
-    public List<Project> getProject() {
-        return projectRepository.findAll();
+    public List<TimeEntry> getAll() {
+        return timeEntryRepository.findAll();
     }
 
     @POST
     @Consumes("application/json")
     @Produces("text/html")
-    public Response createProject(Project project) {
-        projectRepository.save(project);
+    public Response createTimeEntry(TimeEntry timeEntry) {
+        timeEntryRepository.save(timeEntry);
 
         return Response.status(CREATED)
-                .entity("New project has been created")
+                .entity("New time entry has been created")
                 .header("Location",
-                        restUrlGenerator.generateUrlToNewResource(uriInfo, project.getId())
+                        restUrlGenerator.generateUrlToNewResource(uriInfo, timeEntry.getId())
                 ).build();
     }
 }
