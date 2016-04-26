@@ -1,5 +1,6 @@
 package com.dovydasvenckus.timetracker.project;
 
+import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -17,8 +18,8 @@ public class ProjectController {
     @Context
     UriInfo uriInfo;
 
-    @Value("${server.port}")
-    private Integer serverPort;
+    @Autowired
+    RestUrlGenerator restUrlGenerator;
 
     @Autowired
     ProjectRepository projectRepository;
@@ -34,15 +35,11 @@ public class ProjectController {
     @Produces("text/html")
     public Response createProject(Project project){
         projectRepository.save(project);
-        UriBuilder resourceUrlBuilder = uriInfo.getRequestUriBuilder();
 
         return Response.status(Response.Status.CREATED)
                 .entity("New project has been created")
                 .header("Location",
-                        resourceUrlBuilder
-                                .path(project.getId().toString())
-                                .port(serverPort)
-                                .build()
+                        restUrlGenerator.generateUrlToNewResource(uriInfo, project.getId())
                         ).build();
     }
 }
