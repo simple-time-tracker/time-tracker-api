@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-import static javax.ws.rs.core.Response.Status.CREATED;
+import static javax.ws.rs.core.Response.Status.*;
 
 @Component
 @Path("/timeEntries")
@@ -23,12 +23,54 @@ public class TimeEntryController {
     RestUrlGenerator restUrlGenerator;
 
     @Autowired
+    TimeEntryService timeEntryService;
+
+    @Autowired
     TimeEntryRepository timeEntryRepository;
 
     @GET
     @Produces("application/json")
     public List<TimeEntry> getAll() {
         return timeEntryRepository.findAll();
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/current")
+    public TimeEntry getCurrent(){
+        return timeEntryRepository.findCurrentlyActive();
+    }
+
+    @POST
+    @Path("/start/{project}")
+    @Produces("application/json")
+    public Response startTracking(@PathParam("project") long projectId, @QueryParam("description") String description){
+        TimeEntry current = timeEntryRepository.findCurrentlyActive();
+
+        if (current == null){
+            TimeEntry timeEntry = timeEntryService.createTimeEntry(projectId, description);
+
+            return Response.status(CREATED)
+                    .entity("New time entry has been created")
+                    .header("Location",
+                            restUrlGenerator.generateUrlToNewResource(uriInfo, timeEntry.getId())
+                    ).build();
+        }
+
+        return Response.status(INTERNAL_SERVER_ERROR).entity("You are already tracking time on project").build();
+    }
+
+    @POST
+    @Path("/stop")
+    @Produces("application/json")
+    public Response stopCurrent(){
+        TimeEntry current = timeEntryRepository.findCurrentlyActive();
+
+        if (current != null){
+            return Response.status(OK).build();
+        }
+
+        return Response.status(INTERNAL_SERVER_ERROR).entity("No active task").build();
     }
 
     @POST
