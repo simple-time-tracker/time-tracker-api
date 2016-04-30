@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Title</title>
+    <script src="webjars/jquery/2.2.3/jquery.min.js"></script>
+    <script src="tracker.js"></script>
+
+    <script type="application/javascript">
+        jQuery(document).ready(function () {
+            init('');
+            initSelectProject('');
+            startButtonListener('');
+            stopButtonListener('');
+        });
+    </script>
+</head>
+<body>
+
+<div id="current-task">
+
+</div>
+<form id="track-form">
+    <fieldset id="start-tracking-fields">
+        <label>
+            Project
+            <select id="project">
+            </select>
+        </label>
+
+        <label>
+            Description
+            <input id="description" name="description"/>
+        </label>
+    </fieldset>
+    <input id="start" type="button" value="Start tracking"/>
+    <input id="stop" type="button" value="Stop tracking"/>
+</form>
+<table border="1">
+    <tr data-th-each="entry : ${entries}">
+        <td data-th-text="${entry.id}">...</td>
+        <td data-th-text="${entry.description}">...</td>
+        <td data-th-text="${entry.project.name}">...</td>
+        <td data-th-text="${entry.startDate}">...</td>
+        <td data-th-text="${entry.endDate}">...</td>
+    </tr>
+</table>
+</body>
+</html>

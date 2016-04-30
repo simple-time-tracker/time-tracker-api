@@ -8,12 +8,13 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static javax.ws.rs.core.Response.Status.*;
 
 @Component
-@Path("/timeEntries")
+@Path("/entries")
 public class TimeEntryController {
 
     @Context
@@ -37,17 +38,17 @@ public class TimeEntryController {
     @GET
     @Produces("application/json")
     @Path("/current")
-    public TimeEntry getCurrent(){
+    public TimeEntry getCurrent() {
         return timeEntryRepository.findCurrentlyActive();
     }
 
     @POST
     @Path("/start/{project}")
-    @Produces("application/json")
-    public Response startTracking(@PathParam("project") long projectId, @QueryParam("description") String description){
+    @Produces("text/plain")
+    public Response startTracking(@PathParam("project") long projectId, @QueryParam("description") String description) {
         TimeEntry current = timeEntryRepository.findCurrentlyActive();
 
-        if (current == null){
+        if (current == null) {
             TimeEntry timeEntry = timeEntryService.createTimeEntry(projectId, description);
 
             return Response.status(CREATED)
@@ -62,11 +63,13 @@ public class TimeEntryController {
 
     @POST
     @Path("/stop")
-    @Produces("application/json")
-    public Response stopCurrent(){
+    @Produces("text/plain")
+    public Response stopCurrent() {
         TimeEntry current = timeEntryRepository.findCurrentlyActive();
 
-        if (current != null){
+        if (current != null) {
+            current.setEndDate(LocalDateTime.now());
+            timeEntryRepository.save(current);
             return Response.status(OK).build();
         }
 

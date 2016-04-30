@@ -10,7 +10,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-import static javax.ws.rs.core.Response.Status.*;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
+import static javax.ws.rs.core.Response.Status.CREATED;
 
 @Component
 @Path("/projects")
@@ -26,8 +28,10 @@ public class ProjectController {
 
     @GET
     @Produces("application/json")
-    public List<Project> getProject() {
-        return projectRepository.findAll();
+    public List<Project> getProjects() {
+        return projectRepository.findAll().stream()
+                .sorted(comparing(Project::getName))
+                .collect(toList());
     }
 
     @POST
