@@ -6,35 +6,43 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 	}
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'spring-boot' 
+apply plugin: 'spring-boot'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 jar {
 	baseName = 'time-tracker'
 	version = '0.0.1-SNAPSHOT'
 }
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+
+bootRun {
+	addResources = true
+}
+
+configurations {
+    compile.exclude module: "spring-boot-starter-tomcat"
+}
+
 
 repositories {
 	mavenCentral()
 }
 
-configurations {
-	compile.exclude module: "spring-boot-starter-tomcat"
-}
-
 
 dependencies {
-	compile("org.springframework.boot:spring-boot-starter-jetty")
-	compile("org.springframework.boot:spring-boot-starter-jersey")
+	compile('org.springframework.boot:spring-boot-starter-jetty')
+	compile('org.springframework.boot:spring-boot-starter-jersey')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+
+	compile("org.springframework.boot:spring-boot-devtools")
 
 	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 	compile('org.webjars:jquery:2.2.3')
@@ -43,7 +51,7 @@ dependencies {
 	compile('org.postgresql:postgresql:9.4.1208.jre7')
 	runtime('com.h2database:h2')
 
-	testCompile('org.springframework.boot:spring-boot-starter-test') 
+	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
 
