@@ -18,6 +18,8 @@ public class TimeEntry {
 
     private LocalDateTime endDate;
 
+    private Long differenceInMinutes;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "time_entry_id")
@@ -64,5 +66,14 @@ public class TimeEntry {
 
     public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
+    }
+
+    @Transient
+    public Long getDifferenceInMinutes() {
+        return differenceInMinutes;
+    }
+
+    public void setDifferenceInMinutes(Long differenceInMinutes) {
+        this.differenceInMinutes = differenceInMinutes;
     }
 }

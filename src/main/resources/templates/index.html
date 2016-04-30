@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Title</title>
+    <title>Time tracker</title>
     <script src="webjars/jquery/2.2.3/jquery.min.js"></script>
     <script src="tracker.js"></script>
 
@@ -36,13 +36,26 @@
     <input id="stop" type="button" value="Stop tracking"/>
 </form>
 <table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Description</th>
+        <th>Project</th>
+        <th>Start date</th>
+        <th>End date</th>
+        <th>Time spent (minutes)</th>
+    </tr>
+    </thead>
+    <tbody>
     <tr data-th-each="entry : ${entries}">
         <td data-th-text="${entry.id}">...</td>
         <td data-th-text="${entry.description}">...</td>
         <td data-th-text="${entry.project.name}">...</td>
         <td data-th-text="${entry.startDate}">...</td>
         <td data-th-text="${entry.endDate}">...</td>
+        <td data-th-text="${entry.differenceInMinutes}">...</td>
     </tr>
+    </tbody>
 </table>
 </body>
 </html>
