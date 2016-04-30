@@ -8,9 +8,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
+import static java.time.LocalDateTime.now;
 import static javax.ws.rs.core.Response.Status.*;
 
 @Component
@@ -26,29 +27,28 @@ public class TimeEntryController {
     @Autowired
     TimeEntryService timeEntryService;
 
-    @Autowired
-    TimeEntryRepository timeEntryRepository;
-
     @GET
     @Produces("application/json")
-    public List<TimeEntry> getAll() {
-        return timeEntryRepository.findAll();
+    public List<TimeEntryDTO> getAll() {
+        return timeEntryService.findAll();
     }
 
     @GET
     @Produces("application/json")
     @Path("/current")
-    public TimeEntry getCurrent() {
-        return timeEntryRepository.findCurrentlyActive();
+    public TimeEntryDTO getCurrent() {
+        Optional<TimeEntryDTO> current = timeEntryService.findCurrentlyActive();
+
+        return (current.isPresent()) ? current.get() : null;
     }
 
     @POST
     @Path("/start/{project}")
     @Produces("text/plain")
     public Response startTracking(@PathParam("project") long projectId, @QueryParam("description") String description) {
-        TimeEntry current = timeEntryRepository.findCurrentlyActive();
+        Optional<TimeEntryDTO> current = timeEntryService.findCurrentlyActive();
 
-        if (current == null) {
+        if (!current.isPresent()) {
             TimeEntry timeEntry = timeEntryService.createTimeEntry(projectId, description);
 
             return Response.status(CREATED)
@@ -65,11 +65,11 @@ public class TimeEntryController {
     @Path("/stop")
     @Produces("text/plain")
     public Response stopCurrent() {
-        TimeEntry current = timeEntryRepository.findCurrentlyActive();
+        Optional<TimeEntryDTO> current = timeEntryService.findCurrentlyActive();
 
-        if (current != null) {
-            current.setEndDate(LocalDateTime.now());
-            timeEntryRepository.save(current);
+        if (current.isPresent()) {
+            current.get().setEndDate(now());
+            timeEntryService.update(current.get());
             return Response.status(OK).build();
         }
 
@@ -79,8 +79,8 @@ public class TimeEntryController {
     @POST
     @Consumes("application/json")
     @Produces("text/html")
-    public Response createTimeEntry(TimeEntry timeEntry) {
-        timeEntryRepository.save(timeEntry);
+    public Response createTimeEntry(TimeEntryDTO timeEntryDTO) {
+        TimeEntry timeEntry = timeEntryService.create(timeEntryDTO);
 
         return Response.status(CREATED)
                 .entity("New time entry has been created")

@@ -10,8 +10,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.Response.Status.CREATED;
 
 @Component
@@ -24,24 +22,22 @@ public class ProjectController {
     RestUrlGenerator restUrlGenerator;
 
     @Autowired
-    ProjectRepository projectRepository;
+    ProjectService projectService;
 
     @GET
     @Produces("application/json")
-    public List<Project> getProjects() {
-        return projectRepository.findAll().stream()
-                .sorted(comparing(Project::getName))
-                .collect(toList());
+    public List<ProjectDTO> getProjects() {
+        return projectService.findAllProjects();
     }
 
     @POST
     @Consumes("application/json")
     @Produces("text/html")
-    public Response createProject(Project project) {
-        projectRepository.save(project);
+    public Response createProject(ProjectDTO projectDTO) {
+        Project project = projectService.create(projectDTO);
 
         return Response.status(CREATED)
-                .entity("New project has been created")
+                .entity("New projectDTO has been created")
                 .header("Location",
                         restUrlGenerator.generateUrlToNewResource(uriInfo, project.getId())
                 ).build();

@@ -1,5 +1,6 @@
 package com.dovydasvenckus.timetracker.entry;
 
+import com.dovydasvenckus.timetracker.project.ProjectDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
+import static org.springframework.beans.BeanUtils.copyProperties;
 
 @Controller
 public class TimeEntryMvcController {
@@ -21,18 +23,20 @@ public class TimeEntryMvcController {
         ModelAndView viewModel = new ModelAndView();
         List<TimeEntry> timeEntries = timeEntryRepository.findAll();
 
-        timeEntries = timeEntries.stream()
+        List<TimeEntryDTO> result = timeEntries.stream()
                 .sorted(comparing(TimeEntry::getStartDate).reversed())
-                .map((te) -> {
-                    if (te.getEndDate() != null) {
-                        te.setDifferenceInMinutes(ChronoUnit.MINUTES.between(te.getStartDate(), te.getEndDate()));
+                .map((timeEntry) -> {
+                    TimeEntryDTO timeEntryDTO = new TimeEntryDTO(timeEntry);
+
+                    if (timeEntryDTO.getEndDate() != null) {
+                        timeEntryDTO.setDifferenceInMinutes(ChronoUnit.MINUTES.between(timeEntry.getStartDate(), timeEntry.getEndDate()));
                     }
-                    return te;
+                    return timeEntryDTO;
                 })
                 .collect(Collectors.toList());
 
         viewModel.setViewName("index");
-        viewModel.addObject("entries", timeEntries);
+        viewModel.addObject("entries", result);
 
         return viewModel;
     }

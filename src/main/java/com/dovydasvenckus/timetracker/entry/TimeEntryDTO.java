@@ -1,16 +1,13 @@
 package com.dovydasvenckus.timetracker.entry;
 
-import com.dovydasvenckus.timetracker.project.Project;
+import com.dovydasvenckus.timetracker.project.ProjectDTO;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "time_entries")
-public class TimeEntry {
+public class TimeEntryDTO {
     private Long id;
 
-    private Project project;
+    private ProjectDTO project;
 
     private String description;
 
@@ -18,18 +15,20 @@ public class TimeEntry {
 
     private LocalDateTime endDate;
 
-    TimeEntry(){}
+    private Long differenceInMinutes;
 
-    TimeEntry(TimeEntryDTO timeEntryDTO){
-        id = timeEntryDTO.getId();
-        description = timeEntryDTO.getDescription();
-        startDate = timeEntryDTO.getStartDate();
-        endDate = timeEntryDTO.getEndDate();
+    TimeEntryDTO(){
+
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "time_entry_id")
+    TimeEntryDTO(TimeEntry timeEntry) {
+        id = timeEntry.getId();
+        project = new ProjectDTO(timeEntry.getProject());
+        description = timeEntry.getDescription();
+        startDate = timeEntry.getStartDate();
+        endDate = timeEntry.getEndDate();
+    }
+
     public Long getId() {
         return id;
     }
@@ -38,17 +37,14 @@ public class TimeEntry {
         this.id = id;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
-    public Project getProject() {
+    public ProjectDTO getProject() {
         return project;
     }
 
-    public void setProject(Project project) {
+    public void setProject(ProjectDTO project) {
         this.project = project;
     }
 
-    @Column(name = "description")
     public String getDescription() {
         return description;
     }
@@ -57,7 +53,6 @@ public class TimeEntry {
         this.description = description;
     }
 
-    @Column(name = "start_date", nullable = false)
     public LocalDateTime getStartDate() {
         return startDate;
     }
@@ -66,7 +61,6 @@ public class TimeEntry {
         this.startDate = startDate;
     }
 
-    @Column(name = "end_date")
     public LocalDateTime getEndDate() {
         return endDate;
     }
@@ -75,4 +69,11 @@ public class TimeEntry {
         this.endDate = endDate;
     }
 
+    public Long getDifferenceInMinutes() {
+        return differenceInMinutes;
+    }
+
+    public void setDifferenceInMinutes(Long differenceInMinutes) {
+        this.differenceInMinutes = differenceInMinutes;
+    }
 }
