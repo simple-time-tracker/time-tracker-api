@@ -29,14 +29,14 @@ function stopButtonListener(baseurl) {
 }
 
 function initSelectProject(baseUrl) {
-    var dropDown = $("#project");
+    var projectDropdown = $("#project");
     $.ajax({
         type: "GET",
         url: baseUrl + "/api/projects",
         success: function (data) {
             if (data.length) {
                 $.each(data, function (i, d) {
-                    $('#project').append('<option value="' + d.id + '">' + d.name + '</option>');
+                    projectDropdown.append('<option value="' + d.id + '">' + d.name + '</option>');
                 });
             }
 
@@ -63,7 +63,7 @@ function init(baseUrl) {
 
                 currentTask.empty();
                 var message = "Currently working on " + entry.project.name + " project. Current task: "
-                    + entry.description + ' . Start date ' + (new Date(entry.startTime).toLocaleString());
+                    + entry.description + ' . Start date ' + (new Date(entry.startDate).toLocaleString());
 
                 var node = document.createElement("p");
                 var text = document.createTextNode(message);

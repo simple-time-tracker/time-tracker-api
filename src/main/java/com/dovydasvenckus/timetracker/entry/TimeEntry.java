@@ -50,7 +50,7 @@ public class TimeEntry {
         this.description = description;
     }
 
-    @Column(name = "start_time", nullable = false)
+    @Column(name = "start_date", nullable = false)
     public LocalDateTime getStartDate() {
         return startDate;
     }
@@ -59,7 +59,7 @@ public class TimeEntry {
         this.startDate = startDate;
     }
 
-    @Column(name = "end_time")
+    @Column(name = "end_date")
     public LocalDateTime getEndDate() {
         return endDate;
     }
