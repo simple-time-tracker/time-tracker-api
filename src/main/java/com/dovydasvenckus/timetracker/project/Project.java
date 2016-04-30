@@ -1,6 +1,7 @@
 package com.dovydasvenckus.timetracker.project;
 
 import com.dovydasvenckus.timetracker.entry.TimeEntry;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -9,52 +10,21 @@ import java.util.List;
 
 @Entity
 @Table(name = "projects")
+@Data
 public class Project {
-    private Long id;
-
-    private String name;
-
-    private LocalDateTime dateCreated;
-
-    private List<TimeEntry> timeEntries = new ArrayList<>();
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_id")
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private Long id;
 
     @Column(name = "name", unique = true, nullable = false)
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    private String name;
 
     @Column(name = "date_created", nullable = false)
-    public LocalDateTime getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(LocalDateTime dateCreated) {
-        this.dateCreated = dateCreated;
-    }
+    private LocalDateTime dateCreated;
 
     @OneToMany(mappedBy = "project")
-    public List<TimeEntry> getTimeEntries() {
-        return timeEntries;
-    }
-
-    public void setTimeEntries(List<TimeEntry> timeEntries) {
-        this.timeEntries = timeEntries;
-    }
+    private List<TimeEntry> timeEntries = new ArrayList<>();
 
     public void addTimeEntry(TimeEntry timeEntry) {
         this.timeEntries.add(timeEntry);

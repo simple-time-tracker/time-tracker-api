@@ -1,21 +1,32 @@
 package com.dovydasvenckus.timetracker.entry;
 
 import com.dovydasvenckus.timetracker.project.Project;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "time_entries")
+@Data
 public class TimeEntry {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "time_entry_id")
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
+    @Column(name = "description")
     private String description;
 
+    @Column(name = "start_date", nullable = false)
     private LocalDateTime startDate;
 
+    @Column(name = "end_date")
     private LocalDateTime endDate;
 
     TimeEntry(){}
@@ -25,54 +36,6 @@ public class TimeEntry {
         description = timeEntryDTO.getDescription();
         startDate = timeEntryDTO.getStartDate();
         endDate = timeEntryDTO.getEndDate();
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "time_entry_id")
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    @Column(name = "description")
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Column(name = "start_date", nullable = false)
-    public LocalDateTime getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDateTime startDate) {
-        this.startDate = startDate;
-    }
-
-    @Column(name = "end_date")
-    public LocalDateTime getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDateTime endDate) {
-        this.endDate = endDate;
     }
 
 }

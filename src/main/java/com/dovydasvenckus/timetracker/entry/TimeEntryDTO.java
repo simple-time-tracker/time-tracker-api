@@ -1,9 +1,11 @@
 package com.dovydasvenckus.timetracker.entry;
 
 import com.dovydasvenckus.timetracker.project.ProjectDTO;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Data
 public class TimeEntryDTO {
     private Long id;
 
@@ -17,9 +19,7 @@ public class TimeEntryDTO {
 
     private Long differenceInMinutes;
 
-    TimeEntryDTO(){
-
-    }
+    TimeEntryDTO(){}
 
     TimeEntryDTO(TimeEntry timeEntry) {
         id = timeEntry.getId();
@@ -27,53 +27,5 @@ public class TimeEntryDTO {
         description = timeEntry.getDescription();
         startDate = timeEntry.getStartDate();
         endDate = timeEntry.getEndDate();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public ProjectDTO getProject() {
-        return project;
-    }
-
-    public void setProject(ProjectDTO project) {
-        this.project = project;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDateTime getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDateTime startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDateTime getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDateTime endDate) {
-        this.endDate = endDate;
-    }
-
-    public Long getDifferenceInMinutes() {
-        return differenceInMinutes;
-    }
-
-    public void setDifferenceInMinutes(Long differenceInMinutes) {
-        this.differenceInMinutes = differenceInMinutes;
     }
 }
