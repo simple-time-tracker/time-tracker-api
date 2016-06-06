@@ -17,6 +17,10 @@ apply plugin: 'spring-boot'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+springBoot {
+    executable = true
+}
+
 jar {
 	baseName = 'time-tracker'
 	version = '0.0.1-SNAPSHOT'
@@ -43,9 +47,7 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 	compile('org.webjars:jquery:2.2.3')
 
-
-	compile('org.postgresql:postgresql:9.4.1208.jre7')
-	runtime('com.h2database:h2')
+	compile('com.h2database:h2')
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
