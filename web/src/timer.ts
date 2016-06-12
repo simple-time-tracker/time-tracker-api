@@ -44,7 +44,7 @@ export class TimeTracker {
     loadTimeEntries() {
         this.http.fetch('entries')
             .then(response => response.json())
-            .then(entries =>this.timeEntries = entries)
+            .then(entries =>this.timeEntries = entries.reverse())
     }
 
     @computedFrom('currentlyTrackingEntry')
