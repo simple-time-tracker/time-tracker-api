@@ -1,0 +1,26 @@
+`<template bindable="entries">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Description</th>
+                <th>Name</th>
+                <th>Start date</th>
+                <th>End date</th>
+                <th>Time spent</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr repeat.for="entry of entries">
+                <td>${entry.id}</td>
+                <td>${entry.description}</td>
+                <td>${entry.project.name}</td>
+                <td>${entry.startDate}</td>
+                <td>${entry.endDate}</td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</template>

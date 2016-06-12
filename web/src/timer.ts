@@ -10,6 +10,7 @@ export class TimeTracker {
     currentDescription = null;
     currentlyTrackingEntry = null;
     projects = [];
+    timeEntries = [];
 
     constructor(private http:HttpClient) {
         http.configure(config => {
@@ -21,15 +22,16 @@ export class TimeTracker {
 
     activate() {
         return Promise.all([
-            this.getCurrentlyTrackingEntry()
+            this.loadCurrenlyTrackingEntry()
             ,
             this.http.fetch('projects')
                 .then(response => response.json())
                 .then(projects => this.projects = projects),
+            this.loadTimeEntries()
         ]);
     }
 
-    getCurrentlyTrackingEntry() {
+    loadCurrenlyTrackingEntry() {
         this.http.fetch("entries/current")
             .then(response => {
                 if (response.status == 200) {
@@ -37,6 +39,12 @@ export class TimeTracker {
                 }
                 return null;
             }).then(current => this.currentlyTrackingEntry = current)
+    }
+
+    loadTimeEntries() {
+        this.http.fetch('entries')
+            .then(response => response.json())
+            .then(entries =>this.timeEntries = entries)
     }
 
     @computedFrom('currentlyTrackingEntry')
@@ -64,7 +72,8 @@ export class TimeTracker {
         }).then(response => {
             if (response.status == 201) {
                 this.currentDescription = '';
-                this.getCurrentlyTrackingEntry()
+                this.loadCurrenlyTrackingEntry();
+                this.loadTimeEntries();
             }
         })
     }
@@ -74,7 +83,8 @@ export class TimeTracker {
             method: 'post'
         }).then(response => {
             if (response.status == 200) {
-                this.getCurrentlyTrackingEntry()
+                this.loadCurrenlyTrackingEntry();
+                this.loadTimeEntries();
             }
         })
     }
