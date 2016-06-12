@@ -1,6 +1,6 @@
 .gradle
 .idea
-build
+api/build
 
 web/dist
 web/jspm_packages
