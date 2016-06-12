@@ -6,9 +6,10 @@ import 'fetch';
 
 @autoinject(HttpClient, Configure)
 export class TimeTracker {
+    descriptionPlaceholder = 'What are you working on?';
 
     currentProject = null;
-    currentDescription = null;
+    currentDescription = '';
     currentlyTrackingEntry = null;
     projects = [];
     timeEntries = [];
@@ -24,16 +25,13 @@ export class TimeTracker {
 
     activate() {
         return Promise.all([
-            this.loadCurrenlyTrackingEntry()
-            ,
-            this.http.fetch('projects')
-                .then(response => response.json())
-                .then(projects => this.projects = projects),
+            this.loadCurrentlyTrackingEntry(),
+            this.loadProjects(),
             this.loadTimeEntries()
         ]);
     }
 
-    loadCurrenlyTrackingEntry() {
+    loadCurrentlyTrackingEntry() {
         this.http.fetch("entries/current")
             .then(response => {
                 if (response.status == 200) {
@@ -49,9 +47,33 @@ export class TimeTracker {
             .then(entries =>this.timeEntries = entries.reverse())
     }
 
+    loadProjects() {
+        this.http.fetch('projects')
+            .then(response => response.json())
+            .then(projects => {
+                if (projects.length > 0) {
+                    this.projects = projects
+                }
+                else this.projects = [{"id": null, "name": "Select project"}]
+            })
+    }
+
     @computedFrom('currentlyTrackingEntry')
     get isCurrentlyTracking() {
         return this.currentlyTrackingEntry != null
+    }
+
+    @computedFrom('projects')
+    get isProjectSelected() {
+        if (this.projects.length > 1){
+            return true;
+        }
+        else {
+            if (this.projects.length == 1) {
+                return this.projects[0].id != null;
+            }
+            return false;
+        }
     }
 
     @computedFrom('currentlyTrackingEntry')
@@ -74,7 +96,7 @@ export class TimeTracker {
         }).then(response => {
             if (response.status == 201) {
                 this.currentDescription = '';
-                this.loadCurrenlyTrackingEntry();
+                this.loadCurrentlyTrackingEntry();
                 this.loadTimeEntries();
             }
         })
@@ -85,7 +107,7 @@ export class TimeTracker {
             method: 'post'
         }).then(response => {
             if (response.status == 200) {
-                this.loadCurrenlyTrackingEntry();
+                this.loadCurrentlyTrackingEntry();
                 this.loadTimeEntries();
             }
         })
