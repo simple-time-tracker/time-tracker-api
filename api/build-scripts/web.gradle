@@ -1,0 +1,40 @@
+def getFromPath(String path) {
+    return "../web/${path ? path: ''}"
+}
+
+def getDestPath(String path) {
+    return "src/main/resources/public/${path ? path : ''}"
+}
+
+task copyWeb << {
+    copy {
+        from getFromPath('dist')
+        into getDestPath('dist')
+    }
+
+    copy {
+        from getFromPath('jspm_packages')
+        into getDestPath('jspm_packages')
+    }
+
+    copy {
+        from getFromPath('styles')
+        into getDestPath('styles')
+    }
+
+    copy {
+        from getFromPath('config.js')
+        from getFromPath('favicon.ico')
+        from getFromPath('index.html')
+        from getFromPath('index.js')
+        into getDestPath()
+    }
+}
+
+task cleanWeb(type: Delete) {
+    delete getDestPath()
+}
+
+task buildWithWeb(dependsOn: [':web:bundle', 'copyWeb']){
+
+}

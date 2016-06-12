@@ -1,3 +1,5 @@
+apply from: 'build-scripts/web.gradle'
+
 buildscript {
 	ext {
 		springBootVersion = '1.3.3.RELEASE'
@@ -56,3 +58,7 @@ eclipse {
 task wrapper(type: Wrapper) {
 	gradleVersion = '2.12'
 }
+
+clean.dependsOn('cleanWeb')
+
+buildWithWeb.finalizedBy('build')
