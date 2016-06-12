@@ -3,6 +3,7 @@ var outputRoot = 'dist/';
 var exporSrvtRoot = 'export/'
 
 module.exports = {
+  config: './config/*.json',
   root: appRoot,
   source: appRoot + '**/*.ts',
   html: appRoot + '**/*.html',

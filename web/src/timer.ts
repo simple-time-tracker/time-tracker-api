@@ -1,9 +1,10 @@
 import {autoinject} from 'aurelia-framework';
 import {computedFrom} from 'aurelia-framework';
 import {HttpClient} from 'aurelia-fetch-client';
+import {Configure} from "aurelia-configuration";
 import 'fetch';
 
-@autoinject(HttpClient)
+@autoinject(HttpClient, Configure)
 export class TimeTracker {
 
     currentProject = null;
@@ -12,11 +13,12 @@ export class TimeTracker {
     projects = [];
     timeEntries = [];
 
-    constructor(private http:HttpClient) {
+    constructor(private http:HttpClient, private config: Configure) {
+        console.log(config.get('api.endpoint'))
         http.configure(config => {
             config
                 .useStandardConfiguration()
-                .withBaseUrl('http://localhost:8080/api/');
+                .withBaseUrl(this.config.get('api.endpoint'));
         });
     }
 

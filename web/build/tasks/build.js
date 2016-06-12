@@ -17,6 +17,7 @@ gulp.task('build-system', function() {
   if(!typescriptCompiler) {
     typescriptCompiler = typescript.create(require('../../tsconfig.json').compilerOptions);
   }
+
   return gulp.src(paths.dtsSrc.concat(paths.source))
     .pipe(plumber())
     .pipe(sourcemaps.init({loadMaps: true}))
@@ -39,6 +40,11 @@ gulp.task('build-css', function() {
     .pipe(gulp.dest(paths.output));
 });
 
+gulp.task('copy-config', function() {
+  return gulp.src(paths.config)
+      .pipe(gulp.dest(paths.output + '/config'));
+});
+
 // this task calls the clean task (located
 // in ./clean.js), then runs the build-system
 // and build-html tasks in parallel
@@ -46,7 +52,7 @@ gulp.task('build-css', function() {
 gulp.task('build', function(callback) {
   return runSequence(
     'clean',
-    ['build-system', 'build-html', 'build-css'],
+    ['build-system', 'build-html', 'build-css', 'copy-config'],
     callback
   );
 });
