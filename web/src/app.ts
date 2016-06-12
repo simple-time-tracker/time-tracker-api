@@ -6,7 +6,7 @@ export class App {
   configureRouter(config: RouterConfiguration, router: Router) {
     config.title = 'Time tracker';
     config.map([
-      { route: ['', 'timer'], name: 'timer',      moduleId: 'timer',      nav: true, title: 'Timer' },
+      { route: ['', 'timer'], name: 'timer',  moduleId: 'timer',  nav: true, title: 'Timer' },
     ]);
 
     this.router = router;

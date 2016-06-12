@@ -1,34 +1,82 @@
-//import {computedFrom} from 'aurelia-framework';
+import {autoinject} from 'aurelia-framework';
+import {computedFrom} from 'aurelia-framework';
+import {HttpClient} from 'aurelia-fetch-client';
+import 'fetch';
 
-export class Welcome {
-  heading = 'Welcome to the Aurelia Navigation App!';
-  firstName = 'John';
-  lastName = 'Doe';
-  previousValue = this.fullName;
+@autoinject(HttpClient)
+export class TimeTracker {
 
-  //Getters can't be directly observed, so they must be dirty checked.
-  //However, if you tell Aurelia the dependencies, it no longer needs to dirty check the property.
-  //To optimize by declaring the properties that this getter is computed from, uncomment the line below
-  //as well as the corresponding import above.
-  //@computedFrom('firstName', 'lastName')
-  get fullName() {
-    return `${this.firstName} ${this.lastName}`;
-  }
+    currentProject = null;
+    currentDescription = null;
+    currentlyTrackingEntry = null;
+    projects = [];
 
-  submit() {
-    this.previousValue = this.fullName;
-    alert(`Welcome, ${this.fullName}!`);
-  }
-
-  canDeactivate() {
-    if (this.fullName !== this.previousValue) {
-      return confirm('Are you sure you want to leave?');
+    constructor(private http:HttpClient) {
+        http.configure(config => {
+            config
+                .useStandardConfiguration()
+                .withBaseUrl('http://localhost:8080/api/');
+        });
     }
-  }
-}
 
-export class UpperValueConverter {
-  toView(value) {
-    return value && value.toUpperCase();
-  }
+    activate() {
+        return Promise.all([
+            this.getCurrentlyTrackingEntry()
+            ,
+            this.http.fetch('projects')
+                .then(response => response.json())
+                .then(projects => this.projects = projects),
+        ]);
+    }
+
+    getCurrentlyTrackingEntry() {
+        this.http.fetch("entries/current")
+            .then(response => {
+                if (response.status == 200) {
+                    return response.json()
+                }
+                return null;
+            }).then(current => this.currentlyTrackingEntry = current)
+    }
+
+    @computedFrom('currentlyTrackingEntry')
+    get isCurrentlyTracking() {
+        return this.currentlyTrackingEntry != null
+    }
+
+    @computedFrom('currentlyTrackingEntry')
+    get currentlyTrackingEntryMessage() {
+        if (this.currentlyTrackingEntry != null) {
+            return `Currently working on ${this.currentlyTrackingEntry.project.name} project. 
+                    Current task: ${this.currentlyTrackingEntry.description}.
+                    Start date  ${(new Date(this.currentlyTrackingEntry.startDate).toLocaleString())}`
+        }
+        else return '';
+    }
+
+    getStartUrl() {
+        return 'entries/start/' + this.currentProject.id + "?description=" + this.currentDescription
+    }
+
+    start() {
+        this.http.fetch(this.getStartUrl(), {
+            method: 'post',
+        }).then(response => {
+            if (response.status == 201) {
+                this.currentDescription = '';
+                this.getCurrentlyTrackingEntry()
+            }
+        })
+    }
+
+    stop() {
+        this.http.fetch('entries/stop', {
+            method: 'post'
+        }).then(response => {
+            if (response.status == 200) {
+                this.getCurrentlyTrackingEntry()
+            }
+        })
+    }
+
 }
