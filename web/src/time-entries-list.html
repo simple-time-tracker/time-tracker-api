@@ -1,4 +1,4 @@
-`<template bindable="entries">
+`<template>
     <div class="table-responsive">
         <table class="table">
             <thead>
@@ -18,7 +18,7 @@
                 <td>${entry.project.name}</td>
                 <td>${entry.startDate}</td>
                 <td>${entry.endDate}</td>
-                <td></td>
+                <td>${getDifference(entry)}</td>
             </tr>
             </tbody>
         </table>

@@ -17,8 +17,6 @@ public class TimeEntryDTO {
 
     private LocalDateTime endDate;
 
-    private Long differenceInMinutes;
-
     TimeEntryDTO(){}
 
     TimeEntryDTO(TimeEntry timeEntry) {

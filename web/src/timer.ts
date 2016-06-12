@@ -15,7 +15,6 @@ export class TimeTracker {
     timeEntries = [];
 
     constructor(private http:HttpClient, private config: Configure) {
-        console.log(config.get('api.endpoint'))
         http.configure(config => {
             config
                 .useStandardConfiguration()
