@@ -26,6 +26,7 @@ public class TimeEntryService {
     }
 
     TimeEntry create(TimeEntryDTO timeEntryDTO) {
+        timeEntryDTO.setId(null);
         TimeEntry timeEntry;
         timeEntry = new TimeEntry(timeEntryDTO);
         Project project = projectRepository.findOne(timeEntryDTO.getProject().getId());
