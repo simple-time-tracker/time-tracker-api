@@ -3,6 +3,7 @@ package com.dovydasvenckus.timetracker.project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.Comparator.comparing;
@@ -16,17 +17,16 @@ public class ProjectService {
     ProjectRepository projectRepository;
 
     List<ProjectDTO> findAllProjects() {
-        List<ProjectDTO> projects = projectRepository.findAll().stream()
+        return projectRepository.findAll().stream()
                 .sorted(comparing(Project::getName))
                 .map(ProjectDTO::new)
                 .collect(toList());
-
-        return projects;
     }
 
     Project create(ProjectDTO projectDTO) {
         Project project = new Project();
         copyProperties(projectDTO, project);
+        project.setDateCreated(LocalDateTime.now());
 
         projectRepository.save(project);
 

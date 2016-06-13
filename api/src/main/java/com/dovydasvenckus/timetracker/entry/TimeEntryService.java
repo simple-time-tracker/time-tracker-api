@@ -21,16 +21,14 @@ public class TimeEntryService {
     ProjectRepository projectRepository;
 
     List<TimeEntryDTO> findAll() {
-        List<TimeEntryDTO> timeEntries = timeEntryRepository.findAll().stream().
+        return timeEntryRepository.findAll().stream().
                 map(TimeEntryDTO::new).collect(toList());
-
-        return timeEntries;
     }
 
     TimeEntry create(TimeEntryDTO timeEntryDTO) {
         TimeEntry timeEntry;
         timeEntry = new TimeEntry(timeEntryDTO);
-        Project project = projectRepository.findOne(timeEntryDTO.getId());
+        Project project = projectRepository.findOne(timeEntryDTO.getProject().getId());
         timeEntry.setProject(project);
         timeEntryRepository.save(timeEntry);
 
