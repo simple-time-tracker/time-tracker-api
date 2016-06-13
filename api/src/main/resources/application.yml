@@ -4,3 +4,6 @@ server:
 spring:
     jersey:
         applicationPath: /api
+
+cors:
+    allow: 'http://localhost:80'
