@@ -1,25 +1,27 @@
 import {inject} from 'aurelia-framework';
 import {computedFrom} from 'aurelia-framework';
 import {HttpClient} from 'aurelia-fetch-client';
-//import {Configure} from "aurelia-configuration";
+import {Configure} from "aurelia-configuration";
 import moment from 'moment';
 import 'fetch';
 
-@inject(HttpClient)
+@inject(HttpClient, Configure)
 export class TimeTracker {
     descriptionPlaceholder = 'What are you working on?';
-
+    self = this;
     currentProject = null;
     currentDescription = '';
     currentlyTrackingEntry = null;
     projects = [];
     timeEntries = [];
 
-    constructor(http:HttpClient, moment:moment) {
+    constructor(http:HttpClient, config: Configure, moment:moment) {
+        console.log(config.get('api.endpoint'))
+        this.config = config;
         http.configure(config => {
             config
                 .useStandardConfiguration()
-                .withBaseUrl('http://localhost:8080/api/');
+                .withBaseUrl(this.config.get('api.endpoint'));
         });
         this.http = http;
     }
