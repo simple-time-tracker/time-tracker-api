@@ -6,9 +6,22 @@
                 <div class="row" id="tracking-row">
                     <div class="fields" show.bind="!isCurrentlyTracking">
                         <div class="col-lg-2">
-                            <select class="form-control" value.bind="currentProject">
-                                <option repeat.for="project of projects" model.bind="project">${project.name}</option>
-                            </select>
+                            <div class="row">
+                                <div class="col-lg-2">
+                                    <button class="btn btn-default">
+                                        <span></span> Add
+                                    </button>
+                                </div>
+                                <div class="col-lg-1">
+
+                                </div>
+                                <div class="col-lg-8">
+                                    <select class="form-control" value.bind="currentProject">
+                                        <option repeat.for="project of projects" model.bind="project">${project.name}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-lg-4">
                             <input class="form-control" type="text"
@@ -17,11 +30,11 @@
                         </div>
                     </div>
 
-                    <div show.bind="isCurrentlyTracking" style="display: inline-block; margin-right: 10px">
-                        <h4>${currentlyTrackingEntryMessage}</h4>
+                    <div class="col-lg-1">
+                        <h4>${timeElapsed}</h4>
                     </div>
 
-                    <div class="buttons" style="display: inline-block">
+                    <div class="buttons col-lg-4">
                         <button class="btn btn-success"
                                 click.trigger="start()"
                                 disabled.bind="isCurrentlyTracking || !isProjectSelected">Start tracking

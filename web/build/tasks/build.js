@@ -2,26 +2,24 @@ var gulp = require('gulp');
 var runSequence = require('run-sequence');
 var changed = require('gulp-changed');
 var plumber = require('gulp-plumber');
+var to5 = require('gulp-babel');
 var sourcemaps = require('gulp-sourcemaps');
 var paths = require('../paths');
+var compilerOptions = require('../babel-options');
 var assign = Object.assign || require('object.assign');
 var notify = require('gulp-notify');
-var typescript = require('gulp-tsb');
+var browserSync = require('browser-sync');
 
 // transpiles changed es6 files to SystemJS format
 // the plumber() call prevents 'pipe breaking' caused
 // by errors from other gulp plugins
 // https://www.npmjs.com/package/gulp-plumber
-var typescriptCompiler = typescriptCompiler || null;
 gulp.task('build-system', function() {
-  if(!typescriptCompiler) {
-    typescriptCompiler = typescript.create(require('../../tsconfig.json').compilerOptions);
-  }
-
-  return gulp.src(paths.dtsSrc.concat(paths.source))
-    .pipe(plumber())
+  return gulp.src(paths.source)
+    .pipe(plumber({errorHandler: notify.onError('Error: <%= error.message %>')}))
+    .pipe(changed(paths.output, {extension: '.js'}))
     .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(typescriptCompiler())
+    .pipe(to5(assign({}, compilerOptions.system())))
     .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '/src'}))
     .pipe(gulp.dest(paths.output));
 });
@@ -37,12 +35,8 @@ gulp.task('build-html', function() {
 gulp.task('build-css', function() {
   return gulp.src(paths.css)
     .pipe(changed(paths.output, {extension: '.css'}))
-    .pipe(gulp.dest(paths.output));
-});
-
-gulp.task('copy-config', function() {
-  return gulp.src(paths.config)
-      .pipe(gulp.dest(paths.output + '/config'));
+    .pipe(gulp.dest(paths.output))
+    .pipe(browserSync.stream());
 });
 
 // this task calls the clean task (located
@@ -52,7 +46,7 @@ gulp.task('copy-config', function() {
 gulp.task('build', function(callback) {
   return runSequence(
     'clean',
-    ['build-system', 'build-html', 'build-css', 'copy-config'],
+    ['build-system', 'build-html', 'build-css'],
     callback
   );
 });

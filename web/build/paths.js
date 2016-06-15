@@ -1,22 +1,16 @@
 var appRoot = 'src/';
 var outputRoot = 'dist/';
-var exporSrvtRoot = 'export/'
+var exportSrvRoot = 'export/';
 
 module.exports = {
-  config: './config/*.json',
   root: appRoot,
-  source: appRoot + '**/*.ts',
+  source: appRoot + '**/*.js',
   html: appRoot + '**/*.html',
   css: appRoot + '**/*.css',
   style: 'styles/**/*.css',
   output: outputRoot,
-  exportSrv: exporSrvtRoot,
+  exportSrv: exportSrvRoot,
   doc: './doc',
-  e2eSpecsSrc: 'test/e2e/src/**/*.ts',
-  e2eSpecsDist: 'test/e2e/dist/',
-  dtsSrc: [
-    './typings/globals/**/*.d.ts',
-    './custom_typings/**/*.d.ts',
-    './jspm_packages/**/*.d.ts'
-  ]
-}
+  e2eSpecsSrc: 'test/e2e/src/**/*.js',
+  e2eSpecsDist: 'test/e2e/dist/'
+};

@@ -1,10 +1,11 @@
-import {autoinject} from 'aurelia-framework';
+import {inject} from 'aurelia-framework';
 import {computedFrom} from 'aurelia-framework';
 import {HttpClient} from 'aurelia-fetch-client';
-import {Configure} from "aurelia-configuration";
+//import {Configure} from "aurelia-configuration";
+import moment from 'moment';
 import 'fetch';
 
-@autoinject(HttpClient, Configure)
+@inject(HttpClient)
 export class TimeTracker {
     descriptionPlaceholder = 'What are you working on?';
 
@@ -14,12 +15,13 @@ export class TimeTracker {
     projects = [];
     timeEntries = [];
 
-    constructor(private http:HttpClient, private config: Configure) {
+    constructor(http:HttpClient, moment:moment) {
         http.configure(config => {
             config
                 .useStandardConfiguration()
-                .withBaseUrl(this.config.get('api.endpoint'));
+                .withBaseUrl('http://localhost:8080/api/');
         });
+        this.http = http;
     }
 
     activate() {
@@ -64,7 +66,7 @@ export class TimeTracker {
 
     @computedFrom('projects')
     get isProjectSelected() {
-        if (this.projects.length > 1){
+        if (this.projects.length > 1) {
             return true;
         }
         else {

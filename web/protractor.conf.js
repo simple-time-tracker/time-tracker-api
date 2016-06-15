@@ -8,8 +8,6 @@ exports.config = {
   },
 
   //seleniumAddress: 'http://0.0.0.0:4444',
-  // add proper version number
-  seleniumServerJar: '.node_modules/protractor/selenium/selenium-server-standalone-2.47.1.jar',
   specs: ['test/e2e/dist/**/*.js'],
 
   plugins: [{
