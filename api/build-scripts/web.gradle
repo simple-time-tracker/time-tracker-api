@@ -11,6 +11,10 @@ task copyWeb << {
         from getFromPath('export')
         into getDestPath('')
     }
+    copy {
+        from getFromPath('config/config.json')
+        into getDestPath('dist/config')
+    }
 }
 
 task cleanWeb(type: Delete) {
