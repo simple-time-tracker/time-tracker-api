@@ -1,29 +1,40 @@
 import {bindable} from 'aurelia-framework';
+import moment from 'moment';
 
 export class TimeEntriesList {
     @bindable entries = [];
 
+    constructor(moment: moment) {
+        this.moment = moment;
+    }
+
     getDifference(entry) {
         if (entry.endDate != null) {
             var diff = new Date(entry.endDate).getTime() - new Date(entry.startDate).getTime();
-            return this.secondsToTime(diff / 1000)
+            return this.getDuration(diff);
         }
+
         else return '';
     }
 
+    shortDateTime(date) {
+        return date ? moment(date).format('MM/DD hh:mm'): '';
+    }
 
-    secondsToTime(secs) {
-        secs = parseInt(secs);
-        var hours = Math.floor(secs / (60 * 60));
 
-        var divisor_for_minutes = secs % (60 * 60);
-        var minutes = Math.floor(divisor_for_minutes / 60);
+    getDuration(date) {
+        var duration = moment.duration(date);
+        var hours = duration.days() > 0 ? Math.floor(duration.asHours()) : duration.hours();
+        var minutes = duration.minutes();
+        var seconds = duration.seconds();
 
-        var divisor_for_seconds = divisor_for_minutes % 60;
-        var seconds = Math.ceil(divisor_for_seconds);
+        return `${this.convertTimeUnitToString(hours)}:${this.convertTimeUnitToString(minutes)}:${this.convertTimeUnitToString(seconds)}`;
+    }
 
-        return `${hours} hours, ${minutes} minutes, ${seconds} seconds`;
-
+    convertTimeUnitToString(unit) {
+        if (('' + unit).length == 1)
+            return '0' + unit;
+        else return unit == '0' ? '00': unit
     }
 }
 
