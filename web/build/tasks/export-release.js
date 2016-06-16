@@ -51,12 +51,6 @@ gulp.task('export-copy', function() {
     .pipe(gulp.dest(paths.exportSrv));
 });
 
-gulp.task('copy-config', function() {
-  return gulp.src(paths.config)
-      .pipe(gulp.dest(paths.exportSrv + '/dist/config'));
-});
-
-
 gulp.task('export-normalized-resources', function() {
   return normalizeExportPaths().then(normalizedPaths => {
     return gulp.src(normalizedPaths, { base: '.' })
@@ -71,7 +65,6 @@ gulp.task('export', function(callback) {
     'clean-export',
     'export-normalized-resources',
     'export-copy',
-    'copy-config',
     callback
   );
 });

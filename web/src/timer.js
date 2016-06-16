@@ -2,7 +2,6 @@ import {inject} from 'aurelia-framework';
 import {computedFrom} from 'aurelia-framework';
 import {HttpClient} from 'aurelia-fetch-client';
 import {Configure} from "aurelia-configuration";
-import moment from 'moment';
 import 'fetch';
 
 @inject(HttpClient, Configure)
@@ -15,8 +14,7 @@ export class TimeTracker {
     projects = [];
     timeEntries = [];
 
-    constructor(http:HttpClient, config: Configure, moment:moment) {
-        console.log(config.get('api.endpoint'))
+    constructor(http:HttpClient, config: Configure) {
         this.config = config;
         http.configure(config => {
             config
