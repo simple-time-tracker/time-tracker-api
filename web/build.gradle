@@ -21,6 +21,6 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.12'
 }
 
-task bundle(type: GulpTask) {
-    args = ["bundle"]
+task export(type: GulpTask) {
+    args = ["export"]
 }

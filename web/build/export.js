@@ -7,9 +7,12 @@ module.exports = {
     'config.js',
     'favicon.ico',
     'LICENSE',
+    'jspm_packages/github/systemjs/**',
     'jspm_packages/system.js',
     'jspm_packages/system-polyfills.js',
     'jspm_packages/system-csp-production.js',
+    'jspm_packages/github/vheissu/**',
+    'jspm_packages/github/moment/**',
     'styles/styles.css'
   ],
   // this section lists any jspm packages that have

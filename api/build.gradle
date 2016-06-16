@@ -64,6 +64,4 @@ task wrapper(type: Wrapper) {
 	gradleVersion = '2.12'
 }
 
-clean.dependsOn('cleanWeb')
-
 buildWithWeb.finalizedBy('build')
