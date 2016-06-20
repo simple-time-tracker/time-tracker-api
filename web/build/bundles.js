@@ -35,8 +35,8 @@ module.exports = {
       "options": {
         "inject": true,
         "minify": true,
-        "depCache": true,
-        "rev": true
+        "depCache": false,
+        "rev": false
       }
     }
   }

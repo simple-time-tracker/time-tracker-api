@@ -6,4 +6,4 @@ spring:
         applicationPath: /api
 
 cors:
-    allow: 'http://localhost:9000'
+    allow: ''
