@@ -14,7 +14,7 @@ export class TimeTracker {
     projects = [];
     timeEntries = [];
 
-    constructor(http:HttpClient, config: Configure) {
+    constructor(http:HttpClient, config:Configure) {
         this.config = config;
         http.configure(config => {
             config
@@ -87,8 +87,22 @@ export class TimeTracker {
         else return '';
     }
 
+    @computedFrom('isCurrentlyTracking')
+    get currentToggleLabel() {
+        if (this.isCurrentlyTracking) {
+            return "Stop tracking"
+        }
+        else return "Start tracking"
+    }
+
     getStartUrl() {
         return 'entries/start/' + this.currentProject.id + "?description=" + this.currentDescription
+    }
+
+    toggleTracking() {
+        if (this.isCurrentlyTracking)
+            this.stop();
+        else this.start();
     }
 
     start() {

@@ -115,5 +115,18 @@ div.au-stagger {
 }
 
 #tracking-row {
-  margin-top: 10px;
+    margin-top: 10px;
+}
+
+#toggleTracking {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#trackerDescriptionDiv {
+    padding: 5px 5px 5px 5px;
+}
+
+#trackerSelectDiv {
+    padding: 5px 5px 5px 5px;
 }

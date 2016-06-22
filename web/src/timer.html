@@ -4,29 +4,29 @@
         <form role="form">
             <div class="form">
                 <div class="row" id="tracking-row">
+
                     <div class="col-lg-8" show.bind="!isCurrentlyTracking">
-                        <div class="fields col-lg-4">
+                        <div id="trackerSelectDiv" class="fields col-lg-4 col-xs-12">
                             <select class="form-control" value.bind="currentProject">
                                 <option repeat.for="project of projects" model.bind="project">${project.name}
                                 </option>
                             </select>
                         </div>
 
-                        <div class="col-lg-8">
-                            <input class="form-control" type="text"
+                        <div id="trackerDescriptionDiv" class="col-lg-8 col-xs-12">
+                            <input id="trackerDescription"
+                                   class="form-control" type="text"
                                    placeholder.bind="descriptionPlaceholder"
                                    value.bind="currentDescription">
                         </div>
                     </div>
 
-                    <div class="buttons col-lg-4">
-                        <button class="btn btn-success"
-                                click.trigger="start()"
-                                disabled.bind="isCurrentlyTracking || !isProjectSelected">Start tracking
-                        </button>
-                        <button class="btn btn-danger"
-                                click.trigger="stop()"
-                                disabled.bind="!isCurrentlyTracking">Stop tracking
+                    <div class="buttons col-lg-4 col-xs-12">
+                        <button id="toggleTracking"
+                                class="btn btn-block ${isCurrentlyTracking ? 'btn-danger' : 'btn-success'}"
+                                click.trigger="toggleTracking()"
+                                disabled.bind="!isProjectSelected"
+                                >${currentToggleLabel}
                         </button>
                     </div>
                 </div>
