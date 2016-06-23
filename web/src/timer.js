@@ -26,8 +26,8 @@ export class TimeTracker {
 
     activate() {
         return Promise.all([
-            this.loadCurrentlyTrackingEntry(),
             this.loadProjects(),
+            this.loadCurrentlyTrackingEntry(),
             this.loadTimeEntries()
         ]);
     }
@@ -39,7 +39,12 @@ export class TimeTracker {
                     return response.json()
                 }
                 return null;
-            }).then(current => this.currentlyTrackingEntry = current)
+            }).then(current => {
+            this.currentlyTrackingEntry = current;
+            if (current) {
+                this.currentDescription = current.description;
+            }
+        })
     }
 
     loadTimeEntries() {
@@ -53,7 +58,7 @@ export class TimeTracker {
             .then(response => response.json())
             .then(projects => {
                 if (projects.length > 0) {
-                    this.projects = projects
+                    this.projects = projects;
                 }
                 else this.projects = [{"id": null, "name": "Select project"}]
             })
@@ -107,10 +112,9 @@ export class TimeTracker {
 
     start() {
         this.http.fetch(this.getStartUrl(), {
-            method: 'post',
+            method: 'post'
         }).then(response => {
             if (response.status == 201) {
-                this.currentDescription = '';
                 this.loadCurrentlyTrackingEntry();
                 this.loadTimeEntries();
             }
@@ -122,6 +126,7 @@ export class TimeTracker {
             method: 'post'
         }).then(response => {
             if (response.status == 200) {
+                this.currentDescription = '';
                 this.loadCurrentlyTrackingEntry();
                 this.loadTimeEntries();
             }
