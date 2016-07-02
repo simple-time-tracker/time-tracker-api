@@ -29,14 +29,15 @@ public class TimeEntryService {
         timeEntryDTO.setId(null);
         TimeEntry timeEntry;
         timeEntry = new TimeEntry(timeEntryDTO);
-        Project project = projectRepository.findOne(timeEntryDTO.getProject().getId());
-        timeEntry.setProject(project);
+        Optional<Project> project = projectRepository.findOne(timeEntryDTO.getProject().getId());
+        if (project.isPresent())
+            timeEntry.setProject(project.get());
         timeEntryRepository.save(timeEntry);
 
         return timeEntry;
     }
 
-    TimeEntry update(TimeEntryDTO timeEntryDTO){
+    TimeEntry update(TimeEntryDTO timeEntryDTO) {
         TimeEntry timeEntry = timeEntryRepository.findOne(timeEntryDTO.getId());
 
         timeEntry.setDescription(timeEntryDTO.getDescription());
@@ -62,14 +63,17 @@ public class TimeEntryService {
 
 
     TimeEntry createTimeEntry(Long projectId, String description) {
-        Project project = projectRepository.findOne(projectId);
-        TimeEntry timeEntry = new TimeEntry();
-        timeEntry.setStartDate(LocalDateTime.now());
-        timeEntry.setDescription(description);
-        timeEntry.setProject(project);
+        Optional<Project> project = projectRepository.findOne(projectId);
+        if (project.isPresent()) {
+            TimeEntry timeEntry = new TimeEntry();
+            timeEntry.setStartDate(LocalDateTime.now());
+            timeEntry.setDescription(description);
+            timeEntry.setProject(project.get());
 
-        timeEntryRepository.save(timeEntry);
+            timeEntryRepository.save(timeEntry);
 
-        return timeEntry;
+            return timeEntry;
+        }
+        return null;
     }
 }

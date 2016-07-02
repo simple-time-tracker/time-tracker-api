@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
@@ -23,13 +24,23 @@ public class ProjectService {
                 .collect(toList());
     }
 
-    Project create(ProjectDTO projectDTO) {
-        Project project = new Project();
-        copyProperties(projectDTO, project);
-        project.setDateCreated(LocalDateTime.now());
+    Optional<ProjectDTO> findProject(Long id) {
+        return projectRepository
+                .findOne(id)
+                .map(ProjectDTO::new);
+    }
 
-        projectRepository.save(project);
+    Optional<Project> create(ProjectDTO projectDTO) {
+        Optional<Project> projectInDb = projectRepository.findByName(projectDTO.getName());
 
-        return project;
+        if (!projectInDb.isPresent()) {
+            Project project = new Project();
+            copyProperties(projectDTO, project);
+            project.setDateCreated(LocalDateTime.now());
+
+            projectRepository.save(project);
+
+            return Optional.of(project);
+        } else return Optional.empty();
     }
 }

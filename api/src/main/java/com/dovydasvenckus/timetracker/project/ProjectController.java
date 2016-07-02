@@ -9,8 +9,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
+import java.util.Optional;
 
-import static javax.ws.rs.core.Response.Status.CREATED;
+import static javax.ws.rs.core.Response.Status.*;
 
 @Component
 @Path("/projects")
@@ -30,16 +31,28 @@ public class ProjectController {
         return projectService.findAllProjects();
     }
 
+    @GET
+    @Path("{id}")
+    @Produces("application/json")
+    public Response getProject(@PathParam("id") Long id) {
+        Optional<ProjectDTO> project = projectService.findProject(id);
+
+        return project
+                .map(p -> Response.status(OK).entity(p).build())
+                .orElse(Response.status(NOT_FOUND).build());
+    }
+
     @POST
     @Consumes("application/json")
     @Produces("text/html")
     public Response createProject(ProjectDTO projectDTO) {
-        Project project = projectService.create(projectDTO);
+        Optional<Project> project = projectService.create(projectDTO);
 
-        return Response.status(CREATED)
+        return project.map(p ->
+                Response.status(CREATED)
                 .entity("New projectDTO has been created")
                 .header("Location",
-                        restUrlGenerator.generateUrlToNewResource(uriInfo, project.getId())
-                ).build();
+                        restUrlGenerator.generateUrlToNewResource(uriInfo, p.getId())).build())
+                .orElse(Response.status(CONFLICT).build());
     }
 }
