@@ -1,6 +1,6 @@
 package com.dovydasvenckus.timetracker.entry;
 
-import com.dovydasvenckus.timetracker.project.ProjectDTO;
+import com.dovydasvenckus.timetracker.project.ProjectReadDTO;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class TimeEntryDTO {
     private Long id;
 
-    private ProjectDTO project;
+    private ProjectReadDTO project;
 
     private String description;
 
@@ -17,11 +17,12 @@ public class TimeEntryDTO {
 
     private LocalDateTime endDate;
 
-    TimeEntryDTO(){}
+    private TimeEntryDTO() {
+    }
 
     TimeEntryDTO(TimeEntry timeEntry) {
         id = timeEntry.getId();
-        project = new ProjectDTO(timeEntry.getProject());
+        project = new ProjectReadDTO(timeEntry.getProject());
         description = timeEntry.getDescription();
         startDate = timeEntry.getStartDate();
         endDate = timeEntry.getEndDate();

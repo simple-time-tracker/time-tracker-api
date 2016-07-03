@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static org.springframework.beans.BeanUtils.copyProperties;
 
 @Service
 public class ProjectService {
@@ -17,25 +16,25 @@ public class ProjectService {
     @Autowired
     ProjectRepository projectRepository;
 
-    List<ProjectDTO> findAllProjects() {
+    List<ProjectReadDTO> findAllProjects() {
         return projectRepository.findAll().stream()
                 .sorted(comparing(Project::getName))
-                .map(ProjectDTO::new)
+                .map(ProjectReadDTO::new)
                 .collect(toList());
     }
 
-    Optional<ProjectDTO> findProject(Long id) {
+    Optional<ProjectReadDTO> findProject(Long id) {
         return projectRepository
                 .findOne(id)
-                .map(ProjectDTO::new);
+                .map(ProjectReadDTO::new);
     }
 
-    Optional<Project> create(ProjectDTO projectDTO) {
-        Optional<Project> projectInDb = projectRepository.findByName(projectDTO.getName());
+    Optional<Project> create(ProjectWriteDTO projectWriteDTO) {
+        Optional<Project> projectInDb = projectRepository.findByName(projectWriteDTO.getName());
 
         if (!projectInDb.isPresent()) {
             Project project = new Project();
-            copyProperties(projectDTO, project);
+            project.setName(projectWriteDTO.getName());
             project.setDateCreated(LocalDateTime.now());
 
             projectRepository.save(project);

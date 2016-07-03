@@ -27,7 +27,7 @@ public class ProjectController {
 
     @GET
     @Produces("application/json")
-    public List<ProjectDTO> getProjects() {
+    public List<ProjectReadDTO> getProjects() {
         return projectService.findAllProjects();
     }
 
@@ -35,7 +35,7 @@ public class ProjectController {
     @Path("{id}")
     @Produces("application/json")
     public Response getProject(@PathParam("id") Long id) {
-        Optional<ProjectDTO> project = projectService.findProject(id);
+        Optional<ProjectReadDTO> project = projectService.findProject(id);
 
         return project
                 .map(p -> Response.status(OK).entity(p).build())
@@ -45,14 +45,14 @@ public class ProjectController {
     @POST
     @Consumes("application/json")
     @Produces("text/html")
-    public Response createProject(ProjectDTO projectDTO) {
-        Optional<Project> project = projectService.create(projectDTO);
+    public Response createProject(ProjectWriteDTO projectWriteDTO) {
+        Optional<Project> project = projectService.create(projectWriteDTO);
 
         return project.map(p ->
                 Response.status(CREATED)
-                .entity("New projectDTO has been created")
-                .header("Location",
-                        restUrlGenerator.generateUrlToNewResource(uriInfo, p.getId())).build())
+                        .entity("New project has been created")
+                        .header("Location",
+                                restUrlGenerator.generateUrlToNewResource(uriInfo, p.getId())).build())
                 .orElse(Response.status(CONFLICT).build());
     }
 }

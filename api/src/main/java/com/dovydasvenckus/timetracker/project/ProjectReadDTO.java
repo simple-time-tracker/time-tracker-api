@@ -5,16 +5,17 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class ProjectDTO {
+public class ProjectReadDTO {
     private Long id;
 
     private String name;
 
     private LocalDateTime dateCreated;
 
-    ProjectDTO() {}
+    private ProjectReadDTO() {
+    }
 
-    public ProjectDTO(Project project) {
+    public ProjectReadDTO(Project project) {
         id = project.getId();
         name = project.getName();
         dateCreated = project.getDateCreated();
