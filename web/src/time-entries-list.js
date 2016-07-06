@@ -1,5 +1,5 @@
 import {bindable} from 'aurelia-framework';
-import moment from 'moment';
+import moment from 'moment/moment-timezone';
 
 export class TimeEntriesList {
     @bindable entries = [];
@@ -18,7 +18,7 @@ export class TimeEntriesList {
     }
 
     shortDateTime(date) {
-        return date ? moment(date).format('MM/DD HH:mm'): '';
+        return date ? moment.tz(moment.utc(date), moment.tz.guess()).format('MM/DD HH:mm'): '';
     }
 
 

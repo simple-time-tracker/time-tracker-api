@@ -1,11 +1,11 @@
 package com.dovydasvenckus.timetracker.entry;
 
+import com.dovydasvenckus.timetracker.helper.date.DateTimeService.DateTimeService;
 import com.dovydasvenckus.timetracker.project.Project;
 import com.dovydasvenckus.timetracker.project.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,12 +13,20 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 public class TimeEntryService {
+    private DateTimeService dateTimeService;
+
+    private TimeEntryRepository timeEntryRepository;
+
+    private ProjectRepository projectRepository;
 
     @Autowired
-    TimeEntryRepository timeEntryRepository;
-
-    @Autowired
-    ProjectRepository projectRepository;
+    public TimeEntryService(DateTimeService dateTimeService,
+                            TimeEntryRepository timeEntryRepository,
+                            ProjectRepository projectRepository) {
+        this.dateTimeService = dateTimeService;
+        this.timeEntryRepository = timeEntryRepository;
+        this.projectRepository = projectRepository;
+    }
 
     List<TimeEntryDTO> findAll() {
         return timeEntryRepository.findAll().stream().
@@ -66,7 +74,7 @@ public class TimeEntryService {
         Optional<Project> project = projectRepository.findOne(projectId);
         if (project.isPresent()) {
             TimeEntry timeEntry = new TimeEntry();
-            timeEntry.setStartDate(LocalDateTime.now());
+            timeEntry.setStartDate(dateTimeService.now());
             timeEntry.setDescription(description);
             timeEntry.setProject(project.get());
 

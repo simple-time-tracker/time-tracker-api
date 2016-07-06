@@ -1,5 +1,6 @@
 package com.dovydasvenckus.timetracker.entry;
 
+import com.dovydasvenckus.timetracker.helper.date.DateTimeService.DateTimeService;
 import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,7 +12,6 @@ import javax.ws.rs.core.UriInfo;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.LocalDateTime.now;
 import static javax.ws.rs.core.Response.Status.*;
 
 @Component
@@ -20,6 +20,9 @@ public class TimeEntryController {
 
     @Context
     UriInfo uriInfo;
+
+    @Autowired
+    DateTimeService dateTimeService;
 
     @Autowired
     RestUrlGenerator restUrlGenerator;
@@ -68,7 +71,7 @@ public class TimeEntryController {
         Optional<TimeEntryDTO> current = timeEntryService.findCurrentlyActive();
 
         if (current.isPresent()) {
-            current.get().setEndDate(now());
+            current.get().setEndDate(dateTimeService.now());
             timeEntryService.update(current.get());
             return Response.status(OK).build();
         }

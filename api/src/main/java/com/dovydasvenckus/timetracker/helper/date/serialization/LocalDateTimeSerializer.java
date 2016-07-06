@@ -1,4 +1,4 @@
-package com.dovydasvenckus.timetracker.helper.date;
+package com.dovydasvenckus.timetracker.helper.date.serialization;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -15,7 +15,7 @@ public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
     @Override
     public void serialize(LocalDateTime dateTime, JsonGenerator jg,
                           SerializerProvider sp) throws IOException {
-        Instant instant = dateTime.toInstant(ZoneOffset.UTC);
+        Instant instant = dateTime.atZone(ZoneOffset.UTC).toInstant();
         jg.writeString(DateTimeFormatter.ISO_INSTANT.format(instant));
     }
 }

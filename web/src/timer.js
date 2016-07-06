@@ -101,7 +101,7 @@ export class TimeTracker {
     }
 
     getStartUrl() {
-        return 'entries/start/' + this.currentProject.id + "?description=" + this.currentDescription
+        return 'entries/start/' + this.currentProject + "?description=" + this.currentDescription
     }
 
     toggleTracking() {

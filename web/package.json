@@ -86,6 +86,7 @@
       "font-awesome": "npm:font-awesome@^4.5.0",
       "jquery": "npm:jquery@^2.2.3",
       "moment": "github:moment/moment@^2.13.0",
+      "moment/moment-timezone": "github:moment/moment-timezone@^0.5.4",
       "text": "github:systemjs/plugin-text@^0.0.3"
     },
     "devDependencies": {
@@ -93,5 +94,8 @@
       "babel-runtime": "npm:babel-runtime@^5.8.24",
       "core-js": "npm:core-js@^1.1.4"
     }
+  },
+  "dependencies": {
+    "moment-timezone": "^0.5.4"
   }
 }

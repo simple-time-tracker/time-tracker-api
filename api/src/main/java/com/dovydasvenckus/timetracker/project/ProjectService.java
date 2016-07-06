@@ -1,9 +1,9 @@
 package com.dovydasvenckus.timetracker.project;
 
+import com.dovydasvenckus.timetracker.helper.date.DateTimeService.DateTimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,8 +13,15 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class ProjectService {
 
+    private DateTimeService dateTimeService;
+
+    private ProjectRepository projectRepository;
+
     @Autowired
-    ProjectRepository projectRepository;
+    public ProjectService(DateTimeService dateTimeService, ProjectRepository projectRepository) {
+        this.dateTimeService = dateTimeService;
+        this.projectRepository = projectRepository;
+    }
 
     List<ProjectReadDTO> findAllProjects() {
         return projectRepository.findAll().stream()
@@ -35,7 +42,7 @@ public class ProjectService {
         if (!projectInDb.isPresent()) {
             Project project = new Project();
             project.setName(projectWriteDTO.getName());
-            project.setDateCreated(LocalDateTime.now());
+            project.setDateCreated(dateTimeService.now());
 
             projectRepository.save(project);
 
