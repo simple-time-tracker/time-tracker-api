@@ -18,7 +18,7 @@ export class TimeEntriesList {
     }
 
     shortDateTime(date) {
-        return date ? moment(date).format('MM/DD hh:mm'): '';
+        return date ? moment(date).format('MM/DD HH:mm'): '';
     }
 
 
