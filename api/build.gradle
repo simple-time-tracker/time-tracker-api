@@ -44,11 +44,12 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-jersey')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-starter-security')
 
 	compileOnly('org.projectlombok:lombok:1.16.8')
 	compile('org.modelmapper:modelmapper:0.7.5')
 
-	compile('org.hsqldb:hsqldb:2.3.4')
+	compile('org.mariadb.jdbc:mariadb-java-client:2.0.2')
 	runtime('com.h2database:h2')
 
 	testCompile "cglib:cglib:2.2"
