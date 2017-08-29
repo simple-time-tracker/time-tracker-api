@@ -1,24 +1,26 @@
 def getFromPath(String path) {
-    return "../web/${path ? path: ''}"
+    return "../web/${path ? path : ''}"
 }
 
 def getDestPath(String path) {
     return "src/main/resources/public/${path ? path : ''}"
 }
 
-task copyWeb << {
-    copy {
-        from getFromPath('export')
-        into getDestPath('')
-    }
-    copy {
-        from getFromPath('config/config.json')
-        into getDestPath('dist/config')
+task copyWeb {
+    doLast {
+        copy {
+            from getFromPath('export')
+            into getDestPath('')
+        }
+        copy {
+            from getFromPath('config/config.json')
+            into getDestPath('dist/config')
+        }
     }
 }
 
 task cleanWeb(type: Delete) {
-    delete getDestPath()
+    delete getDestPath('')
 }
 
 task buildWithWeb(dependsOn: ['cleanWeb', ':web:export', 'copyWeb']) {
