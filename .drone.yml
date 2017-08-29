@@ -4,5 +4,5 @@ pipeline:
     environment:
       - GRADLE_USER_HOME=~/.gradle
     commands:
-      - ./gradlew buildWithWeb
       - ./gradlew installGulp
+      - ./gradlew buildWithWeb
