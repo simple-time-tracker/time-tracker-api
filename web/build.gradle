@@ -17,6 +17,12 @@ apply plugin: 'com.moowork.gulp'
 dependencies {
 }
 
+node {
+    version = '8.4.0'
+    npmVersion = '5.3.0'
+    download = true
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '4.1'
 }
