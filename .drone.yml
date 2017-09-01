@@ -4,6 +4,4 @@ pipeline:
     environment:
       - GRADLE_USER_HOME=~/.gradle
     commands:
-      - ./gradlew installGulp
-      - ./gradlew :web:npmInstall
-      - ./gradlew buildWithWeb
+      - ./gradlew :api:build

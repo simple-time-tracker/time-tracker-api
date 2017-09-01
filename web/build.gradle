@@ -23,6 +23,11 @@ node {
     download = true
 }
 
+
+task installJSPM(type: NpmTask) {
+    args = ['install', 'jspm', '--save-dev']
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '4.1'
 }

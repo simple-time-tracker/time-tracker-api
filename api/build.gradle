@@ -68,5 +68,3 @@ eclipse {
 task wrapper(type: Wrapper) {
 	gradleVersion = '4.1'
 }
-
-buildWithWeb.finalizedBy('build')
