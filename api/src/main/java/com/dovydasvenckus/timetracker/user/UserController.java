@@ -21,12 +21,10 @@ public class UserController {
 
     RestUrlGenerator restUrlGenerator;
 
-    UserService userService;
 
     @Autowired
-    public UserController(RestUrlGenerator restUrlGenerator, UserService userService) {
+    public UserController(RestUrlGenerator restUrlGenerator) {
         this.restUrlGenerator = restUrlGenerator;
-        this.userService = userService;
     }
 
     @POST
@@ -34,7 +32,7 @@ public class UserController {
     @Produces("text/html")
     public Response createUser(UserCreateDTO createUserDto) {
         try {
-            userService.create(createUserDto);
+            //userService.create(createUserDto);
         } catch (DataIntegrityViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("User name is already taken").build();

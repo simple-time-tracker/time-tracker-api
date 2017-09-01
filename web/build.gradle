@@ -17,6 +17,17 @@ apply plugin: 'com.moowork.gulp'
 dependencies {
 }
 
+node {
+    version = '8.4.0'
+    npmVersion = '5.3.0'
+    download = true
+}
+
+
+task installJSPM(type: NpmTask) {
+    args = ['install', 'jspm', '--save-dev']
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '4.1'
 }

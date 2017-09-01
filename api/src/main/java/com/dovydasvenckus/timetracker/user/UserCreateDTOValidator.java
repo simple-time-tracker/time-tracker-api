@@ -9,12 +9,12 @@ import org.springframework.validation.Validator;
 @Component
 public class UserCreateDTOValidator implements Validator {
 
-    private final UserService userService;
-
-    @Autowired
-    public UserCreateDTOValidator(UserService userService) {
-        this.userService = userService;
-    }
+//    private final UserService userService;
+//
+//    @Autowired
+//    public UserCreateDTOValidator(UserService userService) {
+//        this.userService = userService;
+//    }
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -25,7 +25,7 @@ public class UserCreateDTOValidator implements Validator {
     public void validate(Object target, Errors errors) {
         UserCreateDTO userDTO = (UserCreateDTO) target;
         validatePasswords(errors, userDTO);
-        validateEmail(errors, userDTO);
+//        validateEmail(errors, userDTO);
     }
 
     private void validatePasswords(Errors errors, UserCreateDTO userDTO) {
@@ -34,10 +34,10 @@ public class UserCreateDTOValidator implements Validator {
         }
     }
 
-    private void validateEmail(Errors errors, UserCreateDTO userDTO) {
-        if (userService.getUserByEmail(userDTO.getEmail()).isPresent()) {
-            errors.reject("email.exists", "User with this email already exists");
-        }
-    }
+//    private void validateEmail(Errors errors, UserCreateDTO userDTO) {
+//        if (userService.getUserByEmail(userDTO.getEmail()).isPresent()) {
+//            errors.reject("email.exists", "User with this email already exists");
+//        }
+//    }
 }
 

@@ -36,6 +36,7 @@ System.config({
     "aurelia-templating-router": "npm:aurelia-templating-router@1.0.0-beta.2.0.0",
     "babel": "npm:babel-core@5.8.38",
     "babel-runtime": "npm:babel-runtime@5.8.38",
+    "bluebird": "npm:bluebird@3.4.1",
     "bootstrap": "github:twbs/bootstrap@3.3.6",
     "core-js": "npm:core-js@1.2.6",
     "deep-extend": "npm:deep-extend@0.4.1",
@@ -199,6 +200,9 @@ System.config({
     "npm:babel-runtime@5.8.38": {
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
+    "npm:bluebird@3.4.1": {
+      "process": "github:jspm/nodelibs-process@0.1.2"
+    },
     "npm:buffer@3.6.0": {
       "base64-js": "npm:base64-js@0.0.8",
       "child_process": "github:jspm/nodelibs-child_process@0.1.0",
@@ -238,8 +242,23 @@ System.config({
       "indexof": "npm:indexof@0.0.1"
     }
   },
+  depCache: {
+    "main.js": [
+      "bootstrap"
+    ],
+    "time-entries-list.js": [
+      "aurelia-framework",
+      "moment/moment-timezone"
+    ],
+    "timer.js": [
+      "aurelia-framework",
+      "aurelia-fetch-client",
+      "aurelia-configuration",
+      "fetch"
+    ]
+  },
   bundles: {
-    "app-build-e80eb676fd.js": [
+    "app-build.js": [
       "app.html!github:systemjs/plugin-text@0.0.3.js",
       "app.js",
       "main.js",
@@ -338,21 +357,6 @@ System.config({
       "npm:aurelia-templating@1.0.0-beta.3.0.2/aurelia-templating.js",
       "npm:jquery@2.2.4.js",
       "npm:jquery@2.2.4/dist/jquery.js"
-    ]
-  },
-  depCache: {
-    "main.js": [
-      "bootstrap"
-    ],
-    "time-entries-list.js": [
-      "aurelia-framework",
-      "moment/moment-timezone"
-    ],
-    "timer.js": [
-      "aurelia-framework",
-      "aurelia-fetch-client",
-      "aurelia-configuration",
-      "fetch"
     ]
   }
 });
