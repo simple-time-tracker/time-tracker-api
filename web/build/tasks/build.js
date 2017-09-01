@@ -9,6 +9,7 @@ var compilerOptions = require('../babel-options');
 var assign = Object.assign || require('object.assign');
 var notify = require('gulp-notify');
 var browserSync = require('browser-sync');
+var htmlmin = require('gulp-htmlmin');
 
 // transpiles changed es6 files to SystemJS format
 // the plumber() call prevents 'pipe breaking' caused
@@ -19,7 +20,7 @@ gulp.task('build-system', function() {
     .pipe(plumber({errorHandler: notify.onError('Error: <%= error.message %>')}))
     .pipe(changed(paths.output, {extension: '.js'}))
     .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(to5(assign({}, compilerOptions.system())))
+    .pipe(to5(assign({}, compilerOptions('systemjs'))))
     .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '/src'}))
     .pipe(gulp.dest(paths.output));
 });
@@ -27,7 +28,9 @@ gulp.task('build-system', function() {
 // copies changed html files to the output directory
 gulp.task('build-html', function() {
   return gulp.src(paths.html)
+    .pipe(plumber({errorHandler: notify.onError('Error: <%= error.message %>')}))
     .pipe(changed(paths.output, {extension: '.html'}))
+    .pipe(htmlmin({collapseWhitespace: true}))
     .pipe(gulp.dest(paths.output));
 });
 

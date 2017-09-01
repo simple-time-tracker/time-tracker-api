@@ -30,6 +30,7 @@ function normalizeExportPaths() {
 
     return jspm.normalize(packageName).then((normalized) => {
       const packagePath = normalized.substring(normalized.indexOf('jspm_packages'), normalized.lastIndexOf('.js'));
+      console.log(packagePath)
       return fileList.map(file => packagePath + file);
     });
   });

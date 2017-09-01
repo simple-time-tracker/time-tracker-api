@@ -32,6 +32,10 @@ module.exports = {
       'bootstrap', [
         '/fonts/*'
       ]
+    ], [
+      'bluebird', [
+        '/js/browser/bluebird.min.js'
+      ]
     ]
   ]
 };
