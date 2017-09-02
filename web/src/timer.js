@@ -1,10 +1,10 @@
 import {inject} from 'aurelia-framework';
 import {computedFrom} from 'aurelia-framework';
 import {HttpClient} from 'aurelia-fetch-client';
-import {Configure} from "aurelia-configuration";
+import {AureliaConfiguration} from 'aurelia-configuration';
 import 'fetch';
 
-@inject(HttpClient, Configure)
+@inject(HttpClient, AureliaConfiguration)
 export class TimeTracker {
     descriptionPlaceholder = 'What are you working on?';
     self = this;
@@ -14,7 +14,7 @@ export class TimeTracker {
     projects = [];
     timeEntries = [];
 
-    constructor(http:HttpClient, config:Configure) {
+    constructor(http:HttpClient, config:AureliaConfiguration) {
         this.config = config;
         http.configure(config => {
             config

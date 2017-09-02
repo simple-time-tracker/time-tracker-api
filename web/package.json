@@ -1,6 +1,6 @@
 {
-  "name": "time-tracker",
-  "version": "0.1",
+  "name": "time-tracker-web",
+  "version": "0.1.0",
   "description": "Simple front end for todo-api project",
   "keywords": [
     "aurelia",
@@ -12,7 +12,7 @@
     "url": "https://github.com/dovydasvenckus/time-tracker/issues"
   },
   "license": "CC0-1.0",
-  "author": "Dovydas Venckus (https://dovydasvenckus.com/)",
+  "author": "Dovydas Venckus <dovydas.venckus@live.com> (https://dovydasvenckus.com/)",
   "main": "dist/main.js",
   "repository": {
     "type": "git",
@@ -65,7 +65,7 @@
     "dependencies": {
       "aurelia-animator-css": "npm:aurelia-animator-css@^1.0.0",
       "aurelia-bootstrapper": "npm:aurelia-bootstrapper@^1.0.0",
-      "aurelia-configuration": "github:vheissu/aurelia-configuration@1.0.14",
+      "aurelia-configuration": "github:vheissu/aurelia-configuration@^1.0.17",
       "aurelia-fetch-client": "npm:aurelia-fetch-client@^1.0.0",
       "aurelia-framework": "npm:aurelia-framework@^1.0.0",
       "aurelia-history-browser": "npm:aurelia-history-browser@^1.0.0",
