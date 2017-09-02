@@ -1,5 +1,5 @@
 CREATE TABLE time_entries (
-    time_entry_id BIGINT PRIMARY KEY,
+    time_entry_id BIGSERIAL PRIMARY KEY,
     description VARCHAR(255),
     end_date TIMESTAMP,
     start_date TIMESTAMP NOT NULL,
