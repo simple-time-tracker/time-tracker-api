@@ -14,7 +14,7 @@ task copyWeb {
         }
         copy {
             from getFromPath('config/config.json')
-            into getDestPath('dist/config')
+            into getDestPath('config')
         }
     }
 }
