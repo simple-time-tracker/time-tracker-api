@@ -5,9 +5,9 @@ import lombok.Data;
 
 import javax.persistence.*;
 
-@Data
-@Entity
-@Table(name = "user")
+//@Data
+//@Entity
+//@Table(name = "user")
 public class User {
 
     @Id
