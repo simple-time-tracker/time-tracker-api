@@ -2,7 +2,7 @@ apply from: 'build-scripts/web.gradle'
 
 buildscript {
 	ext {
-		springBootVersion = '1.5.6.RELEASE'
+		springBootVersion = '1.5.7.RELEASE'
 	}
 
 	repositories {
@@ -54,7 +54,7 @@ dependencies {
 
 	testCompile "cglib:cglib:2.2"
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('org.spockframework:spock-spring:1.0-groovy-2.4')
+	testCompile('org.spockframework:spock-core:1.1-groovy-2.4')
 }
 
 
