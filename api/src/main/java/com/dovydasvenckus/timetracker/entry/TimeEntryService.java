@@ -38,8 +38,7 @@ public class TimeEntryService {
         TimeEntry timeEntry;
         timeEntry = new TimeEntry(timeEntryDTO);
         Optional<Project> project = projectRepository.findOne(timeEntryDTO.getProject().getId());
-        if (project.isPresent())
-            timeEntry.setProject(project.get());
+        project.ifPresent(timeEntry::setProject);
         timeEntryRepository.save(timeEntry);
 
         return timeEntry;
@@ -54,6 +53,10 @@ public class TimeEntryService {
         timeEntryRepository.save(timeEntry);
 
         return timeEntry;
+    }
+
+    void delete(Long id) {
+        timeEntryRepository.delete(id);
     }
 
 

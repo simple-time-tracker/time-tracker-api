@@ -9,6 +9,7 @@
                 <th>Start date</th>
                 <th>End date</th>
                 <th>Time spent</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -19,6 +20,7 @@
                 <td>${shortDateTime(entry.startDate)}</td>
                 <td>${shortDateTime(entry.endDate)}</td>
                 <td>${getDifference(entry)}</td>
+                <td><span click.trigger="delete(entry.id)" class="glyphicon glyphicon-trash"></span></td>
             </tr>
             </tbody>
         </table>

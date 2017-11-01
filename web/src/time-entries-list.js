@@ -1,11 +1,21 @@
 import {bindable} from 'aurelia-framework';
+import {inject} from 'aurelia-framework';
+import {HttpClient} from 'aurelia-http-client';
+import {AureliaConfiguration} from 'aurelia-configuration';
 import moment from 'moment/moment-timezone';
 
+@inject(AureliaConfiguration, moment)
 export class TimeEntriesList {
     @bindable entries = [];
 
-    constructor(moment: moment) {
+    constructor(config:AureliaConfiguration, moment: moment) {
+        this.config = config;
         this.moment = moment;
+
+        this.http = new HttpClient();
+        this.http.configure(cfg => {
+            cfg.withBaseUrl(this.config.get('api.endpoint'));
+        });
     }
 
     getDifference(entry) {
@@ -36,5 +46,17 @@ export class TimeEntriesList {
             return '0' + unit;
         else return unit == '0' ? '00': unit
     }
-}
 
+    delete(time_entry_id) {
+      var self = this;
+
+      this.http.delete('entries/' + time_entry_id)
+          .then(response => {
+          console.log(self.entries)
+            self.entries  = self.entries.filter(function(element) {
+                return element.id !== time_entry_id
+            })
+
+          })
+    }
+}

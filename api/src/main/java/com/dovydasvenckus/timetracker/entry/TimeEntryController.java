@@ -4,6 +4,7 @@ import com.dovydasvenckus.timetracker.helper.date.DateTimeService.DateTimeServic
 import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -22,13 +23,13 @@ public class TimeEntryController {
     UriInfo uriInfo;
 
     @Autowired
-    DateTimeService dateTimeService;
+    private DateTimeService dateTimeService;
 
     @Autowired
-    RestUrlGenerator restUrlGenerator;
+    private RestUrlGenerator restUrlGenerator;
 
     @Autowired
-    TimeEntryService timeEntryService;
+    private TimeEntryService timeEntryService;
 
     @GET
     @Produces("application/json")
@@ -42,7 +43,7 @@ public class TimeEntryController {
     public TimeEntryDTO getCurrent() {
         Optional<TimeEntryDTO> current = timeEntryService.findCurrentlyActive();
 
-        return (current.isPresent()) ? current.get() : null;
+        return current.orElse(null);
     }
 
     @POST
@@ -90,5 +91,13 @@ public class TimeEntryController {
                 .header("Location",
                         restUrlGenerator.generateUrlToNewResource(uriInfo, timeEntry.getId())
                 ).build();
+    }
+
+    @DELETE
+    @Path("/{project}")
+    public Response deleteProject(@PathParam("project") long projectId) {
+        timeEntryService.delete(projectId);
+
+        return Response.status(OK).build();
     }
 }
