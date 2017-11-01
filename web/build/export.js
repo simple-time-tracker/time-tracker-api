@@ -13,6 +13,8 @@ module.exports = {
     'jspm_packages/system-csp-production.js',
     'jspm_packages/github/vheissu/**',
     'jspm_packages/github/moment/**',
+    'jspm_packages/npm/aurelia-http-client@1.2.1/**',
+    'jspm_packages/npm/aurelia-http-client@1.2.1.js',
     'styles/styles.css'
   ],
   // this section lists any jspm packages that have
@@ -30,6 +32,8 @@ module.exports = {
     ], [
       // include bootstrap's font files
       'bootstrap', [
+        '/css/*',
+        '/js/*',
         '/fonts/*'
       ]
     ], [
