@@ -1,5 +1,7 @@
 .gradle
 .idea
+*.iml
+out
 
 .eslintrc
 api/build
