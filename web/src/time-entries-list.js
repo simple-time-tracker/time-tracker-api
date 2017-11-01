@@ -47,12 +47,11 @@ export class TimeEntriesList {
         else return unit == '0' ? '00': unit
     }
 
-    delete(time_entry_id) {
+    deleteEntry(time_entry_id) {
       var self = this;
 
       this.http.delete('entries/' + time_entry_id)
           .then(response => {
-          console.log(self.entries)
             self.entries  = self.entries.filter(function(element) {
                 return element.id !== time_entry_id
             })

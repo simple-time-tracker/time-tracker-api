@@ -20,7 +20,7 @@
                 <td>${shortDateTime(entry.startDate)}</td>
                 <td>${shortDateTime(entry.endDate)}</td>
                 <td>${getDifference(entry)}</td>
-                <td><span click.trigger="delete(entry.id)" class="glyphicon glyphicon-trash"></span></td>
+                <td><span click.delegate="deleteEntry(entry.id)" class="glyphicon glyphicon-trash"></span></td>
             </tr>
             </tbody>
         </table>
