@@ -2,7 +2,7 @@ apply from: 'build-scripts/web.gradle'
 
 buildscript {
 	ext {
-		springBootVersion = '1.5.7.RELEASE'
+		springBootVersion = '1.5.9.RELEASE'
 	}
 
 	repositories {
@@ -15,7 +15,7 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 
 sourceCompatibility = 1.8
@@ -30,20 +30,18 @@ jar {
 	version = '0.0.1-SNAPSHOT'
 }
 
-configurations {
-    compile.exclude module: "spring-boot-starter-tomcat"
-}
-
-
 repositories {
 	mavenCentral()
 }
 
 
 dependencies {
+	compile('org.springframework.boot:spring-boot-starter-web') {
+		exclude module: 'spring-boot-starter-tomcat'
+	}
+
 	compile('org.springframework.boot:spring-boot-starter-jetty')
-	compile('org.springframework.boot:spring-boot-starter-jersey')
-	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 
 	compileOnly('org.projectlombok:lombok:1.16.8')
@@ -56,14 +54,6 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.codehaus.groovy:groovy-all:2.4.10')
 	testCompile('org.spockframework:spock-core:1.1-groovy-2.4')
-}
-
-
-eclipse {
-	classpath {
-		 containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-		 containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
-	}
 }
 
 task wrapper(type: Wrapper) {
