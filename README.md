@@ -1,7 +1,6 @@
 # time-tracker-web
 
-[![Build Status](https://build.xanadu.tk/api/badges/dovydasvenckus/time-tracker/status.svg)](https://build.xanadu.tk/dovydasvenckus/time-tracker)
-
+[![Build Status](https://travis-ci.org/dovydasvenckus/time-tracker.svg?branch=master)](https://travis-ci.org/dovydasvenckus/time-tracker)
 ## Description
 Simple time tracking application. Not ready for
 production. I have started this project just to try out
