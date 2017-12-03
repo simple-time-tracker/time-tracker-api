@@ -17,7 +17,6 @@ public class TimeEntry {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
     @Column(name = "description")

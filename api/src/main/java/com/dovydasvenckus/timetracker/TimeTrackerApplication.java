@@ -6,7 +6,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 @EntityScan(
-		basePackageClasses = { TimeTrackerApplication.class, Jsr310JpaConverters.class }
+		basePackageClasses = { Jsr310JpaConverters.class },
+		basePackages = {"com.dovydasvenckus.timetracker"}
 )
 
 @SpringBootApplication

@@ -20,6 +20,9 @@ public class Project {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
+    @Column(name = "is_archived")
+    private boolean isArchived = false;
+
     @Column(name = "date_created", nullable = false)
     private LocalDateTime dateCreated;
 

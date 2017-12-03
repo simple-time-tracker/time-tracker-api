@@ -3,6 +3,7 @@ package com.dovydasvenckus.timetracker.project;
 import com.dovydasvenckus.timetracker.helper.date.DateTimeService.DateTimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +33,7 @@ public class ProjectService {
 
     Optional<ProjectReadDTO> findProject(Long id) {
         return projectRepository
-                .findOne(id)
+                .findById(id)
                 .map(ProjectReadDTO::new);
     }
 
@@ -48,5 +49,17 @@ public class ProjectService {
 
             return Optional.of(project);
         } else return Optional.empty();
+    }
+
+    @Transactional
+    public boolean archiveProject(long projectId) {
+        Optional<Project> project = projectRepository.findById(projectId);
+
+        if (project.isPresent()) {
+            project.get().setArchived(true);
+            return true;
+        }
+
+        return false;
     }
 }

@@ -11,6 +11,8 @@ public class ProjectReadDTO {
     private Long id;
 
     private String name;
+    
+    private boolean isArchived;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime dateCreated;
@@ -22,5 +24,6 @@ public class ProjectReadDTO {
         id = project.getId();
         name = project.getName();
         dateCreated = project.getDateCreated();
+        isArchived = project.isArchived();
     }
 }

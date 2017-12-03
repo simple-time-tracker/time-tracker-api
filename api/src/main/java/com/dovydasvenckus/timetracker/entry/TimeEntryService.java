@@ -37,7 +37,7 @@ public class TimeEntryService {
         timeEntryDTO.setId(null);
         TimeEntry timeEntry;
         timeEntry = new TimeEntry(timeEntryDTO);
-        Optional<Project> project = projectRepository.findOne(timeEntryDTO.getProject().getId());
+        Optional<Project> project = projectRepository.findById(timeEntryDTO.getProject().getId());
         project.ifPresent(timeEntry::setProject);
         timeEntryRepository.save(timeEntry);
 
@@ -74,7 +74,7 @@ public class TimeEntryService {
 
 
     TimeEntry createTimeEntry(Long projectId, String description) {
-        Optional<Project> project = projectRepository.findOne(projectId);
+        Optional<Project> project = projectRepository.findById(projectId);
         if (project.isPresent()) {
             TimeEntry timeEntry = new TimeEntry();
             timeEntry.setStartDate(dateTimeService.now());

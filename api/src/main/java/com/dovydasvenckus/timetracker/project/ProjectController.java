@@ -2,6 +2,7 @@ package com.dovydasvenckus.timetracker.project;
 
 import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
@@ -20,10 +21,10 @@ public class ProjectController {
     UriInfo uriInfo;
 
     @Autowired
-    RestUrlGenerator restUrlGenerator;
+    private RestUrlGenerator restUrlGenerator;
 
     @Autowired
-    ProjectService projectService;
+    private ProjectService projectService;
 
     @GET
     @Produces("application/json")
@@ -54,5 +55,13 @@ public class ProjectController {
                         .header("Location",
                                 restUrlGenerator.generateUrlToNewResource(uriInfo, p.getId())).build())
                 .orElse(Response.status(CONFLICT).build());
+    }
+
+    @POST
+    @Path("{id}/archive")
+    public Response archiveProject(@PathParam("id") Long id) {
+        boolean wasSuccessfullyArchived = projectService.archiveProject(id);
+
+        return wasSuccessfullyArchived ? Response.ok().build() : Response.status(BAD_REQUEST).build();
     }
 }
