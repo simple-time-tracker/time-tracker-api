@@ -1,7 +1,7 @@
 package com.dovydasvenckus.timetracker.helper.date
 
-import com.dovydasvenckus.timetracker.helper.date.DateTimeService.DateTimeService
-import com.dovydasvenckus.timetracker.helper.date.DateTimeService.UTCDateTimeService
+import com.dovydasvenckus.timetracker.helper.date.clock.DateTimeService
+import com.dovydasvenckus.timetracker.helper.date.clock.UTCDateTimeService
 import com.dovydasvenckus.timetracker.helper.date.serialization.LocalDateTimeSerializer
 import com.fasterxml.jackson.core.JsonGenerator
 import spock.lang.Specification

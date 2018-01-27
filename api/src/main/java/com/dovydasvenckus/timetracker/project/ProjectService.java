@@ -1,6 +1,6 @@
 package com.dovydasvenckus.timetracker.project;
 
-import com.dovydasvenckus.timetracker.helper.date.DateTimeService.DateTimeService;
+import com.dovydasvenckus.timetracker.helper.date.clock.DateTimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +14,9 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class ProjectService {
 
-    private DateTimeService dateTimeService;
+    private final DateTimeService dateTimeService;
 
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
 
     @Autowired
     public ProjectService(DateTimeService dateTimeService, ProjectRepository projectRepository) {

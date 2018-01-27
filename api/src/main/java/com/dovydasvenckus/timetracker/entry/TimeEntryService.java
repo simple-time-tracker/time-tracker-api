@@ -1,6 +1,6 @@
 package com.dovydasvenckus.timetracker.entry;
 
-import com.dovydasvenckus.timetracker.helper.date.DateTimeService.DateTimeService;
+import com.dovydasvenckus.timetracker.helper.date.clock.DateTimeService;
 import com.dovydasvenckus.timetracker.project.Project;
 import com.dovydasvenckus.timetracker.project.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +13,12 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 public class TimeEntryService {
-    private DateTimeService dateTimeService;
 
-    private TimeEntryRepository timeEntryRepository;
+    private final DateTimeService dateTimeService;
 
-    private ProjectRepository projectRepository;
+    private final TimeEntryRepository timeEntryRepository;
+
+    private final ProjectRepository projectRepository;
 
     @Autowired
     public TimeEntryService(DateTimeService dateTimeService,

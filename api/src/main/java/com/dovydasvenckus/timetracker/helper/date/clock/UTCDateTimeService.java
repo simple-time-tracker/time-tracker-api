@@ -1,4 +1,4 @@
-package com.dovydasvenckus.timetracker.helper.date.DateTimeService;
+package com.dovydasvenckus.timetracker.helper.date.clock;
 
 import org.springframework.stereotype.Service;
 

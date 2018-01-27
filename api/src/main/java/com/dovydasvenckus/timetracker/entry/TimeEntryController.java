@@ -1,10 +1,9 @@
 package com.dovydasvenckus.timetracker.entry;
 
-import com.dovydasvenckus.timetracker.helper.date.DateTimeService.DateTimeService;
+import com.dovydasvenckus.timetracker.helper.date.clock.DateTimeService;
 import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -20,16 +19,20 @@ import static javax.ws.rs.core.Response.Status.*;
 public class TimeEntryController {
 
     @Context
-    UriInfo uriInfo;
+    private UriInfo uriInfo;
+
+    private final DateTimeService dateTimeService;
+
+    private final RestUrlGenerator restUrlGenerator;
+
+    private final TimeEntryService timeEntryService;
 
     @Autowired
-    private DateTimeService dateTimeService;
-
-    @Autowired
-    private RestUrlGenerator restUrlGenerator;
-
-    @Autowired
-    private TimeEntryService timeEntryService;
+    public TimeEntryController(DateTimeService dateTimeService, RestUrlGenerator restUrlGenerator, TimeEntryService timeEntryService) {
+        this.dateTimeService = dateTimeService;
+        this.restUrlGenerator = restUrlGenerator;
+        this.timeEntryService = timeEntryService;
+    }
 
     @GET
     @Produces("application/json")

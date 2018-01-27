@@ -17,14 +17,19 @@ import static javax.ws.rs.core.Response.Status.*;
 @Component
 @Path("/projects")
 public class ProjectController {
+
     @Context
-    UriInfo uriInfo;
+    private UriInfo uriInfo;
+
+    private final RestUrlGenerator restUrlGenerator;
+
+    private final ProjectService projectService;
 
     @Autowired
-    private RestUrlGenerator restUrlGenerator;
-
-    @Autowired
-    private ProjectService projectService;
+    public ProjectController(RestUrlGenerator restUrlGenerator, ProjectService projectService) {
+        this.restUrlGenerator = restUrlGenerator;
+        this.projectService = projectService;
+    }
 
     @GET
     @Produces("application/json")
