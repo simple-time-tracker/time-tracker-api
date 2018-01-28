@@ -28,7 +28,9 @@ public class TimeEntryController {
     private final TimeEntryService timeEntryService;
 
     @Autowired
-    public TimeEntryController(DateTimeService dateTimeService, RestUrlGenerator restUrlGenerator, TimeEntryService timeEntryService) {
+    public TimeEntryController(DateTimeService dateTimeService,
+                               RestUrlGenerator restUrlGenerator,
+                               TimeEntryService timeEntryService) {
         this.dateTimeService = dateTimeService;
         this.restUrlGenerator = restUrlGenerator;
         this.timeEntryService = timeEntryService;

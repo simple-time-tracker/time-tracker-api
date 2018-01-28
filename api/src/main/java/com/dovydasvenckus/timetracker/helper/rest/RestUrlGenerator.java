@@ -13,11 +13,11 @@ public class RestUrlGenerator {
     private final Integer serverPort;
 
     @Autowired
-    public RestUrlGenerator(@Value("${server.port}")Integer serverPort) {
+    public RestUrlGenerator(@Value("${server.port}") Integer serverPort) {
         this.serverPort = serverPort;
     }
 
-    public String generateUrlToNewResource(UriInfo uriInfo, Object identifier){
+    public String generateUrlToNewResource(UriInfo uriInfo, Object identifier) {
         UriBuilder urlBuilder = uriInfo.getRequestUriBuilder();
 
         return urlBuilder

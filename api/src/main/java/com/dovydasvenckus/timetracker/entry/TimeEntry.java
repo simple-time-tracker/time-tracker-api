@@ -28,9 +28,10 @@ public class TimeEntry {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    TimeEntry(){}
+    TimeEntry() {
+    }
 
-    TimeEntry(TimeEntryDTO timeEntryDTO){
+    TimeEntry(TimeEntryDTO timeEntryDTO) {
         id = timeEntryDTO.getId();
         description = timeEntryDTO.getDescription();
         startDate = timeEntryDTO.getStartDate();

@@ -48,7 +48,9 @@ public class ProjectService {
             projectRepository.save(project);
 
             return Optional.of(project);
-        } else return Optional.empty();
+        }
+
+        return Optional.empty();
     }
 
     @Transactional

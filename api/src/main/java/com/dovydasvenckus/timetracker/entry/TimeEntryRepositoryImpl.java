@@ -7,18 +7,19 @@ import javax.persistence.TypedQuery;
 
 public class TimeEntryRepositoryImpl implements TimeEntryRepositoryCustom {
 
+    private static final String ACTIVE_ENTRY_QUERY = "SELECT te FROM TimeEntry as te WHERE te.endDate is null";
+
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     public TimeEntry findCurrentlyActive() {
         TimeEntry result;
-        TypedQuery<TimeEntry> query = entityManager.createQuery("SELECT te FROM TimeEntry as te WHERE te.endDate is null ", TimeEntry.class);
+        TypedQuery<TimeEntry> query = entityManager.createQuery(ACTIVE_ENTRY_QUERY, TimeEntry.class);
 
         try {
             result = query.getSingleResult();
-        }
-        catch (NoResultException nre){
+        } catch (NoResultException nre) {
             result = null;
         }
         return result;

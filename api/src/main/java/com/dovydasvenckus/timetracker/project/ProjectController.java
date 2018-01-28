@@ -2,7 +2,6 @@ package com.dovydasvenckus.timetracker.project;
 
 import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;

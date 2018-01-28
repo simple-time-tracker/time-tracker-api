@@ -30,8 +30,8 @@ public class TimeEntryService {
     }
 
     List<TimeEntryDTO> findAll() {
-        return timeEntryRepository.findAll().stream().
-                map(TimeEntryDTO::new).collect(toList());
+        return timeEntryRepository.findAll().stream()
+                .map(TimeEntryDTO::new).collect(toList());
     }
 
     TimeEntry create(TimeEntryDTO timeEntryDTO) {
