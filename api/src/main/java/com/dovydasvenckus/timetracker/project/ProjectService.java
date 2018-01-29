@@ -37,7 +37,8 @@ public class ProjectService {
                 .map(ProjectReadDTO::new);
     }
 
-    Optional<Project> create(ProjectWriteDTO projectWriteDTO) {
+    @Transactional
+    public Optional<Project> create(ProjectWriteDTO projectWriteDTO) {
         Optional<Project> projectInDb = projectRepository.findByName(projectWriteDTO.getName());
 
         if (!projectInDb.isPresent()) {

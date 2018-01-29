@@ -5,6 +5,7 @@ import com.dovydasvenckus.timetracker.project.Project;
 import com.dovydasvenckus.timetracker.project.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +35,8 @@ public class TimeEntryService {
                 .map(TimeEntryDTO::new).collect(toList());
     }
 
-    TimeEntry create(TimeEntryDTO timeEntryDTO) {
+    @Transactional
+    public TimeEntry create(TimeEntryDTO timeEntryDTO) {
         timeEntryDTO.setId(null);
         TimeEntry timeEntry;
         timeEntry = new TimeEntry(timeEntryDTO);
@@ -45,18 +47,19 @@ public class TimeEntryService {
         return timeEntry;
     }
 
-    TimeEntry update(TimeEntryDTO timeEntryDTO) {
+    @Transactional
+    public TimeEntry update(TimeEntryDTO timeEntryDTO) {
         TimeEntry timeEntry = timeEntryRepository.findOne(timeEntryDTO.getId());
 
         timeEntry.setDescription(timeEntryDTO.getDescription());
         timeEntry.setStartDate(timeEntryDTO.getStartDate());
         timeEntry.setEndDate(timeEntryDTO.getEndDate());
-        timeEntryRepository.save(timeEntry);
 
         return timeEntry;
     }
 
-    void delete(Long id) {
+    @Transactional
+    public void delete(Long id) {
         timeEntryRepository.delete(id);
     }
 
@@ -74,7 +77,8 @@ public class TimeEntryService {
     }
 
 
-    TimeEntry createTimeEntry(Long projectId, String description) {
+    @Transactional
+    public TimeEntry createTimeEntry(Long projectId, String description) {
         Optional<Project> project = projectRepository.findById(projectId);
         if (project.isPresent()) {
             TimeEntry timeEntry = new TimeEntry();
