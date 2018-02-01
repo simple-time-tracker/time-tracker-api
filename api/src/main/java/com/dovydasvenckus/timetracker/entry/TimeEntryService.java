@@ -30,8 +30,9 @@ public class TimeEntryService {
         this.projectRepository = projectRepository;
     }
 
+    @Transactional(readOnly = true)
     List<TimeEntryDTO> findAll() {
-        return timeEntryRepository.findAll().stream()
+        return timeEntryRepository.findAllByOrderByStartDateDesc().stream()
                 .map(TimeEntryDTO::new).collect(toList());
     }
 
