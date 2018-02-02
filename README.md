@@ -1,6 +1,6 @@
 # time-tracker-web
 
-[![Build Status](https://travis-ci.org/dovydasvenckus/time-tracker.svg?branch=master)](https://travis-ci.org/dovydasvenckus/time-tracker)
+[![[![Run Status](https://api.shippable.com/projects/59fe1ab0e07b7707001c66e3/badge?branch=master)](https://app.shippable.com/github/dovydasvenckus/time-tracker)
 ## Description
 Simple time tracking application. Not ready for
 production. I have started this project just to try out

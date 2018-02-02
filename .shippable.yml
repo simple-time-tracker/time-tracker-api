@@ -1,0 +1,17 @@
+language: java
+
+jdk:
+    - openjdk8
+
+build:
+    ci:
+        - ./gradlew assemble
+        - ./gradlew checkstyleMain
+        - ./gradlew checkstyleTest
+        - ./gradlew test
+
+    post_ci:
+        - ./ci/copy-test-results.sh
+
+    on_failure:
+        - ./ci/copy-test-results.sh
