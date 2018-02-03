@@ -5,10 +5,7 @@ jdk:
 
 build:
     ci:
-        - ./gradlew assemble
-        - ./gradlew checkstyleMain
-        - ./gradlew checkstyleTest
-        - ./gradlew test
+        - ./gradlew buildWithWeb
 
     post_ci:
         - ./ci/copy-test-results.sh
