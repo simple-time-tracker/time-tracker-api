@@ -35,3 +35,15 @@ task wrapper(type: Wrapper) {
 task export(type: GulpTask) {
     args = ["export"]
 }
+
+task installJspmDependencies(type: NodeTask) {
+    script = file('node_modules/jspm/jspm.js')
+    args = ['install']
+}
+
+task installWebDependencies(dependsOn: ['npmInstall', 'installGulp', 'installJSPM', 'installJspmDependencies'])
+task buildWeb(dependsOn: ['installWebDependencies', 'export'])
+
+installJSPM.mustRunAfter(npmInstall)
+installJspmDependencies.mustRunAfter(installJSPM)
+export.mustRunAfter(installWebDependencies)
