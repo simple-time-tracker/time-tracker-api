@@ -23,5 +23,9 @@ task cleanWeb(type: Delete) {
     delete getDestPath('')
 }
 
-task buildWithWeb(dependsOn: ['cleanWeb', ':web:installGulp', ':web:installJSPM', ':web:export', 'copyWeb']) {
-}
+task buildWithWeb(dependsOn: ['cleanWeb', 'buildWeb', 'copyWeb'])
+task buildWeb(dependsOn: ['installWebDependencies', ':web:export'])
+task installWebDependencies(dependsOn: [':web:installGulp', ':web:installJSPM'])
+
+copyWeb.mustRunAfter(buildWeb)
+buildWeb.mustRunAfter(cleanWeb)

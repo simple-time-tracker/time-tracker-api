@@ -255,23 +255,6 @@ System.config({
       "indexof": "npm:indexof@0.0.1"
     }
   },
-  depCache: {
-    "main.js": [
-      "bootstrap"
-    ],
-    "time-entries-list.js": [
-      "aurelia-framework",
-      "aurelia-http-client",
-      "aurelia-configuration",
-      "moment/moment-timezone"
-    ],
-    "timer.js": [
-      "aurelia-framework",
-      "aurelia-fetch-client",
-      "aurelia-configuration",
-      "fetch"
-    ]
-  },
   bundles: {
     "app-build.js": [
       "app.html!github:systemjs/plugin-text@0.0.3.js",
@@ -372,6 +355,23 @@ System.config({
       "npm:aurelia-templating@1.4.2/aurelia-templating.js",
       "npm:jquery@2.2.4.js",
       "npm:jquery@2.2.4/dist/jquery.js"
+    ]
+  },
+  depCache: {
+    "main.js": [
+      "bootstrap"
+    ],
+    "time-entries-list.js": [
+      "aurelia-framework",
+      "aurelia-http-client",
+      "aurelia-configuration",
+      "moment/moment-timezone"
+    ],
+    "timer.js": [
+      "aurelia-framework",
+      "aurelia-fetch-client",
+      "aurelia-configuration",
+      "fetch"
     ]
   }
 });
