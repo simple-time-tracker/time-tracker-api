@@ -8,7 +8,7 @@ jdk:
 
 build:
     ci:
-        - ./gradlew buildWithWeb
+        - ./gradlew build
 
     post_ci:
         - ./ci/copy-test-results.sh
