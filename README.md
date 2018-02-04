@@ -42,3 +42,5 @@ Launch procedure is same as for other jars
 
     java -jar time-tracker-0.0.1-SNAPSHOT.jar
     
+Security test
+    
