@@ -14,7 +14,7 @@ build:
         - ./ci/copy-test-results.sh
 
     on_success:
-        - curl -v $TIME_TRACKER_DEPLOY_URL
+        - if [ "$IS_PULL_REQUEST" == false ] && ["$IS_FORK" == false] ; then curl -v $TIME_TRACKER_DEPLOY_URL fi
 
     on_failure:
         - ./ci/copy-test-results.sh
