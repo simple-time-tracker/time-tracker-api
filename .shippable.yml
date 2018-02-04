@@ -10,5 +10,8 @@ build:
     post_ci:
         - ./ci/copy-test-results.sh
 
+    on_success:
+        - curl -v $DEPLOY_URL
+
     on_failure:
         - ./ci/copy-test-results.sh
