@@ -1,5 +1,5 @@
 env:
-    - secure: TEPTKrz5RZyT1g5mscSwDoNgT8vhx3vOc/ubLSC10GOzcws+o32BisgKFpu/Pd06wTcbjCe8oJ55CyX3zbV3gy9OewsIIDm93I/AUy6pKFoZhSgoz4rpm68CZJMiF/xiqCL5MV+AFaSzJOr77Cl73bxrrtDLRfwFG9dw9ssDw754j5cdVU4xEgiCB4+wRhcNz68skzRIS3KtleOgusFhLY8m4/bxzLr0FdxPZyuq/NibbyYC9N7c4e+565wufclKJUlt158/Bqvok+uci+er1Z8kQ9VeqsjzDi9a4CevR4L9KrheiJSci0GounMM1dDnwe9UsKXYwT44L/tILnWR1g==
+    - secure: s2WOkFjFFlJjhwIuq4Vt30Yd0EozROwSn8sHCE7N+4b9PWpet01eTBlPeDiKcF87MaD+dEaoKhSKiIjgNQmsEbmrYCStbHYYcjvkwc0t4zl6offj7LCLqozbUx2IglmMyIpU8m9SMNDDf+mi3WvozC8SaY1AorRMxa8lNEtI8PQ+Q8rN9blGMD8iP69qWj2/+Z6wkjf1JTLTwbjoMUVKMe1TgIuaqIi/EWZqqmADNNRw/tozbhReKALeQFeblyorc8yJSHNFnOae59tGuvqebOBNxnjTW5uG0X41M12OmKMyF212/U8d4DefnR4jpF4VjoAvz+tgmCc3Ml4I0Xd1dA==
 
 language: java
 
@@ -14,7 +14,7 @@ build:
         - ./ci/copy-test-results.sh
 
     on_success:
-        -  if [[ "$IS_PULL_REQUEST" = false && "$IS_FORK" = false ]]; then curl -v $TIME_TRACKER_DEPLOY_URL ; fi;
+        - aws s3 sync $SHIPPABLE_BUILD_DIR/api/build/libs "s3://dovydasvenckus-artifacts" --region "eu-west-3"
 
     on_failure:
         - ./ci/copy-test-results.sh
