@@ -20,12 +20,6 @@ To build single jar follow directions bellow.
     ./gradlew build
 
 ## Build jar with api and web
-
-To build app for first time you need to fetch JSPM packages.
-Change directory to web module and run this command.
-    
-    jspm install
-    
 Run from root directory
 
     ./gradlew buildWithWeb
