@@ -2,7 +2,9 @@ apply from: 'build-scripts/web.gradle'
 
 buildscript {
 	ext {
+		currentVersion = '0.0.1'
 		springBootVersion = '1.5.9.RELEASE'
+        isCIServer=System.getenv().CI
 	}
 
 	repositories {
@@ -28,7 +30,7 @@ springBoot {
 
 jar {
 	baseName = 'time-tracker'
-	version = '0.0.1-SNAPSHOT'
+	version = isCIServer ? "${currentVersion}-${new Date().format('YYYYMMddHHmmss')}" : "${currentVersion}-SNAPSHOT"
 }
 
 repositories {
