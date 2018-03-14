@@ -21,7 +21,7 @@ public class Project {
     private String name;
 
     @Column(name = "is_archived")
-    private boolean isArchived = false;
+    private boolean archived = false;
 
     @Column(name = "date_created", nullable = false)
     private LocalDateTime dateCreated;

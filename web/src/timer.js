@@ -54,7 +54,7 @@ export class TimeTracker {
     }
 
     loadProjects() {
-        this.http.fetch('projects')
+        this.http.fetch('projects/active')
             .then(response => response.json())
             .then(projects => {
                 if (projects.length > 0) {

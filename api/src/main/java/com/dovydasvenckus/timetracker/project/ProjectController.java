@@ -37,6 +37,13 @@ public class ProjectController {
     }
 
     @GET
+    @Path("/active")
+    @Produces("application/json")
+    public List<ProjectReadDTO> getAllActiveProjects() {
+        return projectService.findAllActiveProjects();
+    }
+
+    @GET
     @Path("{id}")
     @Produces("application/json")
     public Response getProject(@PathParam("id") Long id) {

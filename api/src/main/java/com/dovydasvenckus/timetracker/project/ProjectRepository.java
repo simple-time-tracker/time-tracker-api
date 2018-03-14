@@ -12,4 +12,6 @@ public interface ProjectRepository extends CrudRepository<Project, Long> {
     Optional<Project> findByName(String name);
 
     List<Project> findAll();
+
+    List<Project> findByArchivedFalse();
 }

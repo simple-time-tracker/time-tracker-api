@@ -31,6 +31,13 @@ public class ProjectService {
                 .collect(toList());
     }
 
+
+    List<ProjectReadDTO> findAllActiveProjects() {
+        return projectRepository.findByArchivedFalse().stream()
+                .map(ProjectReadDTO::new)
+                .collect(toList());
+    }
+
     Optional<ProjectReadDTO> findProject(Long id) {
         return projectRepository
                 .findById(id)
