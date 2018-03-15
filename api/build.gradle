@@ -55,7 +55,7 @@ dependencies {
 
 	testCompile "cglib:cglib:2.2"
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('org.codehaus.groovy:groovy-all:2.4.10')
+	testCompile('org.codehaus.groovy:groovy-all:2.4.14')
 	testCompile('org.spockframework:spock-core:1.1-groovy-2.4')
 }
 
