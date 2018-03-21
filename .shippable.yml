@@ -13,9 +13,5 @@ build:
     post_ci:
         - ./ci/copy-test-results.sh
 
-    on_success:
-
-        - if [[ "$BRANCH" == "master" &&  "$IS_PULL_REQUEST" = false && "$IS_FORK" = false ]]; then aws s3 sync $SHIPPABLE_BUILD_DIR/api/build/libs "s3://dovydasvenckus-artifacts" --region "eu-west-3"; fi;
-
     on_failure:
         - ./ci/copy-test-results.sh
