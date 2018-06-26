@@ -5,5 +5,9 @@ spring:
     jersey:
         applicationPath: /api
 
+    jpa:
+         hibernate:
+             ddl-auto: validate
+
 cors:
     allow: ''
