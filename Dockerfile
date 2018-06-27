@@ -7,8 +7,8 @@ ENV APP_ROOT=/home/time-tracker \
 WORKDIR $APP_ROOT
 COPY [".", "${APP_ROOT}/source/"]
 RUN cd source && \
-    ./gradlew :api:build && \
-    cp api/build/libs/$APP_NAME .. && \
+    ./gradlew build && \
+    cp build/libs/$APP_NAME .. && \
     cd .. && \
     rm -r source && \
     rm -r /root/.gradle && \
