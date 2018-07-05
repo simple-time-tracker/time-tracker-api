@@ -15,7 +15,7 @@ public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
     @Override
     public void serialize(LocalDateTime dateTime, JsonGenerator jg,
                           SerializerProvider sp) throws IOException {
-        Instant instant = dateTime.atZone(ZoneOffset.UTC).toInstant();
+        Instant instant = dateTime.atZone(ZoneOffset.systemDefault()).toInstant();
         jg.writeString(DateTimeFormatter.ISO_INSTANT.format(instant));
     }
 }
