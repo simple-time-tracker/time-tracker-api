@@ -1,8 +1,8 @@
 spring:
-    datasource:
-        url: ${DB_URL}
-        username: ${DB_USERNAME}
-        password: ${DB_PASSWORD}
-    jpa:
-         hibernate:
-             dialect: ${DB_DIALECT}
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      dialect: ${DB_DIALECT}

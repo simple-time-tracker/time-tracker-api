@@ -1,13 +1,13 @@
 server:
-    port: 8080
+  port: 8080
 
 spring:
-    jersey:
-        applicationPath: /api
+  jersey:
+    applicationPath: /api
 
-    jpa:
-         hibernate:
-             ddl-auto: validate
+  jpa:
+    hibernate:
+      ddl-auto: validate
 
 cors:
-    allow: ''
+  allow: ''

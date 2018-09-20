@@ -1,2 +1,2 @@
 cors:
-    allow: '*'
+  allow: '*'
