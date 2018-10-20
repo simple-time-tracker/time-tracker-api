@@ -1,7 +1,5 @@
 package com.dovydasvenckus.timetracker.project;
 
-import com.dovydasvenckus.timetracker.helper.date.serialization.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,10 +9,9 @@ public class ProjectReadDTO {
     private Long id;
 
     private String name;
-    
+
     private boolean isArchived;
 
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime dateCreated;
 
     private ProjectReadDTO() {

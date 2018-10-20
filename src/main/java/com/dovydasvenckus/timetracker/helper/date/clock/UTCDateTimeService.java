@@ -10,6 +10,6 @@ public class UTCDateTimeService implements DateTimeService {
 
     @Override
     public LocalDateTime now() {
-        return LocalDateTime.now(Clock.systemDefaultZone());
+        return LocalDateTime.now(Clock.systemUTC());
     }
 }
