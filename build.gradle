@@ -1,68 +1,66 @@
 buildscript {
-	ext {
-		currentVersion = '0.0.1'
-		springBootVersion = '1.5.16.RELEASE'
-        isCIServer=System.getenv().CI
-	}
+    ext {
+        currentVersion = '0.0.1'
+        springBootVersion = '2.0.6.RELEASE'
+        isCIServer = System.getenv().CI
+    }
 
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
 
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 apply plugin: 'checkstyle'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-springBoot {
-    executable = true
-}
-
 jar {
-	baseName = 'time-tracker'
-	version = isCIServer ? "${currentVersion}-${new Date().format('YYYYMMddHHmmss')}" : "${currentVersion}-SNAPSHOT"
+    baseName = 'time-tracker'
+    version = isCIServer ? "${currentVersion}-${new Date().format('YYYYMMddHHmmss')}" : "${currentVersion}-SNAPSHOT"
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-web') {
-		exclude module: 'spring-boot-starter-tomcat'
-	}
+    compile('org.springframework.boot:spring-boot-starter-web') {
+        exclude module: 'spring-boot-starter-tomcat'
+    }
 
-	compile('org.springframework.boot:spring-boot-starter-jetty')
-	compile('org.springframework.boot:spring-boot-starter-jersey')
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile("org.springframework.boot:spring-boot-devtools")
+    compile('org.springframework.boot:spring-boot-starter-jetty')
+    compile('org.springframework.boot:spring-boot-starter-jersey')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile("org.springframework.boot:spring-boot-devtools")
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
-	compileOnly('org.projectlombok:lombok:1.16.20')
-	compile('org.flywaydb:flyway-core:4.2.0')
+    compileOnly('org.projectlombok:lombok:1.16.20')
+    compile('org.flywaydb:flyway-core:4.2.0')
 
-	compile('org.postgresql:postgresql:9.4.1212')
-	runtime('com.h2database:h2')
+    compile('org.postgresql:postgresql:9.4.1212')
+    runtime('com.h2database:h2')
 
-	testCompile "cglib:cglib:2.2"
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('org.codehaus.groovy:groovy-all:2.4.14')
-	testCompile('org.spockframework:spock-core:1.1-groovy-2.4')
+    testCompile "cglib:cglib:2.2"
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('org.codehaus.groovy:groovy-all:2.4.14')
+    testCompile('org.spockframework:spock-core:1.1-groovy-2.4')
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '4.2.1'
+    gradleVersion = '4.2.1'
 }
 
 checkstyle {
-	configFile = project.file('checkstyle.xml')
-	toolVersion ="8.8"
+    configFile = project.file('checkstyle.xml')
+    toolVersion = "8.8"
 }

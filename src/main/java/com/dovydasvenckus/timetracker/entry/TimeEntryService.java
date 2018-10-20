@@ -49,19 +49,14 @@ public class TimeEntryService {
     }
 
     @Transactional
-    public TimeEntry update(TimeEntryDTO timeEntryDTO) {
-        TimeEntry timeEntry = timeEntryRepository.findOne(timeEntryDTO.getId());
-
-        timeEntry.setDescription(timeEntryDTO.getDescription());
-        timeEntry.setStartDate(timeEntryDTO.getStartDate());
-        timeEntry.setEndDate(timeEntryDTO.getEndDate());
-
-        return timeEntry;
+    public void stop(TimeEntryDTO timeEntryDTO) {
+        timeEntryRepository.findById(timeEntryDTO.getId())
+                .ifPresent(entry -> entry.setEndDate(dateTimeService.now()));
     }
 
     @Transactional
     public void delete(Long id) {
-        timeEntryRepository.delete(id);
+        timeEntryRepository.deleteById(id);
     }
 
 

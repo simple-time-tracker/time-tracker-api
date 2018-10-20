@@ -21,8 +21,6 @@ public class TimeEntryController {
     @Context
     private UriInfo uriInfo;
 
-    private final DateTimeService dateTimeService;
-
     private final RestUrlGenerator restUrlGenerator;
 
     private final TimeEntryService timeEntryService;
@@ -31,7 +29,6 @@ public class TimeEntryController {
     public TimeEntryController(DateTimeService dateTimeService,
                                RestUrlGenerator restUrlGenerator,
                                TimeEntryService timeEntryService) {
-        this.dateTimeService = dateTimeService;
         this.restUrlGenerator = restUrlGenerator;
         this.timeEntryService = timeEntryService;
     }
@@ -77,8 +74,7 @@ public class TimeEntryController {
         Optional<TimeEntryDTO> current = timeEntryService.findCurrentlyActive();
 
         if (current.isPresent()) {
-            current.get().setEndDate(dateTimeService.now());
-            timeEntryService.update(current.get());
+            timeEntryService.stop(current.get());
             return Response.status(OK).build();
         }
 
