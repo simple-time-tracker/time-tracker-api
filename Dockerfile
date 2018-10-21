@@ -1,7 +1,7 @@
 FROM openjdk:8-jdk-alpine
 MAINTAINER Dovydas Venckus "dovydas.venckus@live.com"
 ENV APP_ROOT=/home/time-tracker \
-    APP_NAME=time-tracker-0.0.1-SNAPSHOT.jar \
+    APP_NAME=time-tracker-api.jar \
     ACTIVE_PROFILES=default
 
 WORKDIR $APP_ROOT
