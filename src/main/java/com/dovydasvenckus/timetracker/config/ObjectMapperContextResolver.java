@@ -39,12 +39,20 @@ public class ObjectMapperContextResolver implements ContextResolver<ObjectMapper
 
     private JavaTimeModule createCustomJavaTimeSerializationModule() {
         JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(createUTCLocalDateTimeFormatter()));
+
+        javaTimeModule.addSerializer(
+                LocalDateTime.class,
+                new LocalDateTimeSerializer(createUTCLocalDateTimeFormatter())
+        );
+
         return javaTimeModule;
     }
 
     private DateTimeFormatter createUTCLocalDateTimeFormatter() {
-        return (new DateTimeFormatterBuilder()).parseCaseInsensitive().append(DateTimeFormatter.ISO_LOCAL_DATE_TIME).appendLiteral("Z").toFormatter();
+        return (new DateTimeFormatterBuilder())
+                .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                .appendLiteral("Z")
+                .toFormatter();
     }
 
 }
