@@ -6,3 +6,6 @@ spring:
   jpa:
     hibernate:
       dialect: ${DB_DIALECT}
+
+cors:
+  allow: ${CORS_ALLOW}
