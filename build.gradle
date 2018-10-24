@@ -48,7 +48,6 @@ dependencies {
     compile('org.flywaydb:flyway-core:4.2.0')
 
     compile('org.postgresql:postgresql:9.4.1212')
-    runtime('com.h2database:h2')
 
     testCompile "cglib:cglib:2.2"
     testCompile('org.springframework.boot:spring-boot-starter-test')
