@@ -1,10 +1,10 @@
 package com.dovydasvenckus.timetracker.entry;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.List;
-
 public interface TimeEntryRepository extends CrudRepository<TimeEntry, Long>, TimeEntryRepositoryCustom {
-    List<TimeEntry> findAllByOrderByStartDateDesc();
+    Page<TimeEntry> findAllByOrderByStartDateDesc(Pageable pageable);
 
 }

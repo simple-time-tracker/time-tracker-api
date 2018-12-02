@@ -3,13 +3,13 @@ package com.dovydasvenckus.timetracker.entry;
 import com.dovydasvenckus.timetracker.helper.date.clock.DateTimeService;
 import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.List;
 import java.util.Optional;
 
 import static javax.ws.rs.core.Response.Status.*;
@@ -35,8 +35,8 @@ public class TimeEntryController {
 
     @GET
     @Produces("application/json")
-    public List<TimeEntryDTO> getAll() {
-        return timeEntryService.findAll();
+    public Page<TimeEntryDTO> getAll(@QueryParam("page") int page) {
+        return timeEntryService.findAll(page);
     }
 
     @GET

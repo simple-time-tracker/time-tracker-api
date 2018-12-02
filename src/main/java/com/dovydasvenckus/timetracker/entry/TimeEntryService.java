@@ -4,13 +4,12 @@ import com.dovydasvenckus.timetracker.helper.date.clock.DateTimeService;
 import com.dovydasvenckus.timetracker.project.Project;
 import com.dovydasvenckus.timetracker.project.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 public class TimeEntryService {
@@ -31,9 +30,9 @@ public class TimeEntryService {
     }
 
     @Transactional(readOnly = true)
-    List<TimeEntryDTO> findAll() {
-        return timeEntryRepository.findAllByOrderByStartDateDesc().stream()
-                .map(TimeEntryDTO::new).collect(toList());
+    Page<TimeEntryDTO> findAll(int page) {
+        return timeEntryRepository.findAllByOrderByStartDateDesc(PageRequest.of(page, 15))
+                .map(TimeEntryDTO::new);
     }
 
     @Transactional
