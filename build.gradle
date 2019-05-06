@@ -1,17 +1,8 @@
-buildscript {
-    ext {
-        currentVersion = '0.0.1'
-        springBootVersion = '2.0.6.RELEASE'
-        isCIServer = System.getenv().CI
-    }
-
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    }
+plugins {
+    id 'org.springframework.boot' version '2.1.4.RELEASE'
 }
+
+
 
 apply plugin: 'java'
 apply plugin: 'groovy'
@@ -22,6 +13,11 @@ apply plugin: 'checkstyle'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+ext {
+    currentVersion = '0.0.1'
+    isCIServer = System.getenv().CI
+}
 
 jar {
     baseName = 'time-tracker'
@@ -34,30 +30,27 @@ repositories {
 
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-web') {
+    implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: 'spring-boot-starter-tomcat'
     }
 
-    compile('org.springframework.boot:spring-boot-starter-jetty')
-    compile('org.springframework.boot:spring-boot-starter-jersey')
-    compile('org.springframework.boot:spring-boot-starter-data-jpa')
-    compile("org.springframework.boot:spring-boot-devtools")
-    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-    
-    compileOnly('org.projectlombok:lombok:1.16.20')
-    compile('org.flywaydb:flyway-core:4.2.0')
+    implementation 'org.springframework.boot:spring-boot-starter-jetty'
+    implementation 'org.springframework.boot:spring-boot-starter-jersey'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation "org.springframework.boot:spring-boot-devtools"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
 
-    compile('org.postgresql:postgresql:42.2.5')
+    compileOnly 'org.projectlombok:lombok:1.18.6'
+    annotationProcessor 'org.projectlombok:lombok:1.18.6'
+
+    implementation 'org.flywaydb:flyway-core:5.2.4'
+    implementation 'org.postgresql:postgresql:42.2.5'
     runtime('com.h2database:h2')
 
-    testCompile "cglib:cglib:2.2"
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('org.codehaus.groovy:groovy-all:2.4.14')
-    testCompile('org.spockframework:spock-core:1.1-groovy-2.4')
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.2.1'
+    implementation "cglib:cglib:2.2"
+    testImplementation'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.codehaus.groovy:groovy-all:2.4.14'
+    testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4'
 }
 
 checkstyle {

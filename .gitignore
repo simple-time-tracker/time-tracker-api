@@ -2,13 +2,3 @@
 .idea
 *.iml
 out
-
-.eslintrc
-api/build
-api/src/main/resources/public
-
-web/dist
-web/export
-web/jspm_packages
-web/node_modules
-web/test/e2e/dist
