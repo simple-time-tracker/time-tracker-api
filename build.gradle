@@ -19,10 +19,7 @@ ext {
     isCIServer = System.getenv().CI
 }
 
-jar {
-    baseName = 'time-tracker'
-    version = isCIServer ? "${currentVersion}-${new Date().format('YYYYMMddHHmmss')}" : "${currentVersion}-SNAPSHOT"
-}
+version = isCIServer ? "${currentVersion}-${new Date().format('YYYYMMddHHmmss')}" : "${currentVersion}-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -55,5 +52,5 @@ dependencies {
 
 checkstyle {
     configFile = project.file('checkstyle.xml')
-    toolVersion = "8.8"
+    toolVersion = "8.20"
 }
