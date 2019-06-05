@@ -2,6 +2,7 @@ package com.dovydasvenckus.timetracker.entry;
 
 import com.dovydasvenckus.timetracker.helper.date.clock.DateTimeService;
 import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.Optional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import static javax.ws.rs.core.Response.Status.*;
 
@@ -51,17 +53,18 @@ public class TimeEntryController {
     @POST
     @Path("/start/{project}")
     @Produces("text/plain")
-    public Response startTracking(@PathParam("project") long projectId, @QueryParam("description") String description) {
+    public Response startTracking(@PathParam("project") long projectId,
+                                  @Valid  @RequestBody CreateTimeEntryRequest request
+    ) {
         Optional<TimeEntryDTO> current = timeEntryService.findCurrentlyActive();
 
         if (!current.isPresent()) {
-            TimeEntry timeEntry = timeEntryService.createTimeEntry(projectId, description);
+            TimeEntry timeEntry = timeEntryService.createTimeEntry(projectId, request.getTaskDescription());
 
             return Response.status(CREATED)
-                    .entity("New time entry has been created")
-                    .header("Location",
-                            restUrlGenerator.generateUrlToNewResource(uriInfo, timeEntry.getId())
-                    ).build();
+                       .entity("New time entry has been created")
+                       .header("Location", restUrlGenerator.generateUrlToNewResource(uriInfo, timeEntry.getId()))
+                       .build();
         }
 
         return Response.status(INTERNAL_SERVER_ERROR).entity("You are already tracking time on project").build();
@@ -88,10 +91,10 @@ public class TimeEntryController {
         TimeEntry timeEntry = timeEntryService.create(timeEntryDTO);
 
         return Response.status(CREATED)
-                .entity("New time entry has been created")
-                .header("Location",
-                        restUrlGenerator.generateUrlToNewResource(uriInfo, timeEntry.getId())
-                ).build();
+                   .entity("New time entry has been created")
+                   .header("Location",
+                           restUrlGenerator.generateUrlToNewResource(uriInfo, timeEntry.getId())
+                   ).build();
     }
 
     @DELETE
