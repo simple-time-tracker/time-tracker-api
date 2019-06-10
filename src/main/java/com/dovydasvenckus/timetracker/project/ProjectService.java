@@ -25,7 +25,7 @@ public class ProjectService {
     }
 
     List<ProjectReadDTO> findAllProjects() {
-        return projectRepository.findAll().stream()
+        return projectRepository.findAllByOrderByName().stream()
                 .sorted(comparing(Project::getName))
                 .map(ProjectReadDTO::new)
                 .collect(toList());
