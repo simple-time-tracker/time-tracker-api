@@ -14,6 +14,7 @@ import java.util.Optional;
 @Service
 public class TimeEntryService {
 
+    public static final int PAGE_SIZE = 20;
     private final DateTimeService dateTimeService;
 
     private final TimeEntryRepository timeEntryRepository;
@@ -31,7 +32,7 @@ public class TimeEntryService {
 
     @Transactional(readOnly = true)
     Page<TimeEntryDTO> findAll(int page) {
-        return timeEntryRepository.findAllByOrderByStartDateDesc(PageRequest.of(page, 15))
+        return timeEntryRepository.findAllByOrderByStartDateDesc(PageRequest.of(page, PAGE_SIZE))
                 .map(TimeEntryDTO::new);
     }
 
