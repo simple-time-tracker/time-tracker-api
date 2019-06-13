@@ -13,5 +13,5 @@ public interface ProjectRepository extends CrudRepository<Project, Long> {
 
     List<Project> findAllByOrderByName();
 
-    List<Project> findByArchivedFalse();
+    List<Project> findByArchivedFalseOrderByName();
 }

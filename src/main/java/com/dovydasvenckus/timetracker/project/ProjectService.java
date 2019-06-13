@@ -33,7 +33,7 @@ public class ProjectService {
 
 
     List<ProjectReadDTO> findAllActiveProjects() {
-        return projectRepository.findByArchivedFalse().stream()
+        return projectRepository.findByArchivedFalseOrderByName().stream()
                 .map(ProjectReadDTO::new)
                 .collect(toList());
     }
