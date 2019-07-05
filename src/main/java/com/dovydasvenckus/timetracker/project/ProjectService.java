@@ -26,29 +26,29 @@ public class ProjectService {
 
     List<ProjectReadDTO> findAllProjects() {
         return projectRepository.findAllByOrderByName().stream()
-                .sorted(comparing(Project::getName))
-                .map(ProjectReadDTO::new)
-                .collect(toList());
+                   .sorted(comparing(Project::getName))
+                   .map(ProjectReadDTO::new)
+                   .collect(toList());
     }
 
 
     List<ProjectReadDTO> findAllActiveProjects() {
         return projectRepository.findByArchivedFalseOrderByName().stream()
-                .map(ProjectReadDTO::new)
-                .collect(toList());
+                   .map(ProjectReadDTO::new)
+                   .collect(toList());
     }
 
     Optional<ProjectReadDTO> findProject(Long id) {
         return projectRepository
-                .findById(id)
-                .map(ProjectReadDTO::new);
+                   .findById(id)
+                   .map(ProjectReadDTO::new);
     }
 
     @Transactional
     public Optional<Project> create(ProjectWriteDTO projectWriteDTO) {
         Optional<Project> projectInDb = projectRepository.findByName(projectWriteDTO.getName());
 
-        if (!projectInDb.isPresent()) {
+        if (projectInDb.isEmpty()) {
             Project project = new Project();
             project.setName(projectWriteDTO.getName());
             project.setDateCreated(dateTimeService.now());
@@ -63,13 +63,11 @@ public class ProjectService {
 
     @Transactional
     public boolean archiveProject(long projectId) {
-        Optional<Project> project = projectRepository.findById(projectId);
+        Optional<Project> projectInDb = projectRepository.findById(projectId);
 
-        if (project.isPresent()) {
-            project.get().setArchived(true);
+        return projectInDb.map(project -> {
+            project.setArchived(true);
             return true;
-        }
-
-        return false;
+        }).orElse(false);
     }
 }

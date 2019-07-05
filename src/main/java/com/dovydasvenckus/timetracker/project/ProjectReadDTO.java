@@ -3,8 +3,10 @@ package com.dovydasvenckus.timetracker.project;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class ProjectReadDTO {
     private Long id;
 
@@ -13,9 +15,6 @@ public class ProjectReadDTO {
     private boolean isArchived;
 
     private LocalDateTime dateCreated;
-
-    private ProjectReadDTO() {
-    }
 
     public ProjectReadDTO(Project project) {
         id = project.getId();

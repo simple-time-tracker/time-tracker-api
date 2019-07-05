@@ -58,7 +58,7 @@ public class TimeEntryController {
     ) {
         Optional<TimeEntryDTO> current = timeEntryService.findCurrentlyActive();
 
-        if (!current.isPresent()) {
+        if (current.isEmpty()) {
             TimeEntry timeEntry = timeEntryService.createTimeEntry(projectId, request.getTaskDescription());
 
             return Response.status(CREATED)
@@ -102,6 +102,6 @@ public class TimeEntryController {
     public Response deleteProject(@PathParam("project") long projectId) {
         timeEntryService.delete(projectId);
 
-        return Response.status(OK).build();
+        return Response.status(NO_CONTENT).build();
     }
 }

@@ -1,16 +1,14 @@
 package com.dovydasvenckus.timetracker.project;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProjectWriteDTO {
 
     private String name;
 
-    private ProjectWriteDTO() {
-    }
-
-    public ProjectWriteDTO(String name) {
-        this.name = name;
-    }
 }

@@ -32,8 +32,9 @@ public class TimeEntryService {
 
     @Transactional(readOnly = true)
     Page<TimeEntryDTO> findAll(int page) {
-        return timeEntryRepository.findAllByOrderByStartDateDesc(PageRequest.of(page, PAGE_SIZE))
-                .map(TimeEntryDTO::new);
+        return timeEntryRepository
+                   .findAllByOrderByStartDateDesc(PageRequest.of(page, PAGE_SIZE))
+                   .map(TimeEntryDTO::new);
     }
 
     @Transactional
@@ -51,7 +52,7 @@ public class TimeEntryService {
     @Transactional
     public void stop(TimeEntryDTO timeEntryDTO) {
         timeEntryRepository.findById(timeEntryDTO.getId())
-                .ifPresent(entry -> entry.setEndDate(dateTimeService.now()));
+            .ifPresent(entry -> entry.setEndDate(dateTimeService.now()));
     }
 
     @Transactional
@@ -61,15 +62,8 @@ public class TimeEntryService {
 
 
     Optional<TimeEntryDTO> findCurrentlyActive() {
-        TimeEntry timeEntry = timeEntryRepository.findCurrentlyActive();
-
-        if (timeEntry != null) {
-            TimeEntryDTO timeEntryDTO = new TimeEntryDTO(timeEntry);
-
-            return Optional.of(timeEntryDTO);
-        }
-
-        return Optional.empty();
+        return timeEntryRepository.findCurrentlyActive()
+            .map(TimeEntryDTO::new);
     }
 
 

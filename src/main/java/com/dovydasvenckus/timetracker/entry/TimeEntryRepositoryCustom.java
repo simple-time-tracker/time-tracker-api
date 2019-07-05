@@ -1,5 +1,8 @@
 package com.dovydasvenckus.timetracker.entry;
 
+import java.util.Optional;
+
 interface TimeEntryRepositoryCustom {
-    TimeEntry findCurrentlyActive();
+
+    Optional<TimeEntry> findCurrentlyActive();
 }

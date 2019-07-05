@@ -1,5 +1,6 @@
 package com.dovydasvenckus.timetracker.entry;
 
+import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -13,14 +14,14 @@ public class TimeEntryRepositoryImpl implements TimeEntryRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public TimeEntry findCurrentlyActive() {
-        TimeEntry result;
+    public Optional<TimeEntry> findCurrentlyActive() {
+        Optional<TimeEntry> result;
         TypedQuery<TimeEntry> query = entityManager.createQuery(ACTIVE_ENTRY_QUERY, TimeEntry.class);
 
         try {
-            result = query.getSingleResult();
+            result = Optional.of(query.getSingleResult());
         } catch (NoResultException nre) {
-            result = null;
+            result = Optional.empty();
         }
         return result;
     }
