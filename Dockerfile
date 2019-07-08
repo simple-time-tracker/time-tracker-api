@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:11-slim
 MAINTAINER Dovydas Venckus "dovydas.venckus@live.com"
 ENV APP_ROOT=/home/time-tracker \
     APP_NAME=time-tracker-api-0.0.1-SNAPSHOT.jar \
@@ -11,8 +11,7 @@ RUN cd source && \
     cp build/libs/$APP_NAME .. && \
     cd .. && \
     rm -r source && \
-    rm -r /root/.gradle && \
-    rm -r /var/cache/apk
+    rm -r /root/.gradle
 USER nobody
 ENTRYPOINT ["/bin/sh", "-c", \
  "java -Dspring.profiles.active=${ACTIVE_PROFILES} -jar $APP_NAME"]
