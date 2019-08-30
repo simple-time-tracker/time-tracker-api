@@ -56,15 +56,16 @@ public class ProjectController {
 
     @POST
     @Consumes("application/json")
-    @Produces("text/html")
+    @Produces("application/json")
     public Response createProject(ProjectWriteDTO projectWriteDTO) {
-        Optional<Project> project = projectService.create(projectWriteDTO);
+        Optional<Project> createdProject = projectService.create(projectWriteDTO);
 
-        return project.map(p ->
+        return createdProject.map(project ->
                 Response.status(CREATED)
-                        .entity("New project has been created")
+                        .entity(project)
                         .header("Location",
-                                restUrlGenerator.generateUrlToNewResource(uriInfo, p.getId())).build())
+                                restUrlGenerator.generateUrlToNewResource(uriInfo, project.getId()))
+                    .build())
                 .orElse(Response.status(CONFLICT).build());
     }
 
