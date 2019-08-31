@@ -1,6 +1,7 @@
 package com.dovydasvenckus.timetracker.project;
 
 import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -57,7 +58,7 @@ public class ProjectController {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response createProject(ProjectWriteDTO projectWriteDTO) {
+    public Response createProject(@Valid ProjectWriteDTO projectWriteDTO) {
         Optional<Project> createdProject = projectService.create(projectWriteDTO);
 
         return createdProject.map(project ->

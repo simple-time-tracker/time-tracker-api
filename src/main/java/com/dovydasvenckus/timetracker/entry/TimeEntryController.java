@@ -1,20 +1,28 @@
 package com.dovydasvenckus.timetracker.entry;
 
-import com.dovydasvenckus.timetracker.helper.date.clock.DateTimeService;
-import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
-import javax.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Component;
+import static javax.ws.rs.core.Response.Status.CREATED;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.NO_CONTENT;
+import static javax.ws.rs.core.Response.Status.OK;
 
-import javax.ws.rs.*;
+import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
+import java.util.Optional;
+import javax.validation.Valid;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import static javax.ws.rs.core.Response.Status.*;
 
 @Component
 @Path("/entries")
@@ -28,8 +36,7 @@ public class TimeEntryController {
     private final TimeEntryService timeEntryService;
 
     @Autowired
-    public TimeEntryController(DateTimeService dateTimeService,
-                               RestUrlGenerator restUrlGenerator,
+    public TimeEntryController(RestUrlGenerator restUrlGenerator,
                                TimeEntryService timeEntryService) {
         this.restUrlGenerator = restUrlGenerator;
         this.timeEntryService = timeEntryService;
@@ -54,7 +61,7 @@ public class TimeEntryController {
     @Path("/start/{project}")
     @Produces("text/plain")
     public Response startTracking(@PathParam("project") long projectId,
-                                  @Valid  @RequestBody CreateTimeEntryRequest request
+                                  @Valid @RequestBody CreateTimeEntryRequest request
     ) {
         Optional<TimeEntryDTO> current = timeEntryService.findCurrentlyActive();
 
