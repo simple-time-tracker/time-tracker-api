@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.ToString;
 
 @Entity
 @Table(name = "projects")
@@ -27,6 +28,7 @@ public class Project {
     private LocalDateTime dateCreated;
 
     @OneToMany(mappedBy = "project")
+    @ToString.Exclude
     private List<TimeEntry> timeEntries = new ArrayList<>();
 
     public void addTimeEntry(TimeEntry timeEntry) {

@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import lombok.ToString;
 
 @Entity
 @Table(name = "time_entries")
@@ -18,6 +19,7 @@ public class TimeEntry {
 
     @ManyToOne
     @JoinColumn(name = "project_id")
+    @ToString.Exclude
     private Project project;
 
     @Column(name = "description")
@@ -28,6 +30,9 @@ public class TimeEntry {
 
     @Column(name = "end_date")
     private LocalDateTime endDate;
+
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
 
     TimeEntry() {
     }

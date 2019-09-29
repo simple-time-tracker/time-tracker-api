@@ -14,7 +14,7 @@ import java.util.Optional;
 @Service
 public class TimeEntryService {
 
-    public static final int PAGE_SIZE = 20;
+    private static final int PAGE_SIZE = 20;
     private final DateTimeService dateTimeService;
 
     private final TimeEntryRepository timeEntryRepository;
@@ -33,7 +33,7 @@ public class TimeEntryService {
     @Transactional(readOnly = true)
     Page<TimeEntryDTO> findAll(int page) {
         return timeEntryRepository
-                   .findAllByOrderByStartDateDesc(PageRequest.of(page, PAGE_SIZE))
+                   .findAllByDeletedOrderByStartDateDesc(false, PageRequest.of(page, PAGE_SIZE))
                    .map(TimeEntryDTO::new);
     }
 
@@ -57,9 +57,9 @@ public class TimeEntryService {
 
     @Transactional
     public void delete(Long id) {
-        timeEntryRepository.deleteById(id);
+        timeEntryRepository.findById(id)
+            .ifPresent(timeEntry -> timeEntry.setDeleted(true));
     }
-
 
     Optional<TimeEntryDTO> findCurrentlyActive() {
         return timeEntryRepository.findCurrentlyActive()

@@ -5,6 +5,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
 public interface TimeEntryRepository extends CrudRepository<TimeEntry, Long>, TimeEntryRepositoryCustom {
-    Page<TimeEntry> findAllByOrderByStartDateDesc(Pageable pageable);
-
+    Page<TimeEntry> findAllByDeletedOrderByStartDateDesc(boolean deleted, Pageable pageable);
 }
