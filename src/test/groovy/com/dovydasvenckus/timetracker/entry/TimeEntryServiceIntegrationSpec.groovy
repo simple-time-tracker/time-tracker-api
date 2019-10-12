@@ -1,14 +1,17 @@
 package com.dovydasvenckus.timetracker.entry
 
+import com.dovydasvenckus.timetracker.TestDatabaseConfig
 import com.dovydasvenckus.timetracker.project.Project
 import com.dovydasvenckus.timetracker.project.ProjectRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.testcontainers.spock.Testcontainers
 import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-@SpringBootTest
+@Testcontainers
+@SpringBootTest(classes = TestDatabaseConfig)
 class TimeEntryServiceIntegrationSpec extends Specification {
 
     @Autowired
