@@ -1,48 +1,42 @@
-# time-tracker-web
+# time-tracker-api
 
 [![Run Status](https://api.shippable.com/projects/59fe1ab0e07b7707001c66e3/badge?branch=master)](https://app.shippable.com/github/dovydasvenckus/time-tracker-api/dashboard)
 ## Description
 Simple time tracking application. Not ready for
-production. I have started this project just to try out
-Aurelia web framework.
-
-You can build api jar or build jar that includes api and web.
-To build single jar follow directions bellow.
+production
 
 ## Missing parts
   * Authorization
-  * Ability to add new projects via web
-  * Reports
   * Many more
   
 ## Build api
 
     ./gradlew build
 
-## Build jar with api and web
-Run from root directory
+## Running app locally
+### Start DB container
+Launch postgres DB inside container
 
-    ./gradlew buildWithWeb
-     
-     
-Build jar is stored in.
+    cd local-db
+    docker-compose up -d
 
-    time-tracker/api/build/libs/time-tracker-0.0.1-SNAPSHOT.jar
+### Start application
+There are few different ways to start application
 
-
-## Running app
-
+#### Start JAR from shell    
 Launch procedure is same as for other jars
 
-    java -jar time-tracker-0.0.1-SNAPSHOT.jar
+    java -Dspring.profiles.active=dev -jar time-tracker-api-0.0.1-SNAPSHOT.jar
     
+#### From Intellij
+Add VM argument `-Dspring.profiles.active=dev` for TimeTrackerApplication class
 
-## Run in docker
-
-### Dev profile (with in memory DB)
+#### Docker
+Launch API container:
+  
     docker run -it -e ACTIVE_PROFILES=dev -p 8080:8080 --name time-tracker-api dovydasvenckus/time-tracker
 
-### Production profile (with real DB)    
+#### Production profile (with real DB)    
     docker run -it --rm \
     -e ACTIVE_PROFILES=prod \
     -e DB_URL="jdbc:postgresql://jdbcUrlToPosgreSQLDB" \
@@ -52,7 +46,7 @@ Launch procedure is same as for other jars
     -e CORS_ALLOW='' \
      dovydasvenckus/time-tracker-api
      
-### Launching API + Frontend app
+## Launching API + Frontend app
 You can use docker-compose to launch whole stack.
  Docker compose file is located in [time-tracker-env](https://github.com/dovydasvenckus/time-tracker-env)
  repository.

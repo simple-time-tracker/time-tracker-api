@@ -1,2 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost/time_tracker
+    username: time_tracker
+    password: super-secret-pass
+
 cors:
   allow: '*'
