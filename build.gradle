@@ -36,6 +36,9 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-devtools"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
 
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.0.1.RELEASE'
+
     compileOnly 'org.projectlombok:lombok:1.18.6'
     annotationProcessor 'org.projectlombok:lombok:1.18.6'
 

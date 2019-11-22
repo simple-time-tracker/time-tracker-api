@@ -3,4 +3,4 @@
 *.iml
 out
 build
-local-db/data
+dev-env/data

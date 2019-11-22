@@ -7,6 +7,8 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.EncodingFilter;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+
 @Component
 public class JerseyConfig extends ResourceConfig {
     public JerseyConfig() {
@@ -14,5 +16,6 @@ public class JerseyConfig extends ResourceConfig {
         register(ProjectController.class);
         register(TimeEntryController.class);
         EncodingFilter.enableFor(this, GZipEncoder.class);
+        setProperties(Collections.singletonMap("jersey.config.server.response.setStatusOverSendError", true));
     }
 }
