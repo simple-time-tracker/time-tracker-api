@@ -4,14 +4,15 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ProjectRepository extends CrudRepository<Project, Long> {
 
-    Optional<Project> findById(Long id);
+    Optional<Project> findByIdAndUserId(Long id, UUID userId);
 
-    Optional<Project> findByName(String name);
+    Optional<Project> findByNameAndUserId(String name, UUID userId);
 
-    List<Project> findAllByOrderByName();
+    List<Project> findAllByUserIdOrderByName(UUID userId);
 
-    List<Project> findByArchivedFalseOrderByName();
+    List<Project> findByUserIdAndArchivedFalseOrderByName(UUID userId);
 }

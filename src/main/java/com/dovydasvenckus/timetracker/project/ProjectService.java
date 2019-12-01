@@ -1,10 +1,12 @@
 package com.dovydasvenckus.timetracker.project;
 
 import com.dovydasvenckus.timetracker.helper.date.clock.DateTimeService;
+import com.dovydasvenckus.timetracker.helper.security.ClientDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.ws.rs.core.Context;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,34 +26,38 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
-    List<ProjectReadDTO> findAllProjects() {
-        return projectRepository.findAllByOrderByName().stream()
-                   .sorted(comparing(Project::getName))
-                   .map(ProjectReadDTO::new)
-                   .collect(toList());
+    List<ProjectReadDTO> findAllProjects(ClientDetails clientDetails) {
+        return projectRepository.findAllByUserIdOrderByName(clientDetails.getId()).stream()
+                .sorted(comparing(Project::getName))
+                .map(ProjectReadDTO::new)
+                .collect(toList());
     }
 
 
-    List<ProjectReadDTO> findAllActiveProjects() {
-        return projectRepository.findByArchivedFalseOrderByName().stream()
-                   .map(ProjectReadDTO::new)
-                   .collect(toList());
+    List<ProjectReadDTO> findAllActiveProjects(ClientDetails clientDetails) {
+        return projectRepository.findByUserIdAndArchivedFalseOrderByName(clientDetails.getId()).stream()
+                .map(ProjectReadDTO::new)
+                .collect(toList());
     }
 
-    Optional<ProjectReadDTO> findProject(Long id) {
+    Optional<ProjectReadDTO> findProject(Long id, ClientDetails clientDetails) {
         return projectRepository
-                   .findById(id)
-                   .map(ProjectReadDTO::new);
+                .findByIdAndUserId(id, clientDetails.getId())
+                .map(ProjectReadDTO::new);
     }
 
     @Transactional
-    public Optional<Project> create(ProjectWriteDTO projectWriteDTO) {
-        Optional<Project> projectInDb = projectRepository.findByName(projectWriteDTO.getName());
+    public Optional<Project> create(ProjectWriteDTO projectWriteDTO, @Context ClientDetails clientDetails) {
+        Optional<Project> projectInDb = projectRepository.findByNameAndUserId(
+                projectWriteDTO.getName(),
+                clientDetails.getId()
+        );
 
         if (projectInDb.isEmpty()) {
             Project project = new Project();
             project.setName(projectWriteDTO.getName());
             project.setDateCreated(dateTimeService.now());
+            project.setUserId(clientDetails.getId());
 
             projectRepository.save(project);
 
@@ -62,8 +68,8 @@ public class ProjectService {
     }
 
     @Transactional
-    public boolean archiveProject(long projectId) {
-        Optional<Project> projectInDb = projectRepository.findById(projectId);
+    public boolean archiveProject(long projectId, ClientDetails clientDetails) {
+        Optional<Project> projectInDb = projectRepository.findByIdAndUserId(projectId, clientDetails.getId());
 
         return projectInDb.map(project -> {
             project.setArchived(true);

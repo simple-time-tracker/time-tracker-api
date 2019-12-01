@@ -1,6 +1,7 @@
 package com.dovydasvenckus.timetracker.project;
 
 import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
+import com.dovydasvenckus.timetracker.helper.security.ClientDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,10 +18,6 @@ import static javax.ws.rs.core.Response.Status.*;
 @Component
 @Path("/projects")
 public class ProjectController {
-
-    @Context
-    private UriInfo uriInfo;
-
     private final RestUrlGenerator restUrlGenerator;
 
     private final ProjectService projectService;
@@ -33,22 +30,22 @@ public class ProjectController {
 
     @GET
     @Produces("application/json")
-    public List<ProjectReadDTO> getProjects() {
-        return projectService.findAllProjects();
+    public List<ProjectReadDTO> getProjects(@Context ClientDetails clientDetails) {
+        return projectService.findAllProjects(clientDetails);
     }
 
     @GET
     @Path("/active")
     @Produces("application/json")
-    public List<ProjectReadDTO> getAllActiveProjects() {
-        return projectService.findAllActiveProjects();
+    public List<ProjectReadDTO> getAllActiveProjects(@Context ClientDetails clientDetails) {
+        return projectService.findAllActiveProjects(clientDetails);
     }
 
     @GET
     @Path("{id}")
     @Produces("application/json")
-    public Response getProject(@PathParam("id") Long id) {
-        Optional<ProjectReadDTO> project = projectService.findProject(id);
+    public Response getProject(@PathParam("id") Long id, @Context ClientDetails clientDetails) {
+        Optional<ProjectReadDTO> project = projectService.findProject(id, clientDetails);
 
         return project
                 .map(p -> Response.status(OK).entity(p).build())
@@ -58,22 +55,24 @@ public class ProjectController {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response createProject(@Valid ProjectWriteDTO projectWriteDTO) {
-        Optional<Project> createdProject = projectService.create(projectWriteDTO);
+    public Response createProject(@Valid ProjectWriteDTO projectWriteDTO,
+                                  @Context UriInfo uriInfo,
+                                  @Context ClientDetails clientDetails) {
+        Optional<Project> createdProject = projectService.create(projectWriteDTO, clientDetails);
 
         return createdProject.map(project ->
                 Response.status(CREATED)
                         .entity(project)
                         .header("Location",
                                 restUrlGenerator.generateUrlToNewResource(uriInfo, project.getId()))
-                    .build())
+                        .build())
                 .orElse(Response.status(CONFLICT).build());
     }
 
     @POST
     @Path("{id}/archive")
-    public Response archiveProject(@PathParam("id") Long id) {
-        boolean wasSuccessfullyArchived = projectService.archiveProject(id);
+    public Response archiveProject(@PathParam("id") Long id, @Context ClientDetails clientDetails) {
+        boolean wasSuccessfullyArchived = projectService.archiveProject(id, clientDetails);
 
         return wasSuccessfullyArchived ? Response.ok().build() : Response.status(BAD_REQUEST).build();
     }
