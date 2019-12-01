@@ -11,11 +11,6 @@ rest:
   security:
     enabled: true
     api-matcher: /api/*
-    cors:
-      allowed-origins: \*
-      allowed-headers: \*
-      allowed-methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
-      max-age: 3600
 
     issuer-uri: http://localhost:8080/auth/realms/time-tracker
 
@@ -27,16 +22,6 @@ security:
       user-info-uri: ${rest.security.issuer-uri}/protocol/openid-connect/userinfo
       jwt:
         key-value: -----BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmkdhWuJnBf5bhgPZwmKeliGZWoZYUAatbJuyfHk9UUArkJLUbsdtwBcgNC1s8GtQW+M8OJnrThH7E/19CUS0iaIvP5G4d/H3UVn10y7Xlq3lyDOK3pUiWGmvLgQNUOwNsooijcjj3JxmhLesAni3GShrtHYiWpzqFwauOFpEaPmYYeZgPa+qn9pzxh/jv4IFsYxpFCNEncv8mtqcP2VTy4HwEqbbncrpoKE7x2P5Qn2C6oVkKO10efCqBJ3X217Frexa8/JiMb/2qLsvLYY3ae4g0BlDR+e5HFVSXcwF3Zl6R2NkN32znbeZm8ByIm+gDVVhm6j6E7KSsHRNdNFrsQIDAQAB-----END PUBLIC KEY-----
-
-
-    #   Rest template client
-    client:
-      client-id: time-tracker-api
-      client-secret: ad83bd85-e40c-4284-8987-ebedbea1ea7e
-      user-authorization-uri: ${rest.security.issuer-uri}/protocol/openid-connect/auth
-      access-token-uri: ${rest.security.issuer-uri}/protocol/openid-connect/token
-      scope: openid
-      grant-type: client_credentials
 
 cors:
   allow: '*'

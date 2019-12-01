@@ -1,5 +1,6 @@
 package com.dovydasvenckus.timetracker.config.security;
 
+import com.dovydasvenckus.timetracker.helper.security.ClientDetails;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -14,10 +15,7 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class JwtAccessTokenCustomizer extends DefaultAccessTokenConverter implements JwtAccessTokenConverterConfigurer {
     private static final Logger LOG = LoggerFactory.getLogger(JwtAccessTokenCustomizer.class);
@@ -25,6 +23,11 @@ public class JwtAccessTokenCustomizer extends DefaultAccessTokenConverter implem
     private static final String CLIENT_NAME_ELEMENT_IN_JWT = "resource_access";
 
     private static final String ROLE_ELEMENT_IN_JWT = "roles";
+
+    private static final String USER_NAME_ELEMENT_IN_JWT = "user_name";
+
+    private static final String USER_ID_ELEMENT_IN_JWT = "sub";
+
 
     private ObjectMapper mapper;
 
@@ -41,7 +44,6 @@ public class JwtAccessTokenCustomizer extends DefaultAccessTokenConverter implem
 
     @Override
     public OAuth2Authentication extractAuthentication(Map<String, ?> tokenMap) {
-        LOG.debug("Begin extractAuthentication: tokenMap = {}", tokenMap);
         JsonNode token = mapper.convertValue(tokenMap, JsonNode.class);
         Set<String> audienceList = extractClients(token);
         List<GrantedAuthority> authorities = extractRoles(token);
@@ -56,18 +58,29 @@ public class JwtAccessTokenCustomizer extends DefaultAccessTokenConverter implem
                         authRequest.getScope(),
                         audienceList, null, null, null);
 
+        ClientDetails clientDetails = extractClientDetails(token);
+
         Authentication usernamePasswordAuthentication = new UsernamePasswordAuthenticationToken(
-                authentication.getPrincipal(),
+                clientDetails,
                 "N/A",
                 authorities
         );
 
-        LOG.debug("End extractAuthentication");
         return new OAuth2Authentication(request, usernamePasswordAuthentication);
     }
 
+    private ClientDetails extractClientDetails(JsonNode jwt) {
+        String id = jwt.path(USER_ID_ELEMENT_IN_JWT).textValue();
+        String username = jwt.path(USER_NAME_ELEMENT_IN_JWT).textValue();
+
+        if (id != null && username != null) {
+            return new ClientDetails(UUID.fromString(id), username);
+        }
+
+        throw new IllegalArgumentException("Can't extract username and id from JWT token");
+    }
+
     private List<GrantedAuthority> extractRoles(JsonNode jwt) {
-        LOG.debug("Begin extractRoles: jwt = {}", jwt);
         Set<String> rolesWithPrefix = new HashSet<>();
 
         jwt.path(CLIENT_NAME_ELEMENT_IN_JWT)
@@ -76,23 +89,18 @@ public class JwtAccessTokenCustomizer extends DefaultAccessTokenConverter implem
                         .elements()
                         .forEachRemaining(r -> rolesWithPrefix.add("ROLE_" + r.asText())));
 
-        final List<GrantedAuthority> authorityList = AuthorityUtils.createAuthorityList(
+        return AuthorityUtils.createAuthorityList(
                 rolesWithPrefix.toArray(new String[0])
         );
-
-        LOG.debug("End extractRoles: roles = {}", authorityList);
-        return authorityList;
     }
 
     private Set<String> extractClients(JsonNode jwt) {
-        LOG.debug("Begin extractClients: jwt = {}", jwt);
         if (jwt.has(CLIENT_NAME_ELEMENT_IN_JWT)) {
             JsonNode resourceAccessJsonNode = jwt.path(CLIENT_NAME_ELEMENT_IN_JWT);
             final Set<String> clientNames = new HashSet<>();
             resourceAccessJsonNode.fieldNames()
                     .forEachRemaining(clientNames::add);
 
-            LOG.debug("End extractClients: clients = {}", clientNames);
             return clientNames;
 
         } else {

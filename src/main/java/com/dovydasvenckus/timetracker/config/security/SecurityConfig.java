@@ -1,7 +1,6 @@
 package com.dovydasvenckus.timetracker.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
 import org.springframework.context.annotation.Bean;
@@ -13,8 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -24,14 +21,17 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Import({SecurityProperties.class})
 public class SecurityConfig extends ResourceServerConfigurerAdapter {
 
-    @Autowired
     private ResourceServerProperties resourceServerProperties;
 
-    @Autowired
     private SecurityProperties securityProperties;
 
+    public SecurityConfig(ResourceServerProperties resourceServerProperties, SecurityProperties securityProperties) {
+        this.resourceServerProperties = resourceServerProperties;
+        this.securityProperties = securityProperties;
+    }
+
     @Override
-    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+    public void configure(ResourceServerSecurityConfigurer resources) {
         resources.resourceId(resourceServerProperties.getResourceId());
     }
 
@@ -39,30 +39,16 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(final HttpSecurity http) throws Exception {
 
-        http.cors()
-                .configurationSource(corsConfigurationSource())
+        http
+                .headers().frameOptions().disable()
                 .and()
-                .headers()
-                .frameOptions()
-                .disable()
-                .and()
-                .csrf()
-                .disable()
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(securityProperties.getApiMatcher())
                 .authenticated()
                 .anyRequest()
                 .hasAnyRole("USER");
 
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        if (null != securityProperties.getCorsConfiguration()) {
-            source.registerCorsConfiguration("/**", securityProperties.getCorsConfiguration());
-        }
-        return source;
     }
 
     @Bean
