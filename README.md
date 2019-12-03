@@ -4,20 +4,16 @@
 ## Description
 Simple time tracking application. Not ready for
 production
-
-## Missing parts
-  * Authorization
-  * Many more
   
 ## Build api
 
     ./gradlew build
 
 ## Running app locally
-### Start DB container
-Launch postgres DB inside container
+### Start DB and Keycloak containers
+Launch Keycloak auth server and PostgreSql DB
 
-    cd local-db
+    cd dev-env
     docker-compose up -d
 
 ### Start application
@@ -34,10 +30,11 @@ Add VM argument `-Dspring.profiles.active=dev` for TimeTrackerApplication class
 #### Docker
 Launch API container:
   
-    docker run -it -e ACTIVE_PROFILES=dev -p 8080:8080 --name time-tracker-api dovydasvenckus/time-tracker
+    docker run -it -e ACTIVE_PROFILES=dev -p 8180:8080 --name time-tracker-api dovydasvenckus/time-tracker
 
 #### Production profile (with real DB)    
     docker run -it --rm \
+    -p 8180:8080
     -e ACTIVE_PROFILES=prod \
     -e DB_URL="jdbc:postgresql://jdbcUrlToPosgreSQLDB" \
     -e DB_USERNAME="myDBUserName" \
