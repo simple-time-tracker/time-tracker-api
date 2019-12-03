@@ -1,4 +1,4 @@
-package com.dovydasvenckus.timetracker.config;
+package com.dovydasvenckus.timetracker.config.jersey;
 
 import com.dovydasvenckus.timetracker.entry.TimeEntryController;
 import com.dovydasvenckus.timetracker.helper.security.ClientDetails;

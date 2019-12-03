@@ -1,4 +1,4 @@
-package com.dovydasvenckus.timetracker.config;
+package com.dovydasvenckus.timetracker.config.jersey;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

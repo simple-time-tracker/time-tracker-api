@@ -1,4 +1,4 @@
-package com.dovydasvenckus.timetracker.config;
+package com.dovydasvenckus.timetracker.config.jersey;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
