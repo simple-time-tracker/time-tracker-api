@@ -43,7 +43,10 @@ public class TimeEntryService {
         timeEntryDTO.setId(null);
         TimeEntry timeEntry;
         timeEntry = new TimeEntry(timeEntryDTO, clientDetails.getId());
-        Optional<Project> project = projectRepository.findById(timeEntryDTO.getProject().getId());
+        Optional<Project> project = projectRepository.findByIdAndUserId(
+                timeEntryDTO.getProject().getId(),
+                clientDetails.getId()
+        );
         project.ifPresent(timeEntry::setProject);
         timeEntryRepository.save(timeEntry);
 
@@ -69,7 +72,7 @@ public class TimeEntryService {
 
     @Transactional
     public TimeEntry startTracking(Long projectId, String description, ClientDetails clientDetails) {
-        Optional<Project> project = projectRepository.findById(projectId);
+        Optional<Project> project = projectRepository.findByIdAndUserId(projectId, clientDetails.getId());
         if (project.isPresent()) {
             TimeEntry timeEntry = new TimeEntry();
             timeEntry.setStartDate(dateTimeService.now());
