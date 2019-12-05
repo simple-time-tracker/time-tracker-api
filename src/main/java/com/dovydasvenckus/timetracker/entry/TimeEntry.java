@@ -2,10 +2,11 @@ package com.dovydasvenckus.timetracker.entry;
 
 import com.dovydasvenckus.timetracker.project.Project;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import lombok.ToString;
+import java.util.UUID;
 
 @Entity
 @Table(name = "time_entries")
@@ -34,14 +35,18 @@ public class TimeEntry {
     @Column(name = "is_deleted")
     private boolean deleted = false;
 
+    @Column(name = "user_id")
+    private UUID userId;
+
     TimeEntry() {
     }
 
-    TimeEntry(TimeEntryDTO timeEntryDTO) {
-        id = timeEntryDTO.getId();
-        description = timeEntryDTO.getDescription();
-        startDate = timeEntryDTO.getStartDate();
-        endDate = timeEntryDTO.getEndDate();
+    TimeEntry(TimeEntryDTO timeEntryDTO, UUID userId) {
+        this.id = timeEntryDTO.getId();
+        this.description = timeEntryDTO.getDescription();
+        this.startDate = timeEntryDTO.getStartDate();
+        this.endDate = timeEntryDTO.getEndDate();
+        this.userId = userId;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.dovydasvenckus.timetracker.entry
 
 import com.dovydasvenckus.timetracker.TestDatabaseConfig
+import com.dovydasvenckus.timetracker.helper.security.ClientDetails
 import com.dovydasvenckus.timetracker.project.Project
 import com.dovydasvenckus.timetracker.project.ProjectRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,9 +24,11 @@ class TimeEntryServiceIntegrationSpec extends Specification {
     @Autowired
     TimeEntryService timeEntryService
 
+    private ClientDetails user = new ClientDetails(UUID.randomUUID(), 'name')
+
     def 'should mark as deleted'() {
         given:
-            Project project = new Project(name: "Project", dateCreated: LocalDateTime.now())
+            Project project = new Project(name: "Project", dateCreated: LocalDateTime.now(), userId: user.id)
             TimeEntry timeEntry = createTimeEntry("Entry to delete", project)
             project.addTimeEntry(timeEntry)
 
@@ -33,7 +36,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             timeEntryRepository.save(timeEntry)
 
         when:
-            timeEntryService.delete(timeEntry.id)
+            timeEntryService.delete(timeEntry.id, user)
 
         then:
             timeEntryRepository.findById(timeEntry.id).get().deleted
@@ -41,7 +44,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
 
     def 'should return only not deleted entries'() {
         given:
-            Project project = new Project(name: "Project", dateCreated: LocalDateTime.now())
+            Project project = new Project(name: "Project", dateCreated: LocalDateTime.now(), userId: user.id)
             TimeEntry timeEntry1 = createTimeEntry("Time entry 1", project)
 
             TimeEntry timeEntry2 = createTimeEntry("Time entry 2", project)
@@ -52,10 +55,10 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             timeEntryRepository.save(timeEntry2)
 
         and:
-            timeEntryService.delete(timeEntry2.id)
+            timeEntryService.delete(timeEntry2.id, user)
 
         when:
-            List<TimeEntryDTO> result = timeEntryService.findAll(0).getContent()
+            List<TimeEntryDTO> result = timeEntryService.findAll(0, user).getContent()
 
         then:
             result.size() == 1
@@ -67,10 +70,11 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             }
     }
 
-    private static TimeEntry createTimeEntry(String text, Project project) {
+    private TimeEntry createTimeEntry(String text, Project project) {
         TimeEntry timeEntry = new TimeEntry(
                 description: text,
-                startDate: LocalDateTime.now()
+                startDate: LocalDateTime.now(),
+                userId: user.id
         )
         project.addTimeEntry(timeEntry)
         return timeEntry

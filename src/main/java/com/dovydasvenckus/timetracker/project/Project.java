@@ -2,12 +2,13 @@ package com.dovydasvenckus.timetracker.project;
 
 import com.dovydasvenckus.timetracker.entry.TimeEntry;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.ToString;
+import java.util.UUID;
 
 @Entity
 @Table(name = "projects")
@@ -26,6 +27,9 @@ public class Project {
 
     @Column(name = "date_created", nullable = false)
     private LocalDateTime dateCreated;
+
+    @Column(name = "user_id")
+    private UUID userId;
 
     @OneToMany(mappedBy = "project")
     @ToString.Exclude
