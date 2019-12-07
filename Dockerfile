@@ -1,4 +1,4 @@
-FROM openjdk:11-slim
+FROM openjdk:13-alpine
 MAINTAINER Dovydas Venckus "dovydas.venckus@live.com"
 ENV APP_ROOT=/home/time-tracker \
     APP_NAME=time-tracker-api-0.0.1-SNAPSHOT.jar \
@@ -7,7 +7,7 @@ ENV APP_ROOT=/home/time-tracker \
 WORKDIR $APP_ROOT
 COPY [".", "${APP_ROOT}/source/"]
 RUN cd source && \
-    ./gradlew build && \
+    ./gradlew assemble && \
     cp build/libs/$APP_NAME .. && \
     cd .. && \
     rm -r source && \
