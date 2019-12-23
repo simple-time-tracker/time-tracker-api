@@ -9,9 +9,6 @@ spring:
 
 rest:
   security:
-    enabled: true
-    api-matcher: /api/*
-
     issuer-uri: http://localhost:8080/auth/realms/time-tracker
 
 security:

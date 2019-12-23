@@ -9,3 +9,16 @@ spring:
 
 cors:
   allow: ${CORS_ALLOW}
+
+rest:
+  security:
+    issuer-uri: ${AUTH_ISSUER_URI}
+
+security:
+  oauth2:
+    resource:
+      id: time-tracker-api
+      token-info-uri: ${rest.security.issuer-uri}/protocol/openid-connect/token/introspect
+      user-info-uri: ${rest.security.issuer-uri}/protocol/openid-connect/userinfo
+      jwt:
+        key-value: ${AUTH_KEY}

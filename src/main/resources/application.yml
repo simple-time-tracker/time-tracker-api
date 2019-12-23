@@ -10,4 +10,10 @@ spring:
       ddl-auto: validate
 
 cors:
-  allow: ''
+  allow:
+
+rest:
+  security:
+    enabled: true
+    api-matcher: /api/*
+
