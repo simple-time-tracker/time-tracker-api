@@ -1,11 +1,5 @@
 .gradle
+.idea
 build
 *.iml
 out
-
-api/build
-
-web/dist
-web/build
-web/node_modules
-web/jspm_packages
