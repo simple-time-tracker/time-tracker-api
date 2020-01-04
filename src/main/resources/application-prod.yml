@@ -17,7 +17,7 @@ rest:
 security:
   oauth2:
     resource:
-      id: time-tracker-api
+      id: ${AUTH_CLIENT_ID}
       token-info-uri: ${rest.security.issuer-uri}/protocol/openid-connect/token/introspect
       user-info-uri: ${rest.security.issuer-uri}/protocol/openid-connect/userinfo
       jwt:
