@@ -70,6 +70,29 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             }
     }
 
+    def 'should return ordered by start date'() {
+        given:
+            Project project = new Project(name: "Project", dateCreated: LocalDateTime.now(), userId: user.id)
+            TimeEntry timeEntry1 = createTimeEntry("Time entry 1", project)
+
+            TimeEntry timeEntry2 = createTimeEntry("Time entry 2", project)
+            LocalDateTime secondEntryStartDate = timeEntry2.getStartDate();
+            timeEntry2.setStartDate(secondEntryStartDate.plusSeconds(1))
+            project.addTimeEntry(timeEntry2)
+
+            projectRepository.save(project)
+            timeEntryRepository.save(timeEntry1)
+            timeEntryRepository.save(timeEntry2)
+
+        when:
+            List<TimeEntryDTO> result = timeEntryService.findAll(0, user).getContent()
+
+        then:
+            result.size() == 2
+            result.get(0).id == timeEntry2.id
+            result.get(1).id == timeEntry1.id
+    }
+
     private TimeEntry createTimeEntry(String text, Project project) {
         TimeEntry timeEntry = new TimeEntry(
                 description: text,
