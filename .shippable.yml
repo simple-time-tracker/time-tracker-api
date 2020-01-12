@@ -1,21 +1,32 @@
 env:
-    - secure: s2WOkFjFFlJjhwIuq4Vt30Yd0EozROwSn8sHCE7N+4b9PWpet01eTBlPeDiKcF87MaD+dEaoKhSKiIjgNQmsEbmrYCStbHYYcjvkwc0t4zl6offj7LCLqozbUx2IglmMyIpU8m9SMNDDf+mi3WvozC8SaY1AorRMxa8lNEtI8PQ+Q8rN9blGMD8iP69qWj2/+Z6wkjf1JTLTwbjoMUVKMe1TgIuaqIi/EWZqqmADNNRw/tozbhReKALeQFeblyorc8yJSHNFnOae59tGuvqebOBNxnjTW5uG0X41M12OmKMyF212/U8d4DefnR4jpF4VjoAvz+tgmCc3Ml4I0Xd1dA==
+  - secure: s2WOkFjFFlJjhwIuq4Vt30Yd0EozROwSn8sHCE7N+4b9PWpet01eTBlPeDiKcF87MaD+dEaoKhSKiIjgNQmsEbmrYCStbHYYcjvkwc0t4zl6offj7LCLqozbUx2IglmMyIpU8m9SMNDDf+mi3WvozC8SaY1AorRMxa8lNEtI8PQ+Q8rN9blGMD8iP69qWj2/+Z6wkjf1JTLTwbjoMUVKMe1TgIuaqIi/EWZqqmADNNRw/tozbhReKALeQFeblyorc8yJSHNFnOae59tGuvqebOBNxnjTW5uG0X41M12OmKMyF212/U8d4DefnR4jpF4VjoAvz+tgmCc3Ml4I0Xd1dA==
 
 language: java
 
 jdk:
-    - openjdk11
+  - openjdk11
 
 build:
-    pre_ci_boot:
-        image_name: drydock/c7golall
-        image_tag: v7.1.4
+  pre_ci_boot:
+    image_name: drydock/c7golall
+    image_tag: v7.1.4
 
-    ci:
-        - ./gradlew build
+  ci:
+    - ./gradlew build
 
-    post_ci:
-        - ./ci/copy-test-results.sh
+  post_ci:
+    - ./ci/copy-test-results.sh
 
-    on_failure:
-        - ./ci/copy-test-results.sh
+  on_failure:
+    - ./ci/copy-test-results.sh
+
+integrations:
+  notifications:
+    - integrationName: time-tracker-web-dockerhub-build-webhook
+      type: webhook
+      branches:
+        only:
+          - master
+      on_success: always
+      on_failure: never
+      on_cancel: never
