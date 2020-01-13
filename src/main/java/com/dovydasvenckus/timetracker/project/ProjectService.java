@@ -10,7 +10,6 @@ import javax.ws.rs.core.Context;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
 @Service
