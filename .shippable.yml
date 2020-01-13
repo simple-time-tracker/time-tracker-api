@@ -22,7 +22,7 @@ build:
 
 integrations:
   notifications:
-    - integrationName: time-tracker-web-dockerhub-build-webhook
+    - integrationName: time-tracker-api-dockerhub-build-webhook
       type: webhook
       branches:
         only:
