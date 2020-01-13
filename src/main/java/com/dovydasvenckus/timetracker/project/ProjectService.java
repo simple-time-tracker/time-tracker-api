@@ -28,11 +28,23 @@ public class ProjectService {
 
     List<ProjectReadDTO> findAllProjects(ClientDetails clientDetails) {
         return projectRepository.findAllByUserIdOrderByName(clientDetails.getId()).stream()
-                .sorted(comparing(Project::getName))
                 .map(ProjectReadDTO::new)
                 .collect(toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<ProjectReadDTO> findAllProjectsWithSummaries(ClientDetails clientDetails) {
+        return projectRepository.findAllByUserIdOrderByName(clientDetails.getId()).stream()
+                .map(this::mapToSummary)
+                .collect(toList());
+    }
+
+    private ProjectReadDTO mapToSummary(Project project) {
+        long nanoSecondsSpent = project.getTimeEntries().stream()
+                .map(timeEntry -> timeEntry.getEndDate().getNano() - timeEntry.getStartDate().getNano())
+                .reduce(0, Integer::sum);
+        return new ProjectReadDTO(project, nanoSecondsSpent / 1000);
+    }
 
     List<ProjectReadDTO> findAllActiveProjects(ClientDetails clientDetails) {
         return projectRepository.findByUserIdAndArchivedFalseOrderByName(clientDetails.getId()).stream()

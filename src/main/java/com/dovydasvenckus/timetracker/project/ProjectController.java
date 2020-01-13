@@ -30,8 +30,11 @@ public class ProjectController {
 
     @GET
     @Produces("application/json")
-    public List<ProjectReadDTO> getProjects(@Context ClientDetails clientDetails) {
-        return projectService.findAllProjects(clientDetails);
+    public List<ProjectReadDTO> getProjects(@QueryParam("withSummary") boolean withSummary,
+                                            @Context ClientDetails clientDetails) {
+        return Optional.of(withSummary)
+                .map((haveSummary) -> projectService.findAllProjectsWithSummaries(clientDetails))
+                .orElseGet(() -> projectService.findAllProjects(clientDetails));
     }
 
     @GET

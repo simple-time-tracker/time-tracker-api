@@ -1,5 +1,6 @@
 package com.dovydasvenckus.timetracker.project;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -16,10 +17,18 @@ public class ProjectReadDTO {
 
     private LocalDateTime dateCreated;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long timeSpentInMilliseconds;
+
     public ProjectReadDTO(Project project) {
-        id = project.getId();
-        name = project.getName();
-        dateCreated = project.getDateCreated();
-        isArchived = project.isArchived();
+        this.id = project.getId();
+        this.name = project.getName();
+        this.dateCreated = project.getDateCreated();
+        this.isArchived = project.isArchived();
+    }
+
+    public ProjectReadDTO(Project project, long timeSpentInMilliseconds) {
+        this(project);
+        this.timeSpentInMilliseconds = timeSpentInMilliseconds;
     }
 }
