@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Context;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +41,7 @@ public class ProjectService {
 
     private ProjectReadDTO mapToSummary(Project project) {
         long nanoSecondsSpent = project.getTimeEntries().stream()
-                .map(timeEntry -> timeEntry.getEndDate().getNano() - timeEntry.getStartDate().getNano())
+                .map(timeEntry -> Duration.between(timeEntry.getEndDate(), timeEntry.getStartDate()).getNano())
                 .reduce(0, Integer::sum);
         return new ProjectReadDTO(project, nanoSecondsSpent / 1000);
     }
