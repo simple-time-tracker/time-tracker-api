@@ -40,10 +40,10 @@ public class ProjectService {
     }
 
     private ProjectReadDTO mapToSummary(Project project) {
-        long nanoSecondsSpent = project.getTimeEntries().stream()
-                .map(timeEntry -> Duration.between(timeEntry.getEndDate(), timeEntry.getStartDate()).getNano())
-                .reduce(0, Integer::sum);
-        return new ProjectReadDTO(project, nanoSecondsSpent / 1000);
+        long durationInMilliseconds = project.getTimeEntries().stream()
+                .map(timeEntry -> Duration.between(timeEntry.getStartDate(), timeEntry.getEndDate()).toMillis())
+                .reduce(0L, Long::sum);
+        return new ProjectReadDTO(project, durationInMilliseconds);
     }
 
     List<ProjectReadDTO> findAllActiveProjects(ClientDetails clientDetails) {
