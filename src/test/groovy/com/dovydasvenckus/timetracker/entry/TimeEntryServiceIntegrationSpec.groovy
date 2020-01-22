@@ -42,6 +42,21 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             timeEntryRepository.findById(timeEntry.id).get().deleted
     }
 
+    def 'should not allow to set page size bigger that 20'() {
+        expect:
+            timeEntryService.findAll(0, 21, user).pageable.pageSize == 20
+    }
+
+    def 'should allow set page size to one'() {
+        expect:
+            timeEntryService.findAll(0, 1, user).pageable.pageSize == 1
+    }
+
+    def 'should use default page size, if it less than one'() {
+        expect:
+            timeEntryService.findAll(0, 0, user).pageable.pageSize == 20
+    }
+
     def 'should return only not deleted entries'() {
         given:
             Project project = new Project(name: "Project", dateCreated: LocalDateTime.now(), userId: user.id)
@@ -58,7 +73,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             timeEntryService.delete(timeEntry2.id, user)
 
         when:
-            List<TimeEntryDTO> result = timeEntryService.findAll(0, user).getContent()
+            List<TimeEntryDTO> result = timeEntryService.findAll(0, 5, user).getContent()
 
         then:
             result.size() == 1
@@ -76,7 +91,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             TimeEntry timeEntry1 = createTimeEntry("Time entry 1", project)
 
             TimeEntry timeEntry2 = createTimeEntry("Time entry 2", project)
-            LocalDateTime secondEntryStartDate = timeEntry2.getStartDate();
+            LocalDateTime secondEntryStartDate = timeEntry2.getStartDate()
             timeEntry2.setStartDate(secondEntryStartDate.plusSeconds(1))
             project.addTimeEntry(timeEntry2)
 
@@ -85,7 +100,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             timeEntryRepository.save(timeEntry2)
 
         when:
-            List<TimeEntryDTO> result = timeEntryService.findAll(0, user).getContent()
+            List<TimeEntryDTO> result = timeEntryService.findAll(0, 5, user).getContent()
 
         then:
             result.size() == 2
