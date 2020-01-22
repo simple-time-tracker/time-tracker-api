@@ -15,7 +15,7 @@ import java.util.Optional;
 @Service
 public class TimeEntryService {
 
-    private static final int PAGE_SIZE = 20;
+    private static final int MAX_PAGE_SIZE = 20;
     private final DateTimeService dateTimeService;
 
     private final TimeEntryRepository timeEntryRepository;
@@ -32,9 +32,9 @@ public class TimeEntryService {
     }
 
     @Transactional(readOnly = true)
-    Page<TimeEntryDTO> findAll(int page, ClientDetails clientDetails) {
+    Page<TimeEntryDTO> findAll(int page, int pageSize, ClientDetails clientDetails) {
         return timeEntryRepository
-                .findAllByDeleted(clientDetails.getId(), false, PageRequest.of(page, PAGE_SIZE))
+                .findAllByDeleted(clientDetails.getId(), false, PageRequest.of(page, resolvePageSize(pageSize)))
                 .map(TimeEntryDTO::new);
     }
 
@@ -85,5 +85,12 @@ public class TimeEntryService {
             return timeEntry;
         }
         return null;
+    }
+
+    private int resolvePageSize(Integer pageSize) {
+        if (pageSize > MAX_PAGE_SIZE || pageSize < 1) {
+            return MAX_PAGE_SIZE;
+        }
+        return pageSize;
     }
 }

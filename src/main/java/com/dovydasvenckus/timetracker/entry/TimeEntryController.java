@@ -39,8 +39,8 @@ public class TimeEntryController {
 
     @GET
     @Produces("application/json")
-    public Page<TimeEntryDTO> getAll(@QueryParam("page") int page) {
-        return timeEntryService.findAll(page, clientDetails);
+    public Page<TimeEntryDTO> getAll(@QueryParam("page") int page, @QueryParam("pageSize") int pageSize) {
+        return timeEntryService.findAll(page, pageSize, clientDetails);
     }
 
     @GET
