@@ -41,6 +41,7 @@ public class ProjectService {
 
     private ProjectReadDTO mapToSummary(Project project) {
         long durationInMilliseconds = project.getTimeEntries().stream()
+                .filter(timeEntry -> timeEntry.getEndDate() != null)
                 .map(timeEntry -> Duration.between(timeEntry.getStartDate(), timeEntry.getEndDate()).toMillis())
                 .reduce(0L, Long::sum);
         return new ProjectReadDTO(project, durationInMilliseconds);

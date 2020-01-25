@@ -83,6 +83,33 @@ class ProjectServiceSpec extends Specification {
             result[1].name == secondProject.name
     }
 
+    def 'should return time tracked without adding currently being tracked project'() {
+        given:
+            Project firstProject = new Project(name: "First project", dateCreated: LocalDateTime.now(), userId: user.id)
+            TimeEntry firstEntry = createTimeEntry(
+                    "First task",
+                    firstProject,
+                    LocalDateTime.of(2020, 1, 15, 21, 00),
+                    LocalDateTime.of(2020, 1, 15, 21, 13)
+            )
+            TimeEntry secondEntry = createTimeEntry("Second task",
+                    firstProject,
+                    LocalDateTime.now().minusHours(1),
+                    null
+            )
+            projectRepository.save(firstProject)
+            timeEntryRepository.save(firstEntry)
+            timeEntryRepository.save(secondEntry)
+
+        when:
+            List<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(user)
+
+        then:
+            result.size() == 1
+            result[0].timeSpentInMilliseconds == 780000
+            result[0].name == firstProject.name
+    }
+
 
     private TimeEntry createTimeEntry(String text, Project project, LocalDateTime startDate, LocalDateTime stopDate) {
         TimeEntry timeEntry = new TimeEntry(
