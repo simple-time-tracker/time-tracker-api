@@ -6,6 +6,7 @@ import com.dovydasvenckus.timetracker.helper.security.ClientDetails;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,33 +27,37 @@ public class ProjectService {
 
     private final PageSizeResolver pageSizeResolver;
 
+    private final Sort.Order defaultSortOrder;
+
     public ProjectService(DateTimeService dateTimeService,
                           ProjectRepository projectRepository,
                           PageSizeResolver pageSizeResolver) {
         this.dateTimeService = dateTimeService;
         this.projectRepository = projectRepository;
         this.pageSizeResolver = pageSizeResolver;
+        this.defaultSortOrder = new Sort.Order(Sort.Direction.ASC, "name").ignoreCase();
     }
 
     List<ProjectReadDTO> findAllProjects(ClientDetails clientDetails) {
-        return projectRepository.findAllByUserIdOrderByName(clientDetails.getId()).stream()
+        return projectRepository.findAllByUserId(clientDetails.getId(), Sort.by(defaultSortOrder)).stream()
                 .map(ProjectReadDTO::new)
                 .collect(toList());
     }
 
     @Transactional(readOnly = true)
     public Page<ProjectReadDTO> findAllProjectsWithSummaries(int page, int pageSize, ClientDetails clientDetails) {
-        PageRequest pageRequest = PageRequest.of(page, pageSizeResolver.resolvePageSize(pageSize));
-        Page<Project> projectsPage = projectRepository.findAllByUserIdOrderByName(
-                clientDetails.getId(),
-                pageRequest
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                pageSizeResolver.resolvePageSize(pageSize),
+                Sort.by(defaultSortOrder)
         );
+        Page<Project> projectsPage = projectRepository.findAllByUserId(clientDetails.getId(), pageRequest);
 
         return transformProjectsPageToSummariesPage(pageRequest, projectsPage);
     }
 
     List<ProjectReadDTO> findAllActiveProjects(ClientDetails clientDetails) {
-        return projectRepository.findByUserIdAndArchivedFalseOrderByName(clientDetails.getId()).stream()
+        return projectRepository.findByUserIdAndArchivedFalse(clientDetails.getId(), Sort.by(defaultSortOrder)).stream()
                 .map(ProjectReadDTO::new)
                 .collect(toList());
     }
