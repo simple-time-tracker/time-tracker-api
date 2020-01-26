@@ -27,6 +27,70 @@ class ProjectServiceSpec extends Specification {
 
     private ClientDetails user = new ClientDetails(UUID.randomUUID(), 'name')
 
+    def 'should return projects sorted by name ignoring case'() {
+        given:
+            Project firstProject = new Project(name: "ma", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project secondProject = new Project(name: "MB", dateCreated: LocalDateTime.now(), userId: user.id)
+
+            projectRepository.save(firstProject)
+            projectRepository.save(secondProject)
+
+        when:
+            List<ProjectReadDTO> result = projectService.findAllProjects(user)
+
+        then:
+            result.size() == 2
+            result[0].id == firstProject.id
+            result[0].name == 'ma'
+        and:
+            result[1].id == secondProject.id
+            result[1].name == 'MB'
+    }
+
+    def 'should return active projects sorted by name ignoring case'() {
+        given:
+            Project firstProject = new Project(name: "ma", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project secondProject = new Project(name: "MB", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project archivedProject = new Project(name: "MB", dateCreated: LocalDateTime.now(), userId: user.id, archived: true)
+
+            projectRepository.save(firstProject)
+            projectRepository.save(secondProject)
+            projectRepository.save(archivedProject)
+
+        when:
+            List<ProjectReadDTO> result = projectService.findAllActiveProjects(user)
+
+        then:
+            result.size() == 2
+            result[0].id == firstProject.id
+            result[0].name == 'ma'
+        and:
+            result[1].id == secondProject.id
+            result[1].name == 'MB'
+    }
+
+    def 'should return projects summaries sorted by name ignoring case'() {
+        given:
+            Project firstProject = new Project(name: "ma", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project secondProject = new Project(name: "Mb", dateCreated: LocalDateTime.now(), userId: user.id)
+
+            projectRepository.save(firstProject)
+            projectRepository.save(secondProject)
+
+        when:
+            Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, user)
+
+        then:
+            result.totalElements == 2
+            result.content[0].id == firstProject.id
+            result.content[0].name == 'ma'
+        and:
+            result.content[1].id == secondProject.id
+            result.content[1].name == 'Mb'
+    }
+
+
+
     def 'should return zero milliseconds tracked for project, when project has no time entries'() {
         given:
             Project project = new Project(name: "Project", dateCreated: LocalDateTime.now(), userId: user.id)
