@@ -44,6 +44,17 @@ public class TimeEntryService {
                 .map(TimeEntryDTO::new);
     }
 
+    @Transactional(readOnly = true)
+    public Page<TimeEntryDTO> findAllByProject(long projectId, int page, int pageSize, ClientDetails clientDetails) {
+        return timeEntryRepository
+                .findAllByProject(
+                        projectId,
+                        clientDetails.getId(),
+                        PageRequest.of(page, pageSizeResolver.resolvePageSize(pageSize))
+                )
+                .map(TimeEntryDTO::new);
+    }
+
     @Transactional
     public TimeEntry create(TimeEntryDTO timeEntryDTO, ClientDetails clientDetails) {
         timeEntryDTO.setId(null);

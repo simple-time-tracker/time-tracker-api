@@ -1,8 +1,9 @@
 package com.dovydasvenckus.timetracker.project;
 
+import com.dovydasvenckus.timetracker.entry.TimeEntryDTO;
+import com.dovydasvenckus.timetracker.entry.TimeEntryService;
 import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
 import com.dovydasvenckus.timetracker.helper.security.ClientDetails;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
@@ -23,10 +24,14 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    @Autowired
-    public ProjectController(RestUrlGenerator restUrlGenerator, ProjectService projectService) {
+    private final TimeEntryService timeEntryService;
+
+    public ProjectController(RestUrlGenerator restUrlGenerator,
+                             ProjectService projectService,
+                             TimeEntryService timeEntryService) {
         this.restUrlGenerator = restUrlGenerator;
         this.projectService = projectService;
+        this.timeEntryService = timeEntryService;
     }
 
     @GET
@@ -42,6 +47,16 @@ public class ProjectController {
                                                     @QueryParam("pageSize") Integer pageSize,
                                                     @Context ClientDetails clientDetails) {
         return projectService.findAllProjectsWithSummaries(page, pageSize, clientDetails);
+    }
+
+    @GET
+    @Path("{id}/entries")
+    @Produces("application/json")
+    public Page<TimeEntryDTO> getProjectTimeEntries(@PathParam("id") long id,
+                                                    @QueryParam("page") Integer page,
+                                                    @QueryParam("pageSize") Integer pageSize,
+                                                    @Context ClientDetails clientDetails) {
+        return timeEntryService.findAllByProject(id, page, pageSize, clientDetails);
     }
 
     @GET

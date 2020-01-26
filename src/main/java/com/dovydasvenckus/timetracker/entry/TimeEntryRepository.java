@@ -20,4 +20,14 @@ public interface TimeEntryRepository extends CrudRepository<TimeEntry, Long>, Ti
                                      @Param("deleted") boolean deleted,
                                      Pageable pageable
     );
+
+    @Query("SELECT te "
+            + "FROM TimeEntry te "
+            + "WHERE te.project.id = :projectId AND te.userId = :userId AND te.deleted = false "
+            + "ORDER BY te.startDate DESC")
+
+    Page<TimeEntry> findAllByProject(@Param("projectId") long projectId,
+                                     @Param("userId") UUID userId,
+                                     Pageable pageable
+    );
 }
