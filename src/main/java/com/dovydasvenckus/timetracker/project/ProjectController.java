@@ -85,7 +85,9 @@ public class ProjectController {
                                   @Context ClientDetails clientDetails) {
         Optional<Project> createdProject = projectService.create(projectWriteDTO, clientDetails);
 
-        return createdProject.map(project ->
+        return createdProject
+                .map(ProjectReadDTO::new)
+                .map(project ->
                 Response.status(CREATED)
                         .entity(project)
                         .header("Location",
