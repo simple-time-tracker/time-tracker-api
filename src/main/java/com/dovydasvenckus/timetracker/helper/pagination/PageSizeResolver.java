@@ -1,14 +1,19 @@
 package com.dovydasvenckus.timetracker.helper.pagination;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PageSizeResolver {
-    private static final int MAX_PAGE_SIZE = 20;
+    private final int maxPageSize;
+
+    public PageSizeResolver(@Value("${pagination.defaultSize}") int defaultMaxPageSize) {
+        this.maxPageSize = defaultMaxPageSize;
+    }
 
     public int resolvePageSize(Integer pageSize) {
-        if (pageSize > MAX_PAGE_SIZE || pageSize < 1) {
-            return MAX_PAGE_SIZE;
+        if (pageSize > maxPageSize || pageSize < 1) {
+            return maxPageSize;
         }
         return pageSize;
     }
