@@ -1,10 +1,10 @@
 package com.dovydasvenckus.timetracker.entry;
 
 import com.dovydasvenckus.timetracker.helper.date.clock.DateTimeService;
+import com.dovydasvenckus.timetracker.helper.pagination.PageSizeResolver;
 import com.dovydasvenckus.timetracker.helper.security.ClientDetails;
 import com.dovydasvenckus.timetracker.project.Project;
 import com.dovydasvenckus.timetracker.project.ProjectRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -15,26 +15,32 @@ import java.util.Optional;
 @Service
 public class TimeEntryService {
 
-    private static final int MAX_PAGE_SIZE = 20;
     private final DateTimeService dateTimeService;
 
     private final TimeEntryRepository timeEntryRepository;
 
     private final ProjectRepository projectRepository;
 
-    @Autowired
+    private final PageSizeResolver pageSizeResolver;
+
     public TimeEntryService(DateTimeService dateTimeService,
                             TimeEntryRepository timeEntryRepository,
-                            ProjectRepository projectRepository) {
+                            ProjectRepository projectRepository,
+                            PageSizeResolver pageSizeResolver) {
         this.dateTimeService = dateTimeService;
         this.timeEntryRepository = timeEntryRepository;
         this.projectRepository = projectRepository;
+        this.pageSizeResolver = pageSizeResolver;
     }
 
     @Transactional(readOnly = true)
     Page<TimeEntryDTO> findAll(int page, int pageSize, ClientDetails clientDetails) {
         return timeEntryRepository
-                .findAllByDeleted(clientDetails.getId(), false, PageRequest.of(page, resolvePageSize(pageSize)))
+                .findAllByDeleted(
+                        clientDetails.getId(),
+                        false,
+                        PageRequest.of(page, pageSizeResolver.resolvePageSize(pageSize))
+                )
                 .map(TimeEntryDTO::new);
     }
 
@@ -85,12 +91,5 @@ public class TimeEntryService {
             return timeEntry;
         }
         return null;
-    }
-
-    private int resolvePageSize(Integer pageSize) {
-        if (pageSize > MAX_PAGE_SIZE || pageSize < 1) {
-            return MAX_PAGE_SIZE;
-        }
-        return pageSize;
     }
 }

@@ -3,6 +3,7 @@ package com.dovydasvenckus.timetracker.project;
 import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
 import com.dovydasvenckus.timetracker.helper.security.ClientDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
@@ -30,11 +31,17 @@ public class ProjectController {
 
     @GET
     @Produces("application/json")
-    public List<ProjectReadDTO> getProjects(@QueryParam("withSummary") boolean withSummary,
-                                            @Context ClientDetails clientDetails) {
-        return Optional.of(withSummary)
-                .map((haveSummary) -> projectService.findAllProjectsWithSummaries(clientDetails))
-                .orElseGet(() -> projectService.findAllProjects(clientDetails));
+    public List<ProjectReadDTO> getProjects(@Context ClientDetails clientDetails) {
+        return projectService.findAllProjects(clientDetails);
+    }
+
+    @GET
+    @Path("/summaries")
+    @Produces("application/json")
+    public Page<ProjectReadDTO> getProjectSummaries(@QueryParam("page") Integer page,
+                                                    @QueryParam("pageSize") Integer pageSize,
+                                                    @Context ClientDetails clientDetails) {
+        return projectService.findAllProjectsWithSummaries(page, pageSize, clientDetails);
     }
 
     @GET
