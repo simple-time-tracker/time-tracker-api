@@ -17,3 +17,5 @@ rest:
     enabled: true
     api-matcher: /api/*
 
+pagination:
+  defaultSize: 20

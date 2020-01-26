@@ -1,8 +1,11 @@
 package com.dovydasvenckus.timetracker.project;
 
 import com.dovydasvenckus.timetracker.helper.date.clock.DateTimeService;
+import com.dovydasvenckus.timetracker.helper.pagination.PageSizeResolver;
 import com.dovydasvenckus.timetracker.helper.security.ClientDetails;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +13,7 @@ import javax.ws.rs.core.Context;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -20,10 +24,14 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
 
-    @Autowired
-    public ProjectService(DateTimeService dateTimeService, ProjectRepository projectRepository) {
+    private final PageSizeResolver pageSizeResolver;
+
+    public ProjectService(DateTimeService dateTimeService,
+                          ProjectRepository projectRepository,
+                          PageSizeResolver pageSizeResolver) {
         this.dateTimeService = dateTimeService;
         this.projectRepository = projectRepository;
+        this.pageSizeResolver = pageSizeResolver;
     }
 
     List<ProjectReadDTO> findAllProjects(ClientDetails clientDetails) {
@@ -33,10 +41,18 @@ public class ProjectService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProjectReadDTO> findAllProjectsWithSummaries(ClientDetails clientDetails) {
-        return projectRepository.findAllByUserIdOrderByName(clientDetails.getId()).stream()
+    public Page<ProjectReadDTO> findAllProjectsWithSummaries(int page, int pageSize, ClientDetails clientDetails) {
+        PageRequest pageRequest = PageRequest.of(page, pageSizeResolver.resolvePageSize(pageSize));
+        Page<Project> projectsPage = projectRepository.findAllByUserIdOrderByName(
+                clientDetails.getId(),
+                pageRequest
+        );
+
+        List<ProjectReadDTO> projectSummaries = projectsPage.stream()
                 .map(this::mapToSummary)
-                .collect(toList());
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(projectSummaries, pageRequest, projectsPage.getTotalElements());
     }
 
     private ProjectReadDTO mapToSummary(Project project) {
