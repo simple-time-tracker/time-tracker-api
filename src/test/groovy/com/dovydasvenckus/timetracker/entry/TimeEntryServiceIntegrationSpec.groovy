@@ -6,6 +6,7 @@ import com.dovydasvenckus.timetracker.project.Project
 import com.dovydasvenckus.timetracker.project.ProjectRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.Page
 import org.testcontainers.spock.Testcontainers
 import spock.lang.Specification
 
@@ -106,6 +107,35 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             result.size() == 2
             result.get(0).id == timeEntry2.id
             result.get(1).id == timeEntry1.id
+    }
+
+    def 'should return only time entries assigned only to one project'() {
+        given:
+            Project firstProject = new Project(name: "First project", dateCreated: LocalDateTime.now(), userId: user.id)
+            TimeEntry timeEntry1 = createTimeEntry("Time entry 1", firstProject)
+
+            TimeEntry timeEntry2 = createTimeEntry("Time entry 2", firstProject)
+            LocalDateTime secondEntryStartDate = timeEntry2.getStartDate()
+            timeEntry2.setStartDate(secondEntryStartDate.plusSeconds(1))
+            firstProject.addTimeEntry(timeEntry2)
+
+            projectRepository.save(firstProject)
+            timeEntryRepository.save(timeEntry1)
+            timeEntryRepository.save(timeEntry2)
+
+        and:
+            Project secondProject = new Project(name: "Second project", dateCreated: LocalDateTime.now(), userId: user.id)
+            TimeEntry secondProjectTimeEntry = createTimeEntry("Second project Time entry 1", secondProject)
+            projectRepository.save(secondProject)
+            timeEntryRepository.save(secondProjectTimeEntry)
+
+        when:
+            Page<TimeEntryDTO> result = timeEntryService.findAllByProject(firstProject.getId(), 0, 5, user)
+
+        then:
+            result.totalElements == 2
+            result.content[0].id == timeEntry2.id
+            result.content[1].id == timeEntry1.id
     }
 
     private TimeEntry createTimeEntry(String text, Project project) {

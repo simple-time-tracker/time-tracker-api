@@ -48,19 +48,7 @@ public class ProjectService {
                 pageRequest
         );
 
-        List<ProjectReadDTO> projectSummaries = projectsPage.stream()
-                .map(this::mapToSummary)
-                .collect(Collectors.toList());
-
-        return new PageImpl<>(projectSummaries, pageRequest, projectsPage.getTotalElements());
-    }
-
-    private ProjectReadDTO mapToSummary(Project project) {
-        long durationInMilliseconds = project.getTimeEntries().stream()
-                .filter(timeEntry -> timeEntry.getEndDate() != null)
-                .map(timeEntry -> Duration.between(timeEntry.getStartDate(), timeEntry.getEndDate()).toMillis())
-                .reduce(0L, Long::sum);
-        return new ProjectReadDTO(project, durationInMilliseconds);
+        return transformProjectsPageToSummariesPage(pageRequest, projectsPage);
     }
 
     List<ProjectReadDTO> findAllActiveProjects(ClientDetails clientDetails) {
@@ -104,5 +92,22 @@ public class ProjectService {
             project.setArchived(true);
             return true;
         }).orElse(false);
+    }
+
+    private Page<ProjectReadDTO> transformProjectsPageToSummariesPage(PageRequest pageRequest,
+                                                                      Page<Project> projectsPage) {
+        List<ProjectReadDTO> projectSummaries = projectsPage.stream()
+                .map(this::mapToSummary)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(projectSummaries, pageRequest, projectsPage.getTotalElements());
+    }
+
+    private ProjectReadDTO mapToSummary(Project project) {
+        long durationInMilliseconds = project.getTimeEntries().stream()
+                .filter(timeEntry -> timeEntry.getEndDate() != null)
+                .map(timeEntry -> Duration.between(timeEntry.getStartDate(), timeEntry.getEndDate()).toMillis())
+                .reduce(0L, Long::sum);
+        return new ProjectReadDTO(project, durationInMilliseconds);
     }
 }
