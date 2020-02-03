@@ -62,10 +62,11 @@ public class ProjectService {
                 .collect(toList());
     }
 
-    Optional<ProjectReadDTO> findProject(Long id, ClientDetails clientDetails) {
+    @Transactional(readOnly = true)
+    public Optional<ProjectReadDTO> getProjectWithTimeSummary(Long id, ClientDetails clientDetails) {
         return projectRepository
                 .findByIdAndUserId(id, clientDetails.getId())
-                .map(ProjectReadDTO::new);
+                .map(this::mapToSummary);
     }
 
     @Transactional

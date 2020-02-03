@@ -70,7 +70,7 @@ public class ProjectController {
     @Path("{id}")
     @Produces("application/json")
     public Response getProject(@PathParam("id") Long id, @Context ClientDetails clientDetails) {
-        Optional<ProjectReadDTO> project = projectService.findProject(id, clientDetails);
+        Optional<ProjectReadDTO> project = projectService.getProjectWithTimeSummary(id, clientDetails);
 
         return project
                 .map(p -> Response.status(OK).entity(p).build())

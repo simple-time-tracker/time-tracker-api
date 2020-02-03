@@ -69,6 +69,33 @@ class ProjectServiceSpec extends Specification {
             result[1].name == 'MB'
     }
 
+    def 'should find and return project with correct amount tracked'() {
+        given:
+            Project project = new Project(name: "My project", dateCreated: LocalDateTime.now(), userId: user.id)
+            TimeEntry firstEntry = createTimeEntry(
+                    "First task",
+                    project,
+                    LocalDateTime.of(2020, 1, 15, 21, 00),
+                    LocalDateTime.of(2020, 1, 15, 21, 13)
+            )
+            TimeEntry secondEntry = createTimeEntry("Second task",
+                    project,
+                    LocalDateTime.of(2020, 01, 13, 15, 00),
+                    LocalDateTime.of(2020, 01, 13, 16, 00)
+            )
+            projectRepository.save(project)
+            timeEntryRepository.save(firstEntry)
+            timeEntryRepository.save(secondEntry)
+
+        when:
+            ProjectReadDTO result = projectService.getProjectWithTimeSummary(project.id, user).get()
+
+        then:
+            result.id == project.id
+            result.name == project.name
+            result.timeSpentInMilliseconds == 4380000
+    }
+
     def 'should return projects summaries sorted by name ignoring case'() {
         given:
             Project firstProject = new Project(name: "ma", dateCreated: LocalDateTime.now(), userId: user.id)
@@ -88,7 +115,6 @@ class ProjectServiceSpec extends Specification {
             result.content[1].id == secondProject.id
             result.content[1].name == 'Mb'
     }
-
 
 
     def 'should return zero milliseconds tracked for project, when project has no time entries'() {
