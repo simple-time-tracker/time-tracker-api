@@ -96,6 +96,35 @@ class ProjectServiceSpec extends Specification {
             result.timeSpentInMilliseconds == 4380000
     }
 
+    def 'should not include deleted time entries in amount tracked'() {
+        given:
+            Project project = new Project(name: "My project", dateCreated: LocalDateTime.now(), userId: user.id)
+            TimeEntry firstEntry = createTimeEntry(
+                    "First task",
+                    project,
+                    LocalDateTime.of(2020, 1, 15, 21, 00),
+                    LocalDateTime.of(2020, 1, 15, 21, 13)
+            )
+            TimeEntry secondEntry = createTimeEntry("Second task",
+                    project,
+                    LocalDateTime.of(2020, 01, 13, 15, 00),
+                    LocalDateTime.of(2020, 01, 13, 16, 00)
+            )
+            secondEntry.deleted = true
+            projectRepository.save(project)
+            timeEntryRepository.save(firstEntry)
+            timeEntryRepository.save(secondEntry)
+
+        when:
+            ProjectReadDTO result = projectService.getProjectWithTimeSummary(project.id, user).get()
+
+        then:
+            result.id == project.id
+            result.name == project.name
+            result.timeSpentInMilliseconds == 780000
+    }
+
+
     def 'should return projects summaries sorted by name ignoring case'() {
         given:
             Project firstProject = new Project(name: "ma", dateCreated: LocalDateTime.now(), userId: user.id)
@@ -172,6 +201,36 @@ class ProjectServiceSpec extends Specification {
         and:
             result.content[1].timeSpentInMilliseconds == 30000
             result.content[1].name == secondProject.name
+    }
+
+    def 'should not count deleted time entry'() {
+        given:
+            Project project = new Project(name: "First project", dateCreated: LocalDateTime.now(), userId: user.id)
+            TimeEntry firstEntry = createTimeEntry(
+                    "First task",
+                    project,
+                    LocalDateTime.of(2020, 1, 15, 21, 00),
+                    LocalDateTime.of(2020, 1, 15, 21, 13)
+            )
+            firstEntry.deleted = true
+
+            TimeEntry secondEntry = createTimeEntry("Second task",
+                    project,
+                    LocalDateTime.of(2020, 01, 13, 15, 00),
+                    LocalDateTime.of(2020, 01, 13, 16, 00)
+            )
+            projectRepository.save(project)
+            timeEntryRepository.save(firstEntry)
+            timeEntryRepository.save(secondEntry)
+
+        when:
+            Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, user)
+
+        then:
+            result.totalElements == 1
+            result.content[0].timeSpentInMilliseconds == 3600000
+            result.content[0].name == project.name
+
     }
 
     def 'should return time tracked without adding currently being tracked project'() {
