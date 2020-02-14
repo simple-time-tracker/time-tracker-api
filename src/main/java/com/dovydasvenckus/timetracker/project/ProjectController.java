@@ -53,8 +53,8 @@ public class ProjectController {
     @Path("{id}/entries")
     @Produces("application/json")
     public Page<TimeEntryDTO> getProjectTimeEntries(@PathParam("id") long id,
-                                                    @QueryParam("page") Integer page,
-                                                    @QueryParam("pageSize") Integer pageSize,
+                                                    @QueryParam("page") int page,
+                                                    @QueryParam("pageSize") int pageSize,
                                                     @Context ClientDetails clientDetails) {
         return timeEntryService.findAllByProject(id, page, pageSize, clientDetails);
     }
