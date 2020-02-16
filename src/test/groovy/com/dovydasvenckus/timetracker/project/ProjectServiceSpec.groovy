@@ -77,6 +77,50 @@ class ProjectServiceSpec extends Specification {
             result.timeSpentInMilliseconds == 4380000
     }
 
+    def 'should not include archived projects, when querying for active summaries'() {
+        given:
+            Project firstProject = new Project(name: "Active 1", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project secondProject = new Project(name: "Active 2", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project archivedProject = new Project(name: "Archived", dateCreated: LocalDateTime.now(), userId: user.id, archived: true)
+
+            projectRepository.save(firstProject)
+            projectRepository.save(secondProject)
+            projectRepository.save(archivedProject)
+
+        when:
+            Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, false, user)
+
+        then:
+            result.totalElements == 2
+            result.content[0].id == firstProject.id
+            result.content[0].name == 'Active 1'
+        and:
+            result.content[1].id == secondProject.id
+            result.content[1].name == 'Active 2'
+    }
+
+    def 'should not include active projects, when querying for archived summaries'() {
+        given:
+            Project activeProject = new Project(name: "Active", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project firstArchivedProject = new Project(name: "Archived 1", dateCreated: LocalDateTime.now(), userId: user.id, archived: true)
+            Project secondArchivedProject = new Project(name: "Archived 2", dateCreated: LocalDateTime.now(), userId: user.id, archived: true)
+
+            projectRepository.save(activeProject)
+            projectRepository.save(firstArchivedProject)
+            projectRepository.save(secondArchivedProject)
+
+        when:
+            Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, true, user)
+
+        then:
+            result.totalElements == 2
+            result.content[0].id == firstArchivedProject.id
+            result.content[0].name == 'Archived 1'
+        and:
+            result.content[1].id == secondArchivedProject.id
+            result.content[1].name == 'Archived 2'
+    }
+
     def 'should not include deleted time entries in amount tracked'() {
         given:
             Project project = new Project(name: "My project", dateCreated: LocalDateTime.now(), userId: user.id)
@@ -115,7 +159,7 @@ class ProjectServiceSpec extends Specification {
             projectRepository.save(secondProject)
 
         when:
-            Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, user)
+            Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, false, user)
 
         then:
             result.totalElements == 2
@@ -134,7 +178,7 @@ class ProjectServiceSpec extends Specification {
             projectRepository.save(project)
 
         when:
-            Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, user)
+            Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, false, user)
 
         then:
             result.totalElements == 1
@@ -172,7 +216,7 @@ class ProjectServiceSpec extends Specification {
             timeEntryRepository.save(secondProjectEntry)
 
         when:
-            Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, user)
+            Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, false, user)
 
         then:
             result.totalElements == 2
@@ -205,7 +249,7 @@ class ProjectServiceSpec extends Specification {
             timeEntryRepository.save(secondEntry)
 
         when:
-            Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, user)
+            Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, false, user)
 
         then:
             result.totalElements == 1
@@ -233,7 +277,7 @@ class ProjectServiceSpec extends Specification {
             timeEntryRepository.save(secondEntry)
 
         when:
-            Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, user)
+            Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, false, user)
 
         then:
             result.totalElements == 1
@@ -243,17 +287,17 @@ class ProjectServiceSpec extends Specification {
 
     def 'should not allow to set page size bigger that 20'() {
         expect:
-            projectService.findAllProjectsWithSummaries(0, 21, user).pageable.pageSize == 20
+            projectService.findAllProjectsWithSummaries(0, 21, false, user).pageable.pageSize == 20
     }
 
     def 'should allow set page size to one'() {
         expect:
-            projectService.findAllProjectsWithSummaries(0, 1, user).pageable.pageSize == 1
+            projectService.findAllProjectsWithSummaries(0, 1, false, user).pageable.pageSize == 1
     }
 
     def 'should use default page size, if it less than one'() {
         expect:
-            projectService.findAllProjectsWithSummaries(0, 0, user).pageable.pageSize == 20
+            projectService.findAllProjectsWithSummaries(0, 0, false, user).pageable.pageSize == 20
     }
 
     private TimeEntry createTimeEntry(String text, Project project, LocalDateTime startDate, LocalDateTime stopDate) {

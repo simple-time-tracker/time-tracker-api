@@ -39,13 +39,21 @@ public class ProjectService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProjectReadDTO> findAllProjectsWithSummaries(int page, int pageSize, ClientDetails clientDetails) {
+    public Page<ProjectReadDTO> findAllProjectsWithSummaries(int page,
+                                                             int pageSize,
+                                                             boolean isArchived,
+                                                             ClientDetails clientDetails
+    ) {
         PageRequest pageRequest = PageRequest.of(
                 page,
                 pageSizeResolver.resolvePageSize(pageSize),
                 Sort.by(defaultSortOrder)
         );
-        Page<Project> projectsPage = projectRepository.findAllByUserId(clientDetails.getId(), pageRequest);
+        Page<Project> projectsPage = projectRepository.findAllByUserIdAndArchived(
+                clientDetails.getId(),
+                isArchived,
+                pageRequest
+        );
 
         return transformProjectsPageToSummariesPage(pageRequest, projectsPage);
     }

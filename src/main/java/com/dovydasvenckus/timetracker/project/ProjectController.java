@@ -43,10 +43,11 @@ public class ProjectController {
     @GET
     @Path("/summaries")
     @Produces("application/json")
-    public Page<ProjectReadDTO> getProjectSummaries(@QueryParam("page") Integer page,
-                                                    @QueryParam("pageSize") Integer pageSize,
+    public Page<ProjectReadDTO> getProjectSummaries(@QueryParam("page") int page,
+                                                    @QueryParam("pageSize") int pageSize,
+                                                    @QueryParam("isArchived") boolean isArchived,
                                                     @Context ClientDetails clientDetails) {
-        return projectService.findAllProjectsWithSummaries(page, pageSize, clientDetails);
+        return projectService.findAllProjectsWithSummaries(page, pageSize, isArchived, clientDetails);
     }
 
     @GET
