@@ -15,9 +15,7 @@ public interface ProjectRepository extends CrudRepository<Project, Long> {
 
     Optional<Project> findByNameAndUserId(String name, UUID userId);
 
-    List<Project> findAllByUserId(UUID userId, Sort sort);
-
-    Page<Project> findAllByUserId(UUID userId, Pageable pageable);
+    Page<Project> findAllByUserIdAndArchived(UUID userId, boolean isArchived, Pageable pageable);
 
     List<Project> findByUserIdAndArchivedFalse(UUID userId, Sort sort);
 }
