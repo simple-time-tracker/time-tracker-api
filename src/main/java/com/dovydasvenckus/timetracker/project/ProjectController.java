@@ -97,4 +97,12 @@ public class ProjectController {
 
         return wasSuccessfullyArchived ? Response.ok().build() : Response.status(BAD_REQUEST).build();
     }
+
+    @POST
+    @Path("{id}/restore")
+    public Response restoreProject(@PathParam("id") Long id, @Context ClientDetails clientDetails) {
+        boolean wasUnarchived = projectService.restoreProject(id, clientDetails);
+
+        return wasUnarchived ? Response.ok().build() : Response.status(BAD_REQUEST).build();
+    }
 }
