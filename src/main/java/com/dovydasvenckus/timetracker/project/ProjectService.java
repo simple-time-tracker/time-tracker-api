@@ -38,12 +38,6 @@ public class ProjectService {
         this.defaultSortOrder = new Sort.Order(Sort.Direction.ASC, "name").ignoreCase();
     }
 
-    List<ProjectReadDTO> findAllProjects(ClientDetails clientDetails) {
-        return projectRepository.findAllByUserId(clientDetails.getId(), Sort.by(defaultSortOrder)).stream()
-                .map(ProjectReadDTO::new)
-                .collect(toList());
-    }
-
     @Transactional(readOnly = true)
     public Page<ProjectReadDTO> findAllProjectsWithSummaries(int page, int pageSize, ClientDetails clientDetails) {
         PageRequest pageRequest = PageRequest.of(

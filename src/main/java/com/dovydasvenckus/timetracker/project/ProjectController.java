@@ -37,7 +37,7 @@ public class ProjectController {
     @GET
     @Produces("application/json")
     public List<ProjectReadDTO> getProjects(@Context ClientDetails clientDetails) {
-        return projectService.findAllProjects(clientDetails);
+        return projectService.findAllActiveProjects(clientDetails);
     }
 
     @GET
@@ -57,13 +57,6 @@ public class ProjectController {
                                                     @QueryParam("pageSize") int pageSize,
                                                     @Context ClientDetails clientDetails) {
         return timeEntryService.findAllByProject(id, page, pageSize, clientDetails);
-    }
-
-    @GET
-    @Path("/active")
-    @Produces("application/json")
-    public List<ProjectReadDTO> getAllActiveProjects(@Context ClientDetails clientDetails) {
-        return projectService.findAllActiveProjects(clientDetails);
     }
 
     @GET
@@ -88,11 +81,11 @@ public class ProjectController {
         return createdProject
                 .map(ProjectReadDTO::new)
                 .map(project ->
-                Response.status(CREATED)
-                        .entity(project)
-                        .header("Location",
-                                restUrlGenerator.generateUrlToNewResource(uriInfo, project.getId()))
-                        .build())
+                        Response.status(CREATED)
+                                .entity(project)
+                                .header("Location",
+                                        restUrlGenerator.generateUrlToNewResource(uriInfo, project.getId()))
+                                .build())
                 .orElse(Response.status(CONFLICT).build());
     }
 

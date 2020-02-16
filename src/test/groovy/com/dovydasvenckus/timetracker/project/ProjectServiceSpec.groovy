@@ -27,25 +27,6 @@ class ProjectServiceSpec extends Specification {
 
     private ClientDetails user = new ClientDetails(UUID.randomUUID(), 'name')
 
-    def 'should return projects sorted by name ignoring case'() {
-        given:
-            Project firstProject = new Project(name: "ma", dateCreated: LocalDateTime.now(), userId: user.id)
-            Project secondProject = new Project(name: "MB", dateCreated: LocalDateTime.now(), userId: user.id)
-
-            projectRepository.save(firstProject)
-            projectRepository.save(secondProject)
-
-        when:
-            List<ProjectReadDTO> result = projectService.findAllProjects(user)
-
-        then:
-            result.size() == 2
-            result[0].id == firstProject.id
-            result[0].name == 'ma'
-        and:
-            result[1].id == secondProject.id
-            result[1].name == 'MB'
-    }
 
     def 'should return active projects sorted by name ignoring case'() {
         given:
