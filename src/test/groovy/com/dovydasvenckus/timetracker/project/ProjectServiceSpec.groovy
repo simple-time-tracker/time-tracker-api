@@ -300,6 +300,28 @@ class ProjectServiceSpec extends Specification {
             projectService.findAllProjectsWithSummaries(0, 0, false, user).pageable.pageSize == 20
     }
 
+    def 'should archive project'() {
+        given:
+            Project activeProject = new Project(name: "Active", dateCreated: LocalDateTime.now(), userId: user.id)
+            projectRepository.save(activeProject)
+        when:
+            projectService.archiveProject(activeProject.id, user)
+
+        then:
+            projectRepository.findById(activeProject.id).get().archived == true
+    }
+
+
+    def 'should restore project from archive state'() {
+        Project archivedProject = new Project(name: "Archived", dateCreated: LocalDateTime.now(), userId: user.id, archived: true)
+        projectRepository.save(archivedProject)
+        when:
+            projectService.restoreProject(archivedProject.id, user)
+
+        then:
+            projectRepository.findById(archivedProject.id).get().archived == false
+    }
+
     private TimeEntry createTimeEntry(String text, Project project, LocalDateTime startDate, LocalDateTime stopDate) {
         TimeEntry timeEntry = new TimeEntry(
                 description: text,

@@ -102,6 +102,16 @@ public class ProjectService {
         }).orElse(false);
     }
 
+    @Transactional
+    public boolean restoreProject(long projectId, ClientDetails clientDetails) {
+        Optional<Project> projectInDb = projectRepository.findByIdAndUserId(projectId, clientDetails.getId());
+
+        return projectInDb.map(project -> {
+            project.setArchived(false);
+            return true;
+        }).orElse(false);
+    }
+
     private Page<ProjectReadDTO> transformProjectsPageToSummariesPage(PageRequest pageRequest,
                                                                       Page<Project> projectsPage) {
         List<ProjectReadDTO> projectSummaries = projectsPage.stream()
