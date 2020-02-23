@@ -2,6 +2,7 @@ package com.dovydasvenckus.timetracker.project
 
 import com.dovydasvenckus.timetracker.TestDatabaseConfig
 import com.dovydasvenckus.timetracker.core.security.ClientDetails
+import com.dovydasvenckus.timetracker.data.ProjectCreator
 import com.dovydasvenckus.timetracker.entry.TimeEntry
 import com.dovydasvenckus.timetracker.entry.TimeEntryRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page
 import org.testcontainers.spock.Testcontainers
 import spock.lang.Specification
 
+import javax.ws.rs.ForbiddenException
 import java.time.LocalDateTime
 
 @Testcontainers
@@ -25,14 +27,17 @@ class ProjectServiceSpec extends Specification {
     @Autowired
     private ProjectService projectService
 
+    @Autowired
+    private ProjectCreator projectCreator
+
     private ClientDetails user = new ClientDetails(UUID.randomUUID(), 'name')
 
 
     def 'should return active projects sorted by name ignoring case'() {
         given:
-            Project firstProject = new Project(name: "ma", dateCreated: LocalDateTime.now(), userId: user.id)
-            Project secondProject = new Project(name: "MB", dateCreated: LocalDateTime.now(), userId: user.id)
-            Project archivedProject = new Project(name: "MB", dateCreated: LocalDateTime.now(), userId: user.id, archived: true)
+            Project firstProject = projectCreator.createProject("ma", user)
+            Project secondProject = projectCreator.createProject("MB", user)
+            Project archivedProject = projectCreator.createProject("MB", user, true)
 
             projectRepository.save(firstProject)
             projectRepository.save(secondProject)
@@ -52,7 +57,7 @@ class ProjectServiceSpec extends Specification {
 
     def 'should find and return project with correct amount tracked'() {
         given:
-            Project project = new Project(name: "My project", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project project = projectCreator.createProject("My project", user)
             TimeEntry firstEntry = createTimeEntry(
                     "First task",
                     project,
@@ -79,9 +84,9 @@ class ProjectServiceSpec extends Specification {
 
     def 'should not include archived projects, when querying for active summaries'() {
         given:
-            Project firstProject = new Project(name: "Active 1", dateCreated: LocalDateTime.now(), userId: user.id)
-            Project secondProject = new Project(name: "Active 2", dateCreated: LocalDateTime.now(), userId: user.id)
-            Project archivedProject = new Project(name: "Archived", dateCreated: LocalDateTime.now(), userId: user.id, archived: true)
+            Project firstProject = projectCreator.createProject("Active 1", user)
+            Project secondProject = projectCreator.createProject("Active 2", user)
+            Project archivedProject = projectCreator.createProject("Archived", user, true)
 
             projectRepository.save(firstProject)
             projectRepository.save(secondProject)
@@ -101,9 +106,9 @@ class ProjectServiceSpec extends Specification {
 
     def 'should not include active projects, when querying for archived summaries'() {
         given:
-            Project activeProject = new Project(name: "Active", dateCreated: LocalDateTime.now(), userId: user.id)
-            Project firstArchivedProject = new Project(name: "Archived 1", dateCreated: LocalDateTime.now(), userId: user.id, archived: true)
-            Project secondArchivedProject = new Project(name: "Archived 2", dateCreated: LocalDateTime.now(), userId: user.id, archived: true)
+            Project activeProject = projectCreator.createProject("Active", user)
+            Project firstArchivedProject = projectCreator.createProject("Archived 1", user, true)
+            Project secondArchivedProject = projectCreator.createProject("Archived 2", user, true)
 
             projectRepository.save(activeProject)
             projectRepository.save(firstArchivedProject)
@@ -123,7 +128,7 @@ class ProjectServiceSpec extends Specification {
 
     def 'should not include deleted time entries in amount tracked'() {
         given:
-            Project project = new Project(name: "My project", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project project = projectCreator.createProject("My project", user)
             TimeEntry firstEntry = createTimeEntry(
                     "First task",
                     project,
@@ -149,11 +154,10 @@ class ProjectServiceSpec extends Specification {
             result.timeSpentInMilliseconds == 780000
     }
 
-
     def 'should return projects summaries sorted by name ignoring case'() {
         given:
-            Project firstProject = new Project(name: "ma", dateCreated: LocalDateTime.now(), userId: user.id)
-            Project secondProject = new Project(name: "Mb", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project firstProject = projectCreator.createProject("ma", user)
+            Project secondProject = projectCreator.createProject("Mb", user)
 
             projectRepository.save(firstProject)
             projectRepository.save(secondProject)
@@ -170,10 +174,9 @@ class ProjectServiceSpec extends Specification {
             result.content[1].name == 'Mb'
     }
 
-
     def 'should return zero milliseconds tracked for project, when project has no time entries'() {
         given:
-            Project project = new Project(name: "Project", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project project = projectCreator.createProject("Project", user)
 
             projectRepository.save(project)
 
@@ -188,7 +191,7 @@ class ProjectServiceSpec extends Specification {
 
     def 'should return correct amount of milliseconds spent per project'() {
         given:
-            Project firstProject = new Project(name: "First project", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project firstProject = projectCreator.createProject("First project", user)
             TimeEntry firstEntry = createTimeEntry(
                     "First task",
                     firstProject,
@@ -205,7 +208,7 @@ class ProjectServiceSpec extends Specification {
             timeEntryRepository.save(secondEntry)
 
         and:
-            Project secondProject = new Project(name: "First project", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project secondProject = projectCreator.createProject("First project", user)
             TimeEntry secondProjectEntry = createTimeEntry(
                     "Second task project task",
                     secondProject,
@@ -230,7 +233,7 @@ class ProjectServiceSpec extends Specification {
 
     def 'should not count deleted time entry'() {
         given:
-            Project project = new Project(name: "First project", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project project = projectCreator.createProject("First project", user)
             TimeEntry firstEntry = createTimeEntry(
                     "First task",
                     project,
@@ -260,7 +263,7 @@ class ProjectServiceSpec extends Specification {
 
     def 'should return time tracked without adding currently being tracked project'() {
         given:
-            Project firstProject = new Project(name: "First project", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project firstProject = projectCreator.createProject("First project", user)
             TimeEntry firstEntry = createTimeEntry(
                     "First task",
                     firstProject,
@@ -302,7 +305,7 @@ class ProjectServiceSpec extends Specification {
 
     def 'should archive project'() {
         given:
-            Project activeProject = new Project(name: "Active", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project activeProject = projectCreator.createProject("Active", user)
             projectRepository.save(activeProject)
         when:
             projectService.archiveProject(activeProject.id, user)
@@ -311,10 +314,10 @@ class ProjectServiceSpec extends Specification {
             projectRepository.findById(activeProject.id).get().archived == true
     }
 
-
     def 'should restore project from archive state'() {
-        Project archivedProject = new Project(name: "Archived", dateCreated: LocalDateTime.now(), userId: user.id, archived: true)
-        projectRepository.save(archivedProject)
+        given:
+            Project archivedProject = projectCreator.createProject("Archived", user)
+            projectRepository.save(archivedProject)
         when:
             projectService.restoreProject(archivedProject.id, user)
 
@@ -322,12 +325,43 @@ class ProjectServiceSpec extends Specification {
             projectRepository.findById(archivedProject.id).get().archived == false
     }
 
+    def 'should throw forbidden exception if project has different user id'() {
+        given:
+            ClientDetails differentUser = new ClientDetails(UUID.randomUUID(), 'different')
+            Project project = projectCreator.createProject("First project", differentUser)
+            projectRepository.save(project)
+        when:
+            projectService.updateProject(project.getId(), new ProjectWriteDTO("new name"), user)
+
+        then:
+            thrown(ForbiddenException)
+    }
+
+    def 'should update project, when project created by same user'() {
+        given:
+            Project project = projectCreator.createProject("First project", user)
+            projectRepository.save(project)
+        when:
+            projectService.updateProject(project.id, new ProjectWriteDTO("new name"), user)
+
+        then:
+            Project updatedProject = projectRepository.findById(project.id).get()
+            updatedProject.name == "new name"
+            updatedProject.dateModified.isAfter(project.dateModified)
+            updatedProject.modifiedBy == user.id
+    }
+
+    def 'should return empty project, when there is no project to update'() {
+        expect:
+            projectService.updateProject(-1, new ProjectWriteDTO("new name"), user).isEmpty()
+    }
+
     private TimeEntry createTimeEntry(String text, Project project, LocalDateTime startDate, LocalDateTime stopDate) {
         TimeEntry timeEntry = new TimeEntry(
                 description: text,
                 startDate: startDate,
                 endDate: stopDate,
-                userId: user.id
+                createdBy: user.id
         )
         project.addTimeEntry(timeEntry)
         return timeEntry

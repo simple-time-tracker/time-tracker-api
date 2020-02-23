@@ -13,11 +13,11 @@ public interface ProjectRepository extends CrudRepository<Project, Long> {
 
     Optional<Project> findById(long id);
 
-    Optional<Project> findByIdAndUserId(long id, UUID userId);
+    Optional<Project> findByIdAndCreatedBy(long id, UUID userId);
 
-    Optional<Project> findByNameAndUserId(String name, UUID userId);
+    Optional<Project> findByNameAndCreatedBy(String name, UUID userId);
 
-    Page<Project> findAllByUserIdAndArchived(UUID userId, boolean isArchived, Pageable pageable);
+    Page<Project> findAllByCreatedByAndArchived(UUID userId, boolean isArchived, Pageable pageable);
 
-    List<Project> findByUserIdAndArchivedFalse(UUID userId, Sort sort);
+    List<Project> findByCreatedByAndArchivedFalse(UUID userId, Sort sort);
 }

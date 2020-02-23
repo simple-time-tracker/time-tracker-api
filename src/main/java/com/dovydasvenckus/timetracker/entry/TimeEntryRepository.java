@@ -10,11 +10,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface TimeEntryRepository extends CrudRepository<TimeEntry, Long>, TimeEntryRepositoryCustom {
-    Optional<TimeEntry> findByIdAndUserId(long id, UUID userId);
+    Optional<TimeEntry> findByIdAndCreatedBy(long id, UUID userId);
 
     @Query("SELECT te "
             + "FROM TimeEntry te "
-            + "WHERE te.userId = :userId AND deleted = :deleted "
+            + "WHERE te.createdBy = :userId AND deleted = :deleted "
             + "ORDER BY te.startDate DESC")
     Page<TimeEntry> findAllByDeleted(@Param("userId") UUID userId,
                                      @Param("deleted") boolean deleted,
@@ -23,7 +23,7 @@ public interface TimeEntryRepository extends CrudRepository<TimeEntry, Long>, Ti
 
     @Query("SELECT te "
             + "FROM TimeEntry te "
-            + "WHERE te.project.id = :projectId AND te.userId = :userId AND te.deleted = false "
+            + "WHERE te.project.id = :projectId AND te.createdBy = :userId AND te.deleted = false "
             + "ORDER BY te.startDate DESC")
 
     Page<TimeEntry> findAllByProject(@Param("projectId") long projectId,

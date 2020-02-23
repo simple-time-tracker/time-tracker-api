@@ -35,18 +35,18 @@ public class TimeEntry {
     @Column(name = "is_deleted")
     private boolean deleted = false;
 
-    @Column(name = "user_id")
-    private UUID userId;
+    @Column(name = "created_by")
+    private UUID createdBy;
 
     TimeEntry() {
     }
 
-    TimeEntry(TimeEntryDTO timeEntryDTO, UUID userId) {
+    TimeEntry(TimeEntryDTO timeEntryDTO, UUID createdBy) {
         this.id = timeEntryDTO.getId();
         this.description = timeEntryDTO.getDescription();
         this.startDate = timeEntryDTO.getStartDate();
         this.endDate = timeEntryDTO.getEndDate();
-        this.userId = userId;
+        this.createdBy = createdBy;
     }
 
 }
