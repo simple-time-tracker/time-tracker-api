@@ -1,8 +1,8 @@
 package com.dovydasvenckus.timetracker.entry;
 
-import com.dovydasvenckus.timetracker.helper.date.clock.DateTimeService;
-import com.dovydasvenckus.timetracker.helper.pagination.PageSizeResolver;
-import com.dovydasvenckus.timetracker.helper.security.ClientDetails;
+import com.dovydasvenckus.timetracker.core.date.clock.DateTimeService;
+import com.dovydasvenckus.timetracker.core.pagination.PageSizeResolver;
+import com.dovydasvenckus.timetracker.core.security.ClientDetails;
 import com.dovydasvenckus.timetracker.project.Project;
 import com.dovydasvenckus.timetracker.project.ProjectRepository;
 import org.springframework.data.domain.Page;

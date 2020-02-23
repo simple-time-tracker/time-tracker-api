@@ -1,4 +1,4 @@
-package com.dovydasvenckus.timetracker.helper.date.serialization;
+package com.dovydasvenckus.timetracker.core.date.serialization;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;

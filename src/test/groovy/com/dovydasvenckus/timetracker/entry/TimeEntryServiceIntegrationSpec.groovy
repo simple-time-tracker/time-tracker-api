@@ -1,7 +1,7 @@
 package com.dovydasvenckus.timetracker.entry
 
 import com.dovydasvenckus.timetracker.TestDatabaseConfig
-import com.dovydasvenckus.timetracker.helper.security.ClientDetails
+import com.dovydasvenckus.timetracker.core.security.ClientDetails
 import com.dovydasvenckus.timetracker.project.Project
 import com.dovydasvenckus.timetracker.project.ProjectRepository
 import org.springframework.beans.factory.annotation.Autowired

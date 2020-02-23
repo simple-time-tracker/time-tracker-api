@@ -1,8 +1,9 @@
 package com.dovydasvenckus.timetracker.project;
 
-import com.dovydasvenckus.timetracker.helper.date.clock.DateTimeService;
-import com.dovydasvenckus.timetracker.helper.pagination.PageSizeResolver;
-import com.dovydasvenckus.timetracker.helper.security.ClientDetails;
+import com.dovydasvenckus.timetracker.core.date.clock.DateTimeService;
+import com.dovydasvenckus.timetracker.core.pagination.PageSizeResolver;
+import com.dovydasvenckus.timetracker.core.security.ClientDetails;
+import com.dovydasvenckus.timetracker.core.security.IsSameUserId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -10,7 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.ws.rs.core.Context;
+import javax.ws.rs.ForbiddenException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
@@ -71,8 +72,15 @@ public class ProjectService {
                 .map(this::mapToSummary);
     }
 
+    private Optional<Project> findById(long id, ClientDetails clientDetails) throws ForbiddenException {
+        Optional<Project> foundProject = projectRepository.findById(id);
+        foundProject.ifPresent(project -> validateIfProjectBelongsToSameUser(project, clientDetails));
+
+        return foundProject;
+    }
+
     @Transactional
-    public Optional<Project> create(ProjectWriteDTO projectWriteDTO, @Context ClientDetails clientDetails) {
+    public Optional<ProjectReadDTO> create(ProjectWriteDTO projectWriteDTO, ClientDetails clientDetails) {
         Optional<Project> projectInDb = projectRepository.findByNameAndUserId(
                 projectWriteDTO.getName(),
                 clientDetails.getId()
@@ -86,10 +94,22 @@ public class ProjectService {
 
             projectRepository.save(project);
 
-            return Optional.of(project);
+            return Optional.of(project)
+                    .map(ProjectReadDTO::new);
         }
 
         return Optional.empty();
+    }
+
+    @Transactional
+    public Optional<ProjectReadDTO> updateProject(long projectId,
+                                                  ProjectWriteDTO updateRequest,
+                                                  ClientDetails clientDetails) {
+        return findById(projectId, clientDetails)
+                .map(project -> {
+                    project.setName(updateRequest.getName());
+                    return project;
+                }).map(ProjectReadDTO::new);
     }
 
     @Transactional
@@ -128,5 +148,11 @@ public class ProjectService {
                 .map(timeEntry -> Duration.between(timeEntry.getStartDate(), timeEntry.getEndDate()).toMillis())
                 .reduce(0L, Long::sum);
         return new ProjectReadDTO(project, durationInMilliseconds);
+    }
+
+    private void validateIfProjectBelongsToSameUser(Project project, ClientDetails clientDetails) {
+        if (!IsSameUserId.getInstance().test(project.getUserId(), clientDetails)) {
+            throw new ForbiddenException();
+        }
     }
 }

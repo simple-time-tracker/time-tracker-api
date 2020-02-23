@@ -1,4 +1,4 @@
-package com.dovydasvenckus.timetracker.config.jersey.exception;
+package com.dovydasvenckus.timetracker.core.rest.exception.validation;
 
 import lombok.AllArgsConstructor;
 import lombok.Value;

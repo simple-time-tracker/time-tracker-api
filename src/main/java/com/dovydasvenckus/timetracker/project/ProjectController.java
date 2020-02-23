@@ -1,9 +1,9 @@
 package com.dovydasvenckus.timetracker.project;
 
+import com.dovydasvenckus.timetracker.core.rest.RestUrlGenerator;
+import com.dovydasvenckus.timetracker.core.security.ClientDetails;
 import com.dovydasvenckus.timetracker.entry.TimeEntryDTO;
 import com.dovydasvenckus.timetracker.entry.TimeEntryService;
-import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
-import com.dovydasvenckus.timetracker.helper.security.ClientDetails;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
@@ -77,17 +77,34 @@ public class ProjectController {
     public Response createProject(@Valid ProjectWriteDTO projectWriteDTO,
                                   @Context UriInfo uriInfo,
                                   @Context ClientDetails clientDetails) {
-        Optional<Project> createdProject = projectService.create(projectWriteDTO, clientDetails);
+        Optional<ProjectReadDTO> createdProject = projectService.create(projectWriteDTO, clientDetails);
 
         return createdProject
-                .map(ProjectReadDTO::new)
                 .map(project ->
                         Response.status(CREATED)
                                 .entity(project)
-                                .header("Location",
-                                        restUrlGenerator.generateUrlToNewResource(uriInfo, project.getId()))
+                                .location(restUrlGenerator.generateUrlToNewResource(uriInfo, project.getId()))
                                 .build())
                 .orElse(Response.status(CONFLICT).build());
+    }
+
+
+    @PUT
+    @Path("{id}")
+    public Response updateProject(@PathParam("id") long id,
+                                  @Valid ProjectWriteDTO createRequest,
+                                  @Context ClientDetails clientDetails,
+                                  @Context UriInfo uriInfo) {
+        Optional<ProjectReadDTO> updatedProject = projectService.updateProject(id, createRequest, clientDetails);
+        if (updatedProject.isPresent()) {
+            return Response.noContent().build();
+        }
+
+        return projectService.create(createRequest, clientDetails)
+                .map(newProject -> Response
+                        .created(restUrlGenerator.generateUrlToNewResource(uriInfo, newProject.getId()))
+                        .build())
+                .orElse(Response.serverError().build());
     }
 
     @POST

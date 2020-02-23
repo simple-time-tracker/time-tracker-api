@@ -1,9 +1,9 @@
 package com.dovydasvenckus.timetracker.project
 
 import com.dovydasvenckus.timetracker.TestDatabaseConfig
+import com.dovydasvenckus.timetracker.core.security.ClientDetails
 import com.dovydasvenckus.timetracker.entry.TimeEntry
 import com.dovydasvenckus.timetracker.entry.TimeEntryRepository
-import com.dovydasvenckus.timetracker.helper.security.ClientDetails
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.Page
