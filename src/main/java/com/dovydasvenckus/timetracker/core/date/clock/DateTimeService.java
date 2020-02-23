@@ -1,4 +1,4 @@
-package com.dovydasvenckus.timetracker.helper.date.clock;
+package com.dovydasvenckus.timetracker.core.date.clock;
 
 import java.time.LocalDateTime;
 

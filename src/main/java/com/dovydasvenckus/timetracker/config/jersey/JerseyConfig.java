@@ -1,9 +1,9 @@
 package com.dovydasvenckus.timetracker.config.jersey;
 
-import com.dovydasvenckus.timetracker.config.jersey.exception.ConstraintViolationExceptionMapper;
+import com.dovydasvenckus.timetracker.core.rest.exception.validation.ConstraintViolationExceptionMapper;
 import com.dovydasvenckus.timetracker.entry.TimeEntryController;
-import com.dovydasvenckus.timetracker.helper.security.ClientDetails;
-import com.dovydasvenckus.timetracker.helper.security.CurrentUserResolver;
+import com.dovydasvenckus.timetracker.core.security.ClientDetails;
+import com.dovydasvenckus.timetracker.core.security.CurrentUserResolver;
 import com.dovydasvenckus.timetracker.project.ProjectController;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.message.GZipEncoder;

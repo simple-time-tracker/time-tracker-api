@@ -28,8 +28,14 @@ public class Project {
     @Column(name = "date_created", nullable = false)
     private LocalDateTime dateCreated;
 
-    @Column(name = "user_id")
-    private UUID userId;
+    @Column(name = "date_modified", nullable = false)
+    private LocalDateTime dateModified;
+
+    @Column(name = "created_by")
+    private UUID createdBy;
+
+    @Column(name = "modified_by")
+    private UUID modifiedBy;
 
     @OneToMany(mappedBy = "project")
     @ToString.Exclude

@@ -11,11 +11,13 @@ import java.util.UUID;
 
 public interface ProjectRepository extends CrudRepository<Project, Long> {
 
-    Optional<Project> findByIdAndUserId(Long id, UUID userId);
+    Optional<Project> findById(long id);
 
-    Optional<Project> findByNameAndUserId(String name, UUID userId);
+    Optional<Project> findByIdAndCreatedBy(long id, UUID userId);
 
-    Page<Project> findAllByUserIdAndArchived(UUID userId, boolean isArchived, Pageable pageable);
+    Optional<Project> findByNameAndCreatedBy(String name, UUID userId);
 
-    List<Project> findByUserIdAndArchivedFalse(UUID userId, Sort sort);
+    Page<Project> findAllByCreatedByAndArchived(UUID userId, boolean isArchived, Pageable pageable);
+
+    List<Project> findByCreatedByAndArchivedFalse(UUID userId, Sort sort);
 }

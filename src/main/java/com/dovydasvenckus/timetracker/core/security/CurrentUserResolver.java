@@ -1,4 +1,4 @@
-package com.dovydasvenckus.timetracker.helper.security;
+package com.dovydasvenckus.timetracker.core.security;
 
 import org.glassfish.hk2.api.Factory;
 import org.springframework.security.core.Authentication;

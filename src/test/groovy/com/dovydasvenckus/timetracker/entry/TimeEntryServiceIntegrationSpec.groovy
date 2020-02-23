@@ -1,7 +1,8 @@
 package com.dovydasvenckus.timetracker.entry
 
 import com.dovydasvenckus.timetracker.TestDatabaseConfig
-import com.dovydasvenckus.timetracker.helper.security.ClientDetails
+import com.dovydasvenckus.timetracker.core.security.ClientDetails
+import com.dovydasvenckus.timetracker.data.ProjectCreator
 import com.dovydasvenckus.timetracker.project.Project
 import com.dovydasvenckus.timetracker.project.ProjectRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,11 +26,14 @@ class TimeEntryServiceIntegrationSpec extends Specification {
     @Autowired
     TimeEntryService timeEntryService
 
+    @Autowired
+    ProjectCreator projectCreator
+
     private ClientDetails user = new ClientDetails(UUID.randomUUID(), 'name')
 
     def 'should mark as deleted'() {
         given:
-            Project project = new Project(name: "Project", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project project = projectCreator.createProject("Project", user)
             TimeEntry timeEntry = createTimeEntry("Entry to delete", project)
             project.addTimeEntry(timeEntry)
 
@@ -60,7 +64,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
 
     def 'should return only not deleted entries'() {
         given:
-            Project project = new Project(name: "Project", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project project = projectCreator.createProject("Project", user)
             TimeEntry timeEntry1 = createTimeEntry("Time entry 1", project)
 
             TimeEntry timeEntry2 = createTimeEntry("Time entry 2", project)
@@ -88,7 +92,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
 
     def 'should return ordered by start date'() {
         given:
-            Project project = new Project(name: "Project", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project project = projectCreator.createProject("Project", user)
             TimeEntry timeEntry1 = createTimeEntry("Time entry 1", project)
 
             TimeEntry timeEntry2 = createTimeEntry("Time entry 2", project)
@@ -111,7 +115,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
 
     def 'should return only time entries assigned only to one project'() {
         given:
-            Project firstProject = new Project(name: "First project", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project firstProject = projectCreator.createProject("First project", user)
             TimeEntry timeEntry1 = createTimeEntry("Time entry 1", firstProject)
 
             TimeEntry timeEntry2 = createTimeEntry("Time entry 2", firstProject)
@@ -124,7 +128,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             timeEntryRepository.save(timeEntry2)
 
         and:
-            Project secondProject = new Project(name: "Second project", dateCreated: LocalDateTime.now(), userId: user.id)
+            Project secondProject = projectCreator.createProject("Second project", user)
             TimeEntry secondProjectTimeEntry = createTimeEntry("Second project Time entry 1", secondProject)
             projectRepository.save(secondProject)
             timeEntryRepository.save(secondProjectTimeEntry)
@@ -142,7 +146,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
         TimeEntry timeEntry = new TimeEntry(
                 description: text,
                 startDate: LocalDateTime.now(),
-                userId: user.id
+                createdBy: user.id
         )
         project.addTimeEntry(timeEntry)
         return timeEntry

@@ -1,0 +1,2 @@
+ALTER TABLE projects ALTER COLUMN user_id SET NOT NULL;
+ALTER TABLE time_entries ALTER COLUMN user_id SET NOT NULL;

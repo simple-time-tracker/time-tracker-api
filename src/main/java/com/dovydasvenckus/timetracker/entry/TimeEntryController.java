@@ -1,7 +1,7 @@
 package com.dovydasvenckus.timetracker.entry;
 
-import com.dovydasvenckus.timetracker.helper.rest.RestUrlGenerator;
-import com.dovydasvenckus.timetracker.helper.security.ClientDetails;
+import com.dovydasvenckus.timetracker.core.rest.RestUrlGenerator;
+import com.dovydasvenckus.timetracker.core.security.ClientDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
@@ -69,7 +69,7 @@ public class TimeEntryController {
 
             return Response.status(CREATED)
                     .entity("New time entry has been created")
-                    .header("Location", restUrlGenerator.generateUrlToNewResource(uriInfo, timeEntry.getId()))
+                    .location(restUrlGenerator.generateUrlToNewResource(uriInfo, timeEntry.getId()))
                     .build();
         }
 
@@ -98,9 +98,8 @@ public class TimeEntryController {
 
         return Response.status(CREATED)
                 .entity("New time entry has been created")
-                .header("Location",
-                        restUrlGenerator.generateUrlToNewResource(uriInfo, timeEntry.getId())
-                ).build();
+                .location(restUrlGenerator.generateUrlToNewResource(uriInfo, timeEntry.getId()))
+                .build();
     }
 
     @DELETE

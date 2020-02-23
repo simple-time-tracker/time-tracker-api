@@ -1,4 +1,4 @@
-package com.dovydasvenckus.timetracker.helper.security;
+package com.dovydasvenckus.timetracker.core.security;
 
 import lombok.Value;
 

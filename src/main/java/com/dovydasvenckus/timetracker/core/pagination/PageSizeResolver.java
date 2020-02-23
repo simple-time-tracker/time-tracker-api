@@ -1,4 +1,4 @@
-package com.dovydasvenckus.timetracker.helper.pagination;
+package com.dovydasvenckus.timetracker.core.pagination;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

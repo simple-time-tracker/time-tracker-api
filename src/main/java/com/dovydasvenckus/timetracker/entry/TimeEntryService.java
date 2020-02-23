@@ -1,8 +1,8 @@
 package com.dovydasvenckus.timetracker.entry;
 
-import com.dovydasvenckus.timetracker.helper.date.clock.DateTimeService;
-import com.dovydasvenckus.timetracker.helper.pagination.PageSizeResolver;
-import com.dovydasvenckus.timetracker.helper.security.ClientDetails;
+import com.dovydasvenckus.timetracker.core.date.clock.DateTimeService;
+import com.dovydasvenckus.timetracker.core.pagination.PageSizeResolver;
+import com.dovydasvenckus.timetracker.core.security.ClientDetails;
 import com.dovydasvenckus.timetracker.project.Project;
 import com.dovydasvenckus.timetracker.project.ProjectRepository;
 import org.springframework.data.domain.Page;
@@ -60,7 +60,7 @@ public class TimeEntryService {
         timeEntryDTO.setId(null);
         TimeEntry timeEntry;
         timeEntry = new TimeEntry(timeEntryDTO, clientDetails.getId());
-        Optional<Project> project = projectRepository.findByIdAndUserId(
+        Optional<Project> project = projectRepository.findByIdAndCreatedBy(
                 timeEntryDTO.getProject().getId(),
                 clientDetails.getId()
         );
@@ -72,13 +72,13 @@ public class TimeEntryService {
 
     @Transactional
     public void stop(TimeEntryDTO timeEntryDTO, ClientDetails clientDetails) {
-        timeEntryRepository.findByIdAndUserId(timeEntryDTO.getId(), clientDetails.getId())
+        timeEntryRepository.findByIdAndCreatedBy(timeEntryDTO.getId(), clientDetails.getId())
                 .ifPresent(entry -> entry.setEndDate(dateTimeService.now()));
     }
 
     @Transactional
     public void delete(Long id, ClientDetails clientDetails) {
-        timeEntryRepository.findByIdAndUserId(id, clientDetails.getId())
+        timeEntryRepository.findByIdAndCreatedBy(id, clientDetails.getId())
                 .ifPresent(timeEntry -> timeEntry.setDeleted(true));
     }
 
@@ -89,13 +89,13 @@ public class TimeEntryService {
 
     @Transactional
     public TimeEntry startTracking(Long projectId, String description, ClientDetails clientDetails) {
-        Optional<Project> project = projectRepository.findByIdAndUserId(projectId, clientDetails.getId());
+        Optional<Project> project = projectRepository.findByIdAndCreatedBy(projectId, clientDetails.getId());
         if (project.isPresent()) {
             TimeEntry timeEntry = new TimeEntry();
             timeEntry.setStartDate(dateTimeService.now());
             timeEntry.setDescription(description);
             timeEntry.setProject(project.get());
-            timeEntry.setUserId(clientDetails.getId());
+            timeEntry.setCreatedBy(clientDetails.getId());
 
             timeEntryRepository.save(timeEntry);
 
