@@ -1,10 +1,12 @@
 package com.dovydasvenckus.timetracker.project
 
 import com.dovydasvenckus.timetracker.TestDatabaseConfig
+import com.dovydasvenckus.timetracker.core.date.clock.DateTimeService
 import com.dovydasvenckus.timetracker.core.security.ClientDetails
 import com.dovydasvenckus.timetracker.data.ProjectCreator
 import com.dovydasvenckus.timetracker.entry.TimeEntry
 import com.dovydasvenckus.timetracker.entry.TimeEntryRepository
+import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.Page
@@ -314,6 +316,17 @@ class ProjectServiceSpec extends Specification {
             projectRepository.findById(activeProject.id).get().archived == true
     }
 
+    def 'should update date modified, when archiving'() {
+        given:
+            Project activeProject = projectCreator.createProject("Active", user)
+            projectRepository.save(activeProject)
+        when:
+            projectService.archiveProject(activeProject.id, user)
+
+        then:
+            projectRepository.findById(activeProject.id).get().dateModified.isAfter(activeProject.dateModified)
+    }
+
     def 'should restore project from archive state'() {
         given:
             Project archivedProject = projectCreator.createProject("Archived", user)
@@ -324,6 +337,17 @@ class ProjectServiceSpec extends Specification {
         then:
             projectRepository.findById(archivedProject.id).get().archived == false
     }
+    def 'should update date modified, when restoring archived project'() {
+        given:
+            Project archivedProject = projectCreator.createProject("Archived", user)
+            projectRepository.save(archivedProject)
+        when:
+            projectService.restoreProject(archivedProject.id, user)
+
+        then:
+            projectRepository.findById(archivedProject.id).get().dateModified.isAfter(archivedProject.dateModified)
+    }
+
 
     def 'should throw forbidden exception if project has different user id'() {
         given:

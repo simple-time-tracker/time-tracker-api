@@ -120,6 +120,7 @@ public class ProjectService {
 
         return projectInDb.map(project -> {
             project.setArchived(true);
+            project.setDateModified(dateTimeService.now());
             return true;
         }).orElse(false);
     }
@@ -130,6 +131,7 @@ public class ProjectService {
 
         return projectInDb.map(project -> {
             project.setArchived(false);
+            project.setDateModified(dateTimeService.now());
             return true;
         }).orElse(false);
     }
