@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.ForbiddenException;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -87,10 +88,13 @@ public class ProjectService {
         );
 
         if (projectInDb.isEmpty()) {
+            LocalDateTime creationDate = dateTimeService.now();
             Project project = new Project();
             project.setName(projectWriteDTO.getName());
-            project.setDateCreated(dateTimeService.now());
+            project.setDateCreated(creationDate);
+            project.setDateModified(creationDate);
             project.setCreatedBy(clientDetails.getId());
+            project.setModifiedBy(clientDetails.getId());
 
             projectRepository.save(project);
 
