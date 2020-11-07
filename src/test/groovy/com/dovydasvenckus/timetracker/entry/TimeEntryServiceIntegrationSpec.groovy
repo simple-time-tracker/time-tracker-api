@@ -142,6 +142,25 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             result.content[1].id == timeEntry1.id
     }
 
+    def 'should not return deleted time entries as current'() {
+        given:
+            Project project = projectCreator.createProject("Project", user)
+            TimeEntry timeEntry1 = createTimeEntry("Time entry 1", project)
+            timeEntry1.deleted = true
+
+            TimeEntry timeEntry2 = createTimeEntry("Time entry 2", project)
+
+            projectRepository.save(project)
+            timeEntryRepository.save(timeEntry1)
+            timeEntryRepository.save(timeEntry2)
+
+        when:
+            TimeEntryDTO result = timeEntryService.findCurrentlyActive(user).get()
+
+        then:
+            result.id == timeEntry2.id
+    }
+
     private TimeEntry createTimeEntry(String text, Project project) {
         TimeEntry timeEntry = new TimeEntry(
                 description: text,
