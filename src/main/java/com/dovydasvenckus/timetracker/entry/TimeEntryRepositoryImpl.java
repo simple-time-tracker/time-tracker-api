@@ -11,7 +11,7 @@ public class TimeEntryRepositoryImpl implements TimeEntryRepositoryCustom {
 
     private static final String ACTIVE_ENTRY_QUERY = "SELECT te "
             + "FROM TimeEntry as te "
-            + "WHERE te.createdBy = :userId AND te.endDate is null";
+            + "WHERE te.createdBy = :userId AND te.endDate is null AND te.deleted = FALSE";
 
     @PersistenceContext
     private EntityManager entityManager;
