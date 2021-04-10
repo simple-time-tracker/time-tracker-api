@@ -1,6 +1,7 @@
 package com.dovydasvenckus.timetracker.core.rest.exception.validation;
 
-import org.codehaus.jackson.map.ObjectMapper;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
