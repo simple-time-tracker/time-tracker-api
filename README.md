@@ -1,6 +1,8 @@
 # time-tracker-api
-    
-[![Run Status](https://api.shippable.com/projects/59fe1ab0e07b7707001c66e3/badge?branch=master)](https://app.shippable.com/github/dovydasvenckus/time-tracker-api/dashboard) [![Known Vulnerabilities](https://snyk.io//test/github/simple-time-tracker/time-tracker-api/badge.svg?targetFile=build.gradle)](https://snyk.io//test/github/simple-time-tracker/time-tracker-api?targetFile=build.gradle)  
+
+[![Build Status](https://travis-ci.com/simple-time-tracker/time-tracker-api.svg?branch=master)](https://travis-ci.com/simple-time-tracker/time-tracker-api)
+[![codecov](https://codecov.io/gh/simple-time-tracker/time-tracker-api/branch/master/graph/badge.svg?token=J2Z20N5YPY)](https://codecov.io/gh/simple-time-tracker/time-tracker-api)
+[![Known Vulnerabilities](https://snyk.io//test/github/simple-time-tracker/time-tracker-api/badge.svg?targetFile=build.gradle)](https://snyk.io//test/github/simple-time-tracker/time-tracker-api?targetFile=build.gradle)
 ## Description
 Simple time tracking application. Not ready for
 production
