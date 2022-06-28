@@ -1,10 +1,10 @@
-FROM openjdk:13-alpine AS build-jar
+FROM openjdk:jdk-slim-bullseye AS build-jar
 ENV BUILD_ROOT=/home/build-space
 WORKDIR $BUILD_ROOT
 COPY [".", "${BUILD_ROOT}"]
 RUN ./gradlew assemble
 
-FROM openjdk:13-alpine
+FROM openjdk:jdk-slim-bullseye
 MAINTAINER Dovydas Venckus "dovydas.venckus@live.com"
 ENV APP_ROOT=/home/time-tracker \
     APP_NAME=time-tracker-api-0.0.1-SNAPSHOT.jar \
