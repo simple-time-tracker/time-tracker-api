@@ -41,7 +41,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.6'
 
     implementation 'org.flywaydb:flyway-core:5.2.4'
-    implementation 'org.postgresql:postgresql:42.2.19'
+    implementation 'org.postgresql:postgresql:42.4.0'
 
     testImplementation "cglib:cglib:2.2"
     testImplementation "org.testcontainers:spock:${testContainersVersion}"
