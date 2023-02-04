@@ -1,7 +1,7 @@
 package com.dovydasvenckus.timetracker.entry
 
 import com.dovydasvenckus.timetracker.TestDatabaseConfig
-import com.dovydasvenckus.timetracker.core.security.ClientDetails
+
 import com.dovydasvenckus.timetracker.data.ProjectCreator
 import com.dovydasvenckus.timetracker.project.Project
 import com.dovydasvenckus.timetracker.project.ProjectRepository
@@ -29,7 +29,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
     @Autowired
     ProjectCreator projectCreator
 
-    private ClientDetails user = new ClientDetails(UUID.randomUUID(), 'name')
+    private UUID user = UUID.randomUUID()
 
     def 'should mark as deleted'() {
         given:

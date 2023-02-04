@@ -1,125 +1,110 @@
 package com.dovydasvenckus.timetracker.project;
 
 import com.dovydasvenckus.timetracker.core.rest.RestUrlGenerator;
-import com.dovydasvenckus.timetracker.core.security.ClientDetails;
+import com.dovydasvenckus.timetracker.core.security.JwtService;
 import com.dovydasvenckus.timetracker.entry.TimeEntryDTO;
 import com.dovydasvenckus.timetracker.entry.TimeEntryService;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import java.util.List;
 import java.util.Optional;
 
-import static javax.ws.rs.core.Response.Status.*;
-
 @Component
-@Path("/projects")
+@RestController
+@AllArgsConstructor
+@RequestMapping("/projects")
 public class ProjectController {
     private final RestUrlGenerator restUrlGenerator;
-
+    private final JwtService jwtService;
     private final ProjectService projectService;
-
     private final TimeEntryService timeEntryService;
 
-    public ProjectController(RestUrlGenerator restUrlGenerator,
-                             ProjectService projectService,
-                             TimeEntryService timeEntryService) {
-        this.restUrlGenerator = restUrlGenerator;
-        this.projectService = projectService;
-        this.timeEntryService = timeEntryService;
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ProjectReadDTO> getProjects(@AuthenticationPrincipal Jwt jwt) {
+        return projectService.findAllActiveProjects(jwtService.getUserId(jwt));
     }
 
-    @GET
-    @Produces("application/json")
-    public List<ProjectReadDTO> getProjects(@Context ClientDetails clientDetails) {
-        return projectService.findAllActiveProjects(clientDetails);
+    @GetMapping("/summaries")
+    public Page<ProjectReadDTO> getProjectSummaries(@RequestParam("page") int page,
+                                                    @RequestParam("pageSize") int pageSize,
+                                                    @RequestParam("isArchived") boolean isArchived,
+                                                    @AuthenticationPrincipal Jwt jwt) {
+        return projectService.findAllProjectsWithSummaries(page, pageSize, isArchived, jwtService.getUserId(jwt));
     }
 
-    @GET
-    @Path("/summaries")
-    @Produces("application/json")
-    public Page<ProjectReadDTO> getProjectSummaries(@QueryParam("page") int page,
-                                                    @QueryParam("pageSize") int pageSize,
-                                                    @QueryParam("isArchived") boolean isArchived,
-                                                    @Context ClientDetails clientDetails) {
-        return projectService.findAllProjectsWithSummaries(page, pageSize, isArchived, clientDetails);
+    @GetMapping("/{id}/entries")
+    public Page<TimeEntryDTO> getProjectTimeEntries(@PathVariable("id") long id,
+                                                    @RequestParam("page") int page,
+                                                    @RequestParam("pageSize") int pageSize,
+                                                    @AuthenticationPrincipal Jwt jwt) {
+        return timeEntryService.findAllByProject(id, page, pageSize, jwtService.getUserId(jwt));
     }
 
-    @GET
-    @Path("{id}/entries")
-    @Produces("application/json")
-    public Page<TimeEntryDTO> getProjectTimeEntries(@PathParam("id") long id,
-                                                    @QueryParam("page") int page,
-                                                    @QueryParam("pageSize") int pageSize,
-                                                    @Context ClientDetails clientDetails) {
-        return timeEntryService.findAllByProject(id, page, pageSize, clientDetails);
-    }
-
-    @GET
-    @Path("{id}")
-    @Produces("application/json")
-    public Response getProject(@PathParam("id") Long id, @Context ClientDetails clientDetails) {
-        Optional<ProjectReadDTO> project = projectService.getProjectWithTimeSummary(id, clientDetails);
+    @GetMapping("/{id}")
+    public ResponseEntity getProject(@PathVariable("id") Long id, @AuthenticationPrincipal Jwt jwt) {
+        Optional<ProjectReadDTO> project = projectService.getProjectWithTimeSummary(id, jwtService.getUserId(jwt));
 
         return project
-                .map(p -> Response.status(OK).entity(p).build())
-                .orElse(Response.status(NOT_FOUND).build());
+                .map(p -> ResponseEntity.ok((p)))
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @POST
-    @Consumes("application/json")
-    @Produces("application/json")
-    public Response createProject(@Valid ProjectWriteDTO projectWriteDTO,
-                                  @Context UriInfo uriInfo,
-                                  @Context ClientDetails clientDetails) {
-        Optional<ProjectReadDTO> createdProject = projectService.create(projectWriteDTO, clientDetails);
+    @PostMapping
+    public ResponseEntity createProject(@RequestBody @Valid ProjectWriteDTO projectWriteDTO,
+                                        @AuthenticationPrincipal Jwt jwt) {
+        Optional<ProjectReadDTO> createdProject = projectService.create(projectWriteDTO, jwtService.getUserId(jwt));
 
         return createdProject
                 .map(project ->
-                        Response.status(CREATED)
-                                .entity(project)
-                                .location(restUrlGenerator.generateUrlToNewResource(uriInfo, project.getId()))
-                                .build())
-                .orElse(Response.status(CONFLICT).build());
+                        ResponseEntity.created(restUrlGenerator.generateUrlToNewResource(project.getId().toString()))
+                                .body(project)
+                )
+                .orElse(ResponseEntity.status(HttpStatus.CONFLICT).build());
     }
 
 
-    @PUT
-    @Path("{id}")
-    public Response updateProject(@PathParam("id") long id,
-                                  @Valid ProjectWriteDTO createRequest,
-                                  @Context ClientDetails clientDetails,
-                                  @Context UriInfo uriInfo) {
-        Optional<ProjectReadDTO> updatedProject = projectService.updateProject(id, createRequest, clientDetails);
+    @PutMapping("/{id}")
+    public ResponseEntity updateProject(@PathVariable("id") long id,
+                                        @RequestBody @Valid ProjectWriteDTO createRequest,
+                                        @AuthenticationPrincipal Jwt jwt) {
+        Optional<ProjectReadDTO> updatedProject = projectService.updateProject(
+                id,
+                createRequest,
+                jwtService.getUserId(jwt)
+        );
         if (updatedProject.isPresent()) {
-            return Response.noContent().build();
+            return ResponseEntity.noContent().build();
         }
 
-        return projectService.create(createRequest, clientDetails)
-                .map(newProject -> Response
-                        .created(restUrlGenerator.generateUrlToNewResource(uriInfo, newProject.getId()))
+        return projectService.create(createRequest, jwtService.getUserId(jwt))
+                .map(newProject -> ResponseEntity
+                        .created(restUrlGenerator.generateUrlToNewResource(newProject.getId().toString()))
                         .build())
-                .orElse(Response.serverError().build());
+                .orElse(ResponseEntity.internalServerError().build());
     }
 
-    @POST
-    @Path("{id}/archive")
-    public Response archiveProject(@PathParam("id") Long id, @Context ClientDetails clientDetails) {
-        boolean wasSuccessfullyArchived = projectService.archiveProject(id, clientDetails);
+    @PostMapping("/{id}/archive")
+    public ResponseEntity archiveProject(@PathVariable("id") Long id, @AuthenticationPrincipal Jwt jwt) {
+        boolean wasSuccessfullyArchived = projectService.archiveProject(id, jwtService.getUserId(jwt));
 
-        return wasSuccessfullyArchived ? Response.ok().build() : Response.status(BAD_REQUEST).build();
+        return wasSuccessfullyArchived
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    @POST
-    @Path("{id}/restore")
-    public Response restoreProject(@PathParam("id") Long id, @Context ClientDetails clientDetails) {
-        boolean wasUnarchived = projectService.restoreProject(id, clientDetails);
+    @PostMapping("/{id}/restore")
+    public ResponseEntity restoreProject(@PathVariable("id") Long id, @AuthenticationPrincipal Jwt jwt) {
+        boolean wasUnarchived = projectService.restoreProject(id, jwtService.getUserId(jwt));
 
-        return wasUnarchived ? Response.ok().build() : Response.status(BAD_REQUEST).build();
+        return wasUnarchived ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 }

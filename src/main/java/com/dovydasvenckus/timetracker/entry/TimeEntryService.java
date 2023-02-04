@@ -2,7 +2,6 @@ package com.dovydasvenckus.timetracker.entry;
 
 import com.dovydasvenckus.timetracker.core.date.clock.DateTimeService;
 import com.dovydasvenckus.timetracker.core.pagination.PageSizeResolver;
-import com.dovydasvenckus.timetracker.core.security.ClientDetails;
 import com.dovydasvenckus.timetracker.project.Project;
 import com.dovydasvenckus.timetracker.project.ProjectRepository;
 import org.springframework.data.domain.Page;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class TimeEntryService {
@@ -34,10 +34,10 @@ public class TimeEntryService {
     }
 
     @Transactional(readOnly = true)
-    Page<TimeEntryDTO> findAll(int page, int pageSize, ClientDetails clientDetails) {
+    Page<TimeEntryDTO> findAll(int page, int pageSize, UUID userId) {
         return timeEntryRepository
                 .findAllByDeleted(
-                        clientDetails.getId(),
+                        userId,
                         false,
                         PageRequest.of(page, pageSizeResolver.resolvePageSize(pageSize))
                 )
@@ -45,24 +45,24 @@ public class TimeEntryService {
     }
 
     @Transactional(readOnly = true)
-    public Page<TimeEntryDTO> findAllByProject(long projectId, int page, int pageSize, ClientDetails clientDetails) {
+    public Page<TimeEntryDTO> findAllByProject(long projectId, int page, int pageSize, UUID userId) {
         return timeEntryRepository
                 .findAllByProject(
                         projectId,
-                        clientDetails.getId(),
+                        userId,
                         PageRequest.of(page, pageSizeResolver.resolvePageSize(pageSize))
                 )
                 .map(TimeEntryDTO::new);
     }
 
     @Transactional
-    public TimeEntry create(TimeEntryDTO timeEntryDTO, ClientDetails clientDetails) {
+    public TimeEntry create(TimeEntryDTO timeEntryDTO, UUID userId) {
         timeEntryDTO.setId(null);
         TimeEntry timeEntry;
-        timeEntry = new TimeEntry(timeEntryDTO, clientDetails.getId());
+        timeEntry = new TimeEntry(timeEntryDTO, userId);
         Optional<Project> project = projectRepository.findByIdAndCreatedBy(
                 timeEntryDTO.getProject().getId(),
-                clientDetails.getId()
+                userId
         );
         project.ifPresent(timeEntry::setProject);
         timeEntryRepository.save(timeEntry);
@@ -71,31 +71,31 @@ public class TimeEntryService {
     }
 
     @Transactional
-    public void stop(TimeEntryDTO timeEntryDTO, ClientDetails clientDetails) {
-        timeEntryRepository.findByIdAndCreatedBy(timeEntryDTO.getId(), clientDetails.getId())
+    public void stop(TimeEntryDTO timeEntryDTO, UUID userId) {
+        timeEntryRepository.findByIdAndCreatedBy(timeEntryDTO.getId(), userId)
                 .ifPresent(entry -> entry.setEndDate(dateTimeService.now()));
     }
 
     @Transactional
-    public void delete(Long id, ClientDetails clientDetails) {
-        timeEntryRepository.findByIdAndCreatedBy(id, clientDetails.getId())
+    public void delete(Long id, UUID userId) {
+        timeEntryRepository.findByIdAndCreatedBy(id, userId)
                 .ifPresent(timeEntry -> timeEntry.setDeleted(true));
     }
 
-    Optional<TimeEntryDTO> findCurrentlyActive(ClientDetails clientDetails) {
-        return timeEntryRepository.findCurrentlyActive(clientDetails.getId())
+    Optional<TimeEntryDTO> findCurrentlyActive(UUID userId) {
+        return timeEntryRepository.findCurrentlyActive(userId)
                 .map(TimeEntryDTO::new);
     }
 
     @Transactional
-    public TimeEntry startTracking(Long projectId, String description, ClientDetails clientDetails) {
-        Optional<Project> project = projectRepository.findByIdAndCreatedBy(projectId, clientDetails.getId());
+    public TimeEntry startTracking(Long projectId, String description, UUID userId) {
+        Optional<Project> project = projectRepository.findByIdAndCreatedBy(projectId, userId);
         if (project.isPresent()) {
             TimeEntry timeEntry = new TimeEntry();
             timeEntry.setStartDate(dateTimeService.now());
             timeEntry.setDescription(description);
             timeEntry.setProject(project.get());
-            timeEntry.setCreatedBy(clientDetails.getId());
+            timeEntry.setCreatedBy(userId);
 
             timeEntryRepository.save(timeEntry);
 

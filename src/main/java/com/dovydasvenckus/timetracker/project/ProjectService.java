@@ -2,7 +2,7 @@ package com.dovydasvenckus.timetracker.project;
 
 import com.dovydasvenckus.timetracker.core.date.clock.DateTimeService;
 import com.dovydasvenckus.timetracker.core.pagination.PageSizeResolver;
-import com.dovydasvenckus.timetracker.core.security.ClientDetails;
+import com.dovydasvenckus.timetracker.core.rest.exception.ForbiddenException;
 import com.dovydasvenckus.timetracker.core.security.IsSameUserId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -11,11 +11,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.ws.rs.ForbiddenException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -44,14 +44,14 @@ public class ProjectService {
     public Page<ProjectReadDTO> findAllProjectsWithSummaries(int page,
                                                              int pageSize,
                                                              boolean isArchived,
-                                                             ClientDetails clientDetails) {
+                                                             UUID userId) {
         PageRequest pageRequest = PageRequest.of(
                 page,
                 pageSizeResolver.resolvePageSize(pageSize),
                 Sort.by(defaultSortOrder)
         );
         Page<Project> projectsPage = projectRepository.findAllByCreatedByAndArchived(
-                clientDetails.getId(),
+                userId,
                 isArchived,
                 pageRequest
         );
@@ -59,32 +59,32 @@ public class ProjectService {
         return transformProjectsPageToSummariesPage(pageRequest, projectsPage);
     }
 
-    List<ProjectReadDTO> findAllActiveProjects(ClientDetails clientDetails) {
-        return projectRepository.findByCreatedByAndArchivedFalse(clientDetails.getId(), Sort.by(defaultSortOrder))
+    List<ProjectReadDTO> findAllActiveProjects(UUID userId) {
+        return projectRepository.findByCreatedByAndArchivedFalse(userId, Sort.by(defaultSortOrder))
                 .stream()
                 .map(ProjectReadDTO::new)
                 .collect(toList());
     }
 
     @Transactional(readOnly = true)
-    public Optional<ProjectReadDTO> getProjectWithTimeSummary(Long id, ClientDetails clientDetails) {
+    public Optional<ProjectReadDTO> getProjectWithTimeSummary(Long id, UUID userId) {
         return projectRepository
-                .findByIdAndCreatedBy(id, clientDetails.getId())
+                .findByIdAndCreatedBy(id, userId)
                 .map(this::mapToSummary);
     }
 
-    private Optional<Project> findById(long id, ClientDetails clientDetails) throws ForbiddenException {
+    private Optional<Project> findById(long id, UUID userId) throws ForbiddenException {
         Optional<Project> foundProject = projectRepository.findById(id);
-        foundProject.ifPresent(project -> validateIfProjectBelongsToSameUser(project, clientDetails));
+        foundProject.ifPresent(project -> validateIfProjectBelongsToSameUser(project, userId));
 
         return foundProject;
     }
 
     @Transactional
-    public Optional<ProjectReadDTO> create(ProjectWriteDTO projectWriteDTO, ClientDetails clientDetails) {
+    public Optional<ProjectReadDTO> create(ProjectWriteDTO projectWriteDTO, UUID userId) {
         Optional<Project> projectInDb = projectRepository.findByNameAndCreatedBy(
                 projectWriteDTO.getName(),
-                clientDetails.getId()
+                userId
         );
 
         if (projectInDb.isEmpty()) {
@@ -93,8 +93,8 @@ public class ProjectService {
             project.setName(projectWriteDTO.getName());
             project.setDateCreated(creationDate);
             project.setDateModified(creationDate);
-            project.setCreatedBy(clientDetails.getId());
-            project.setModifiedBy(clientDetails.getId());
+            project.setCreatedBy(userId);
+            project.setModifiedBy(userId);
 
             projectRepository.save(project);
 
@@ -108,19 +108,19 @@ public class ProjectService {
     @Transactional
     public Optional<ProjectReadDTO> updateProject(long projectId,
                                                   ProjectWriteDTO updateRequest,
-                                                  ClientDetails clientDetails) {
-        return findById(projectId, clientDetails)
+                                                  UUID userId) {
+        return findById(projectId, userId)
                 .map(project -> {
                     project.setName(updateRequest.getName());
                     project.setDateModified(dateTimeService.now());
-                    project.setModifiedBy(clientDetails.getId());
+                    project.setModifiedBy(userId);
                     return project;
                 }).map(ProjectReadDTO::new);
     }
 
     @Transactional
-    public boolean archiveProject(long projectId, ClientDetails clientDetails) {
-        Optional<Project> projectInDb = projectRepository.findByIdAndCreatedBy(projectId, clientDetails.getId());
+    public boolean archiveProject(long projectId, UUID userId) {
+        Optional<Project> projectInDb = projectRepository.findByIdAndCreatedBy(projectId, userId);
 
         return projectInDb.map(project -> {
             project.setArchived(true);
@@ -130,8 +130,8 @@ public class ProjectService {
     }
 
     @Transactional
-    public boolean restoreProject(long projectId, ClientDetails clientDetails) {
-        Optional<Project> projectInDb = projectRepository.findByIdAndCreatedBy(projectId, clientDetails.getId());
+    public boolean restoreProject(long projectId, UUID userId) {
+        Optional<Project> projectInDb = projectRepository.findByIdAndCreatedBy(projectId, userId);
 
         return projectInDb.map(project -> {
             project.setArchived(false);
@@ -158,8 +158,8 @@ public class ProjectService {
         return new ProjectReadDTO(project, durationInMilliseconds);
     }
 
-    private void validateIfProjectBelongsToSameUser(Project project, ClientDetails clientDetails) {
-        if (!IsSameUserId.getInstance().test(project.getCreatedBy(), clientDetails)) {
+    private void validateIfProjectBelongsToSameUser(Project project, UUID userId) {
+        if (!IsSameUserId.getInstance().test(project.getCreatedBy(), userId)) {
             throw new ForbiddenException();
         }
     }

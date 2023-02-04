@@ -11,11 +11,7 @@ services:
       - ./data:/var/lib/postgresql/data
 
   authorization-server:
-    image: jboss/keycloak:8.0.0
+    image: authelia/authelia:4
     network_mode: "host"
-    environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
-      - KEYCLOAK_IMPORT=/tmp/dev-realm.json
     volumes:
-      - ./keycloak-realm/time-tracker-realm.json:/tmp/dev-realm.json
+      - ./authelia:/config

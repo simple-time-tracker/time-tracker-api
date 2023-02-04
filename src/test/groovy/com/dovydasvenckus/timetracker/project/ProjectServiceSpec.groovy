@@ -1,19 +1,16 @@
 package com.dovydasvenckus.timetracker.project
 
 import com.dovydasvenckus.timetracker.TestDatabaseConfig
-import com.dovydasvenckus.timetracker.core.date.clock.DateTimeService
-import com.dovydasvenckus.timetracker.core.security.ClientDetails
+import com.dovydasvenckus.timetracker.core.rest.exception.ForbiddenException
 import com.dovydasvenckus.timetracker.data.ProjectCreator
 import com.dovydasvenckus.timetracker.entry.TimeEntry
 import com.dovydasvenckus.timetracker.entry.TimeEntryRepository
-import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.Page
 import org.testcontainers.spock.Testcontainers
 import spock.lang.Specification
 
-import javax.ws.rs.ForbiddenException
 import java.time.LocalDateTime
 
 @Testcontainers
@@ -32,7 +29,7 @@ class ProjectServiceSpec extends Specification {
     @Autowired
     private ProjectCreator projectCreator
 
-    private ClientDetails user = new ClientDetails(UUID.randomUUID(), 'name')
+    private UUID user = UUID.randomUUID()
 
 
     def 'should return active projects sorted by name ignoring case'() {
@@ -351,7 +348,7 @@ class ProjectServiceSpec extends Specification {
 
     def 'should throw forbidden exception if project has different user id'() {
         given:
-            ClientDetails differentUser = new ClientDetails(UUID.randomUUID(), 'different')
+            UUID differentUser = UUID.randomUUID()
             Project project = projectCreator.createProject("First project", differentUser)
             projectRepository.save(project)
         when:

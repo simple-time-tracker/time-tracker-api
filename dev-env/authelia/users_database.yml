@@ -1,0 +1,11 @@
+###############################################################
+#                         Users Database                      #
+################################################################ This file can be used if you do not have an LDAP set up.# List of users
+users:
+  kebab:
+    displayname: "kebab"
+    password: $argon2id$v=19$m=65536,t=3,p=4$CeU+kmeZXI8jiZsT8fikEQ$zB4MlNmgA2YLWmQzMelicgXdY+ZcHtI+gZ6uQVJKZkY
+    email: kebab@evil.corp
+    groups:
+      - admins
+      - dev

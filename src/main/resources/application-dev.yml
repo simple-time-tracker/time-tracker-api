@@ -9,16 +9,4 @@ spring:
 
 rest:
   security:
-    issuer-uri: http://localhost:8080/auth/realms/time-tracker
-
-security:
-  oauth2:
-    resource:
-      id: time-tracker-api
-      token-info-uri: ${rest.security.issuer-uri}/protocol/openid-connect/token/introspect
-      user-info-uri: ${rest.security.issuer-uri}/protocol/openid-connect/userinfo
-      jwt:
-        key-value: -----BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmkdhWuJnBf5bhgPZwmKeliGZWoZYUAatbJuyfHk9UUArkJLUbsdtwBcgNC1s8GtQW+M8OJnrThH7E/19CUS0iaIvP5G4d/H3UVn10y7Xlq3lyDOK3pUiWGmvLgQNUOwNsooijcjj3JxmhLesAni3GShrtHYiWpzqFwauOFpEaPmYYeZgPa+qn9pzxh/jv4IFsYxpFCNEncv8mtqcP2VTy4HwEqbbncrpoKE7x2P5Qn2C6oVkKO10efCqBJ3X217Frexa8/JiMb/2qLsvLYY3ae4g0BlDR+e5HFVSXcwF3Zl6R2NkN32znbeZm8ByIm+gDVVhm6j6E7KSsHRNdNFrsQIDAQAB-----END PUBLIC KEY-----
-
-cors:
-  allow: '*'
+    issuer-uri: http://localhost:9091

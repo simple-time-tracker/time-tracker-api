@@ -4,27 +4,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
 @Component
 public class RestUrlGenerator {
 
-    private final Integer serverPort;
+    private final String apiUrl;
 
     @Autowired
-    public RestUrlGenerator(@Value("${server.port}") Integer serverPort) {
-        this.serverPort = serverPort;
+    public RestUrlGenerator(@Value("${server.servlet.context-path}") String apiUrl) {
+        this.apiUrl = apiUrl;
     }
 
-    public URI generateUrlToNewResource(UriInfo uriInfo, Object identifier) {
-        UriBuilder urlBuilder = uriInfo.getRequestUriBuilder();
-
-        return urlBuilder
-                .path(identifier.toString())
-                .port(serverPort)
-                .build();
+    //TODO Generate real url
+    public URI generateUrlToNewResource(String identifier) {
+        return URI.create(identifier);
     }
 
 }
