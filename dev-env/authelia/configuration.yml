@@ -1348,7 +1348,7 @@ identity_providers:
       ## Any origin with https is permitted unless this option is configured or the
       ## allowed_origins_from_client_redirect_uris option is enabled.
       allowed_origins:
-        - http://localhost:5050
+        - http://localhost:5173
         
       ## Automatically adds the origin portion of all redirect URI's on all clients to the list of allowed_origins,
       ## provided they have the scheme http or https and do not have the hostname of localhost.
@@ -1395,8 +1395,8 @@ identity_providers:
 
         ## Redirect URI's specifies a list of valid case-sensitive callbacks for this client.
         redirect_uris:
-          - http://localhost:5050
-          - http://localhost:5050/login-callback
+          - http://localhost:5173
+          - http://localhost:5173/login-callback
 
         ## Grant Types configures which grants this client can obtain.
         ## It's not recommended to define this unless you know what you're doing.
