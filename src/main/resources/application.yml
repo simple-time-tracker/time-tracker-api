@@ -4,11 +4,6 @@ server:
     context-path: /api
 
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:9091
   jpa:
     hibernate:
       ddl-auto: validate

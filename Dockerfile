@@ -4,7 +4,7 @@ WORKDIR $BUILD_ROOT
 COPY [".", "${BUILD_ROOT}"]
 RUN ./gradlew assemble
 
-FROM openjdk:11-alpine
+FROM openjdk:17-slim-buster
 MAINTAINER Dovydas Venckus "dovydas.venckus@live.com"
 ENV APP_ROOT=/home/time-tracker \
     APP_NAME=time-tracker-api-0.0.1-SNAPSHOT.jar \

@@ -6,19 +6,8 @@ spring:
   jpa:
     hibernate:
       dialect: ${DB_DIALECT}
-
-cors:
-  allow: ${CORS_ALLOW}
-
-rest:
   security:
-    issuer-uri: ${AUTH_ISSUER_URI}
-
-security:
-  oauth2:
-    resource:
-      id: ${AUTH_CLIENT_ID}
-      token-info-uri: ${rest.security.issuer-uri}/protocol/openid-connect/token/introspect
-      user-info-uri: ${rest.security.issuer-uri}/protocol/openid-connect/userinfo
-      jwt:
-        key-value: ${AUTH_KEY}
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AUTH_ISSUER_URI}

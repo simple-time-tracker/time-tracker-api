@@ -7,6 +7,8 @@ spring:
     username: time_tracker
     password: super-secret-pass
 
-rest:
   security:
-    issuer-uri: http://localhost:9091
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9091
