@@ -1,4 +1,4 @@
-FROM openjdk:17-alpine AS build-jar
+FROM openjdk:17-slim-buster AS build-jar
 ENV BUILD_ROOT=/home/build-space
 WORKDIR $BUILD_ROOT
 COPY [".", "${BUILD_ROOT}"]
