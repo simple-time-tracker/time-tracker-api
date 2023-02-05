@@ -4,3 +4,4 @@
 out
 build
 dev-env/data
+*.pem

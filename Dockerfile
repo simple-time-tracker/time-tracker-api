@@ -11,6 +11,11 @@ ENV APP_ROOT=/home/time-tracker \
     ACTIVE_PROFILES=default
 WORKDIR $APP_ROOT
 COPY --from=build-jar /home/build-space/build/libs/${APP_NAME} .
+COPY certificate.pem /$APP_ROOT
+RUN \
+    cd /$APP_ROOT \
+    && keytool -keystore cacerts -storepass changeit -noprompt -trustcacerts -importcert -alias sslcert -file certificate.pem
+
 USER nobody
 ENTRYPOINT ["/bin/sh", "-c", \
  "java -Dspring.profiles.active=${ACTIVE_PROFILES} -jar $APP_NAME"]
