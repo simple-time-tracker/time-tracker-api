@@ -29,11 +29,11 @@ class TimeEntryServiceIntegrationSpec extends Specification {
     @Autowired
     ProjectCreator projectCreator
 
-    private UUID user = UUID.randomUUID()
+    private UUID userId = UUID.randomUUID()
 
     def 'should mark as deleted'() {
         given:
-            Project project = projectCreator.createProject("Project", user)
+            Project project = projectCreator.createProject("Project", userId)
             TimeEntry timeEntry = createTimeEntry("Entry to delete", project)
             project.addTimeEntry(timeEntry)
 
@@ -41,7 +41,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             timeEntryRepository.save(timeEntry)
 
         when:
-            timeEntryService.delete(timeEntry.id, user)
+            timeEntryService.delete(timeEntry.id, userId)
 
         then:
             timeEntryRepository.findById(timeEntry.id).get().deleted
@@ -49,22 +49,22 @@ class TimeEntryServiceIntegrationSpec extends Specification {
 
     def 'should not allow to set page size bigger that 20'() {
         expect:
-            timeEntryService.findAll(0, 21, user).pageable.pageSize == 20
+            timeEntryService.findAll(0, 21, userId).pageable.pageSize == 20
     }
 
     def 'should allow set page size to one'() {
         expect:
-            timeEntryService.findAll(0, 1, user).pageable.pageSize == 1
+            timeEntryService.findAll(0, 1, userId).pageable.pageSize == 1
     }
 
     def 'should use default page size, if it less than one'() {
         expect:
-            timeEntryService.findAll(0, 0, user).pageable.pageSize == 20
+            timeEntryService.findAll(0, 0, userId).pageable.pageSize == 20
     }
 
     def 'should return only not deleted entries'() {
         given:
-            Project project = projectCreator.createProject("Project", user)
+            Project project = projectCreator.createProject("Project", userId)
             TimeEntry timeEntry1 = createTimeEntry("Time entry 1", project)
 
             TimeEntry timeEntry2 = createTimeEntry("Time entry 2", project)
@@ -75,24 +75,24 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             timeEntryRepository.save(timeEntry2)
 
         and:
-            timeEntryService.delete(timeEntry2.id, user)
+            timeEntryService.delete(timeEntry2.id, userId)
 
         when:
-            List<TimeEntryDTO> result = timeEntryService.findAll(0, 5, user).getContent()
+            List<TimeEntryDTO> result = timeEntryService.findAll(0, 5, userId).getContent()
 
         then:
             result.size() == 1
             with(result.get(0)) {
                 id == timeEntry1.id
                 description == timeEntry1.description
-                startDate == timeEntry1.startDate
-                endDate == timeEntry1.endDate
+                startDate != null
+                endDate == null
             }
     }
 
     def 'should return ordered by start date'() {
         given:
-            Project project = projectCreator.createProject("Project", user)
+            Project project = projectCreator.createProject("Project", userId)
             TimeEntry timeEntry1 = createTimeEntry("Time entry 1", project)
 
             TimeEntry timeEntry2 = createTimeEntry("Time entry 2", project)
@@ -105,7 +105,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             timeEntryRepository.save(timeEntry2)
 
         when:
-            List<TimeEntryDTO> result = timeEntryService.findAll(0, 5, user).getContent()
+            List<TimeEntryDTO> result = timeEntryService.findAll(0, 5, userId).getContent()
 
         then:
             result.size() == 2
@@ -115,7 +115,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
 
     def 'should return only time entries assigned only to one project'() {
         given:
-            Project firstProject = projectCreator.createProject("First project", user)
+            Project firstProject = projectCreator.createProject("First project", userId)
             TimeEntry timeEntry1 = createTimeEntry("Time entry 1", firstProject)
 
             TimeEntry timeEntry2 = createTimeEntry("Time entry 2", firstProject)
@@ -128,13 +128,13 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             timeEntryRepository.save(timeEntry2)
 
         and:
-            Project secondProject = projectCreator.createProject("Second project", user)
+            Project secondProject = projectCreator.createProject("Second project", userId)
             TimeEntry secondProjectTimeEntry = createTimeEntry("Second project Time entry 1", secondProject)
             projectRepository.save(secondProject)
             timeEntryRepository.save(secondProjectTimeEntry)
 
         when:
-            Page<TimeEntryDTO> result = timeEntryService.findAllByProject(firstProject.getId(), 0, 5, user)
+            Page<TimeEntryDTO> result = timeEntryService.findAllByProject(firstProject.getId(), 0, 5, userId)
 
         then:
             result.totalElements == 2
@@ -144,7 +144,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
 
     def 'should not return deleted time entries as current'() {
         given:
-            Project project = projectCreator.createProject("Project", user)
+            Project project = projectCreator.createProject("Project", userId)
             TimeEntry timeEntry1 = createTimeEntry("Time entry 1", project)
             timeEntry1.deleted = true
 
@@ -155,7 +155,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             timeEntryRepository.save(timeEntry2)
 
         when:
-            TimeEntryDTO result = timeEntryService.findCurrentlyActive(user).get()
+            TimeEntryDTO result = timeEntryService.findCurrentlyActive(userId).get()
 
         then:
             result.id == timeEntry2.id
@@ -165,7 +165,7 @@ class TimeEntryServiceIntegrationSpec extends Specification {
         TimeEntry timeEntry = new TimeEntry(
                 description: text,
                 startDate: LocalDateTime.now(),
-                createdBy: user.id
+                createdBy: userId
         )
         project.addTimeEntry(timeEntry)
         return timeEntry

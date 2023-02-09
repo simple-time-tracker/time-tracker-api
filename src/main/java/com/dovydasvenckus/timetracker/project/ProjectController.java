@@ -14,7 +14,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +54,7 @@ public class ProjectController {
         Optional<ProjectReadDTO> project = projectService.getProjectWithTimeSummary(id, jwtService.getUserId(jwt));
 
         return project
-                .map(p -> ResponseEntity.ok((p)))
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 

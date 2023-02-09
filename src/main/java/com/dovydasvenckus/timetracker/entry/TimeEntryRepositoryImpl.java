@@ -1,9 +1,6 @@
 package com.dovydasvenckus.timetracker.entry;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.*;
 import java.util.Optional;
 import java.util.UUID;
 

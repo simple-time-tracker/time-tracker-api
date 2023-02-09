@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class PageSizeResolver {
     private final int maxPageSize;
 
-    public PageSizeResolver(@Value("${pagination.defaultSize}") int defaultMaxPageSize) {
+    public PageSizeResolver(@Value("${pagination.defaultSize:20}") int defaultMaxPageSize) {
         this.maxPageSize = defaultMaxPageSize;
     }
 
