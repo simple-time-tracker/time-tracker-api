@@ -1,13 +1,12 @@
 package com.dovydasvenckus.timetracker.project;
 
-import javax.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
 
-@Getter
-@NoArgsConstructor
+import lombok.*;
+
+@Value
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public class ProjectWriteDTO {
 
     @NotBlank

@@ -4,7 +4,7 @@ import com.dovydasvenckus.timetracker.entry.TimeEntry;
 import lombok.Data;
 import lombok.ToString;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

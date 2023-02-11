@@ -1,21 +1,12 @@
 server:
   port: 8080
+  servlet:
+    context-path: /api
 
 spring:
-  jersey:
-    applicationPath: /api
-
   jpa:
     hibernate:
       ddl-auto: validate
-
-cors:
-  allow:
-
-rest:
-  security:
-    enabled: true
-    api-matcher: /api/*
 
 pagination:
   defaultSize: 20

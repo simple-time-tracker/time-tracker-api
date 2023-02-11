@@ -1,112 +1,86 @@
 package com.dovydasvenckus.timetracker.entry;
 
 import com.dovydasvenckus.timetracker.core.rest.RestUrlGenerator;
-import com.dovydasvenckus.timetracker.core.security.ClientDetails;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.dovydasvenckus.timetracker.core.security.JwtService;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.validation.Valid;
 import java.util.Optional;
 
-import static javax.ws.rs.core.Response.Status.*;
-
 @Component
-@Path("/entries")
+@RestController
+@AllArgsConstructor
+@RequestMapping("/entries")
 public class TimeEntryController {
 
-    @Context
-    private UriInfo uriInfo;
-
-    @Context
-    private ClientDetails clientDetails;
-
     private final RestUrlGenerator restUrlGenerator;
-
+    private final JwtService jwtService;
     private final TimeEntryService timeEntryService;
 
-    @Autowired
-    public TimeEntryController(RestUrlGenerator restUrlGenerator,
-                               TimeEntryService timeEntryService) {
-        this.restUrlGenerator = restUrlGenerator;
-        this.timeEntryService = timeEntryService;
+    @GetMapping
+    public Page<TimeEntryDTO> getAll(@RequestParam("page") int page,
+                                     @RequestParam("pageSize") int pageSize,
+                                     @AuthenticationPrincipal Jwt jwt) {
+        return timeEntryService.findAll(page, pageSize, jwtService.getUserId(jwt));
     }
 
-    @GET
-    @Produces("application/json")
-    public Page<TimeEntryDTO> getAll(@QueryParam("page") int page, @QueryParam("pageSize") int pageSize) {
-        return timeEntryService.findAll(page, pageSize, clientDetails);
-    }
-
-    @GET
-    @Produces("application/json")
-    @Path("/current")
-    public TimeEntryDTO getCurrent() {
-        Optional<TimeEntryDTO> current = timeEntryService.findCurrentlyActive(clientDetails);
+    @GetMapping(value = "/current")
+    public TimeEntryDTO getCurrent(@AuthenticationPrincipal Jwt jwt) {
+        Optional<TimeEntryDTO> current = timeEntryService.findCurrentlyActive(jwtService.getUserId(jwt));
 
         return current.orElse(null);
     }
 
-    @POST
-    @Path("/start/{project}")
-    @Produces("text/plain")
-    public Response startTracking(@PathParam("project") long projectId,
-                                  @Valid @RequestBody CreateTimeEntryRequest request
+    @PostMapping("/start/{project}")
+    public ResponseEntity startTracking(@PathVariable("project") long projectId,
+                                        @Valid @RequestBody CreateTimeEntryRequest request,
+                                        @AuthenticationPrincipal Jwt jwt
     ) {
-        Optional<TimeEntryDTO> current = timeEntryService.findCurrentlyActive(clientDetails);
+        Optional<TimeEntryDTO> current = timeEntryService.findCurrentlyActive(jwtService.getUserId(jwt));
 
         if (current.isEmpty()) {
             TimeEntry timeEntry = timeEntryService.startTracking(
                     projectId,
                     request.getTaskDescription(),
-                    clientDetails
+                    jwtService.getUserId(jwt)
             );
 
-            return Response.status(CREATED)
-                    .entity("New time entry has been created")
-                    .location(restUrlGenerator.generateUrlToNewResource(uriInfo, timeEntry.getId()))
+            return ResponseEntity.created(restUrlGenerator.generateUrlToNewResource(timeEntry.getId().toString()))
                     .build();
         }
 
-        return Response.status(INTERNAL_SERVER_ERROR).entity("You are already tracking time on project").build();
+        return ResponseEntity.internalServerError().body("You are already tracking time on project");
     }
 
-    @POST
-    @Path("/stop")
-    @Produces("text/plain")
-    public Response stopCurrent() {
-        Optional<TimeEntryDTO> current = timeEntryService.findCurrentlyActive(clientDetails);
+    @PostMapping("/stop")
+    public ResponseEntity stopCurrent(@AuthenticationPrincipal Jwt jwt) {
+        Optional<TimeEntryDTO> current = timeEntryService.findCurrentlyActive(jwtService.getUserId(jwt));
 
         if (current.isPresent()) {
-            timeEntryService.stop(current.get(), clientDetails);
-            return Response.status(OK).build();
+            timeEntryService.stop(current.get(), jwtService.getUserId(jwt));
+            return ResponseEntity.ok().build();
         }
 
-        return Response.status(INTERNAL_SERVER_ERROR).entity("No active task").build();
+        return ResponseEntity.internalServerError().body("No active task");
     }
 
-    @POST
-    @Consumes("application/json")
-    @Produces("text/html")
-    public Response createTimeEntry(TimeEntryDTO timeEntryDTO) {
-        TimeEntry timeEntry = timeEntryService.create(timeEntryDTO, clientDetails);
+    @PostMapping
+    public ResponseEntity createTimeEntry(@RequestBody TimeEntryDTO timeEntryDTO, @AuthenticationPrincipal Jwt jwt) {
+        TimeEntry timeEntry = timeEntryService.create(timeEntryDTO, jwtService.getUserId(jwt));
 
-        return Response.status(CREATED)
-                .entity("New time entry has been created")
-                .location(restUrlGenerator.generateUrlToNewResource(uriInfo, timeEntry.getId()))
-                .build();
+        return ResponseEntity.created(restUrlGenerator.generateUrlToNewResource(timeEntry.getId().toString())).build();
     }
 
-    @DELETE
-    @Path("/{project}")
-    public Response deleteProject(@PathParam("project") long projectId) {
-        timeEntryService.delete(projectId, clientDetails);
-
-        return Response.status(NO_CONTENT).build();
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProject(@PathVariable("id") long id, @AuthenticationPrincipal Jwt jwt) {
+        timeEntryService.delete(id, jwtService.getUserId(jwt));
     }
 }

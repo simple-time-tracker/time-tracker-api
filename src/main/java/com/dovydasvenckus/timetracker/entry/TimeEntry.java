@@ -4,7 +4,7 @@ import com.dovydasvenckus.timetracker.project.Project;
 import lombok.Data;
 import lombok.ToString;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
