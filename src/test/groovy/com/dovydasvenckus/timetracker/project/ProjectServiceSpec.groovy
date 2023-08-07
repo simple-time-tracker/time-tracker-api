@@ -37,11 +37,6 @@ class ProjectServiceSpec extends Specification {
             Project firstProject = projectCreator.createProject("ma", userId)
             Project secondProject = projectCreator.createProject("MB", userId)
             Project archivedProject = projectCreator.createProject("MB", userId, true)
-
-            projectRepository.save(firstProject)
-            projectRepository.save(secondProject)
-            projectRepository.save(archivedProject)
-
         when:
             List<ProjectReadDTO> result = projectService.findAllActiveProjects(userId)
 
@@ -68,9 +63,9 @@ class ProjectServiceSpec extends Specification {
                     LocalDateTime.of(2020, 01, 13, 15, 00),
                     LocalDateTime.of(2020, 01, 13, 16, 00)
             )
-            projectRepository.save(project)
-            timeEntryRepository.save(firstEntry)
-            timeEntryRepository.save(secondEntry)
+
+            timeEntryRepository.insert(firstEntry)
+            timeEntryRepository.insert(secondEntry)
 
         when:
             ProjectReadDTO result = projectService.getProjectWithTimeSummary(project.id, userId).get()
@@ -86,11 +81,6 @@ class ProjectServiceSpec extends Specification {
             Project firstProject = projectCreator.createProject("Active 1", userId)
             Project secondProject = projectCreator.createProject("Active 2", userId)
             Project archivedProject = projectCreator.createProject("Archived", userId, true)
-
-            projectRepository.save(firstProject)
-            projectRepository.save(secondProject)
-            projectRepository.save(archivedProject)
-
         when:
             Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, false, userId)
 
@@ -108,10 +98,6 @@ class ProjectServiceSpec extends Specification {
             Project activeProject = projectCreator.createProject("Active", userId)
             Project firstArchivedProject = projectCreator.createProject("Archived 1", userId, true)
             Project secondArchivedProject = projectCreator.createProject("Archived 2", userId, true)
-
-            projectRepository.save(activeProject)
-            projectRepository.save(firstArchivedProject)
-            projectRepository.save(secondArchivedProject)
 
         when:
             Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, true, userId)
@@ -140,9 +126,8 @@ class ProjectServiceSpec extends Specification {
                     LocalDateTime.of(2020, 01, 13, 16, 00)
             )
             secondEntry.deleted = true
-            projectRepository.save(project)
-            timeEntryRepository.save(firstEntry)
-            timeEntryRepository.save(secondEntry)
+            timeEntryRepository.insert(firstEntry)
+            timeEntryRepository.insert(secondEntry)
 
         when:
             ProjectReadDTO result = projectService.getProjectWithTimeSummary(project.id, userId).get()
@@ -157,9 +142,6 @@ class ProjectServiceSpec extends Specification {
         given:
             Project firstProject = projectCreator.createProject("ma", userId)
             Project secondProject = projectCreator.createProject("Mb", userId)
-
-            projectRepository.save(firstProject)
-            projectRepository.save(secondProject)
 
         when:
             Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, false, userId)
@@ -176,8 +158,6 @@ class ProjectServiceSpec extends Specification {
     def 'should return zero milliseconds tracked for project, when project has no time entries'() {
         given:
             Project project = projectCreator.createProject("Project", userId)
-
-            projectRepository.save(project)
 
         when:
             Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, false, userId)
@@ -202,9 +182,8 @@ class ProjectServiceSpec extends Specification {
                     LocalDateTime.of(2020, 01, 13, 15, 00),
                     LocalDateTime.of(2020, 01, 13, 16, 00)
             )
-            projectRepository.save(firstProject)
-            timeEntryRepository.save(firstEntry)
-            timeEntryRepository.save(secondEntry)
+            timeEntryRepository.insert(firstEntry)
+            timeEntryRepository.insert(secondEntry)
 
         and:
             Project secondProject = projectCreator.createProject("First project", userId)
@@ -214,8 +193,7 @@ class ProjectServiceSpec extends Specification {
                     LocalDateTime.of(2020, 1, 15, 21, 10, 15),
                     LocalDateTime.of(2020, 1, 15, 21, 10, 45)
             )
-            projectRepository.save(secondProject)
-            timeEntryRepository.save(secondProjectEntry)
+            timeEntryRepository.insert(secondProjectEntry)
 
         when:
             Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, false, userId)
@@ -246,9 +224,8 @@ class ProjectServiceSpec extends Specification {
                     LocalDateTime.of(2020, 01, 13, 15, 00),
                     LocalDateTime.of(2020, 01, 13, 16, 00)
             )
-            projectRepository.save(project)
-            timeEntryRepository.save(firstEntry)
-            timeEntryRepository.save(secondEntry)
+            timeEntryRepository.insert(firstEntry)
+            timeEntryRepository.insert(secondEntry)
 
         when:
             Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, false, userId)
@@ -274,9 +251,8 @@ class ProjectServiceSpec extends Specification {
                     LocalDateTime.now().minusHours(1),
                     null
             )
-            projectRepository.save(firstProject)
-            timeEntryRepository.save(firstEntry)
-            timeEntryRepository.save(secondEntry)
+            timeEntryRepository.insert(firstEntry)
+            timeEntryRepository.insert(secondEntry)
 
         when:
             Page<ProjectReadDTO> result = projectService.findAllProjectsWithSummaries(0, 5, false, userId)
@@ -305,7 +281,6 @@ class ProjectServiceSpec extends Specification {
     def 'should archive project'() {
         given:
             Project activeProject = projectCreator.createProject("Active", userId)
-            projectRepository.save(activeProject)
         when:
             projectService.archiveProject(activeProject.id, userId)
 
@@ -316,7 +291,6 @@ class ProjectServiceSpec extends Specification {
     def 'should update date modified, when archiving'() {
         given:
             Project activeProject = projectCreator.createProject("Active", userId)
-            projectRepository.save(activeProject)
         when:
             projectService.archiveProject(activeProject.id, userId)
 
@@ -327,7 +301,6 @@ class ProjectServiceSpec extends Specification {
     def 'should restore project from archive state'() {
         given:
             Project archivedProject = projectCreator.createProject("Archived", userId)
-            projectRepository.save(archivedProject)
         when:
             projectService.restoreProject(archivedProject.id, userId)
 
@@ -337,7 +310,6 @@ class ProjectServiceSpec extends Specification {
     def 'should update date modified, when restoring archived project'() {
         given:
             Project archivedProject = projectCreator.createProject("Archived", userId)
-            projectRepository.save(archivedProject)
         when:
             projectService.restoreProject(archivedProject.id, userId)
 
@@ -350,7 +322,6 @@ class ProjectServiceSpec extends Specification {
         given:
             UUID differentUser = UUID.randomUUID()
             Project project = projectCreator.createProject("First project", differentUser)
-            projectRepository.save(project)
         when:
             projectService.updateProject(project.getId(), new ProjectWriteDTO("new name"), userId)
 
@@ -361,7 +332,6 @@ class ProjectServiceSpec extends Specification {
     def 'should update project, when project created by same user'() {
         given:
             Project project = projectCreator.createProject("First project", userId)
-            projectRepository.save(project)
         when:
             projectService.updateProject(project.id, new ProjectWriteDTO("new name"), userId)
 
@@ -382,9 +352,9 @@ class ProjectServiceSpec extends Specification {
                 description: text,
                 startDate: startDate,
                 endDate: stopDate,
-                createdBy: userId
+                createdBy: userId,
+                projectId: project.id
         )
-        project.addTimeEntry(timeEntry)
         return timeEntry
     }
 
