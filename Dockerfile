@@ -18,5 +18,5 @@ RUN cd $APP_ROOT \
 
 USER nobody
 ENTRYPOINT ["/bin/sh", "-c", \
- "java -Dspring.profiles.active=${ACTIVE_PROFILES} -jar $APP_NAME"]
+ "java -XX:MaxRAMPercentage=75 -Dspring.profiles.active=${ACTIVE_PROFILES} -jar $APP_NAME"]
 EXPOSE 8080
