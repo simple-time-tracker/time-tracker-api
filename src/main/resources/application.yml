@@ -3,10 +3,10 @@ server:
   servlet:
     context-path: /api
 
-spring:
-  jpa:
-    hibernate:
-      ddl-auto: validate
+mybatis:
+  type-handlers-package: com.dovydasvenckus.timetracker.config.persistence.typehandlers
+  configuration:
+    map-underscore-to-camel-case: true
 
 pagination:
   defaultSize: 20

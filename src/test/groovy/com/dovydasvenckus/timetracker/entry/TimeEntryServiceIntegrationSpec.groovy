@@ -18,9 +18,6 @@ import java.time.LocalDateTime
 class TimeEntryServiceIntegrationSpec extends Specification {
 
     @Autowired
-    ProjectRepository projectRepository
-
-    @Autowired
     TimeEntryRepository timeEntryRepository
 
     @Autowired
@@ -35,16 +32,14 @@ class TimeEntryServiceIntegrationSpec extends Specification {
         given:
             Project project = projectCreator.createProject("Project", userId)
             TimeEntry timeEntry = createTimeEntry("Entry to delete", project)
-            project.addTimeEntry(timeEntry)
 
-            projectRepository.save(project)
-            timeEntryRepository.save(timeEntry)
+            timeEntryRepository.insert(timeEntry)
 
         when:
             timeEntryService.delete(timeEntry.id, userId)
 
         then:
-            timeEntryRepository.findById(timeEntry.id).get().deleted
+            timeEntryRepository.findByIdAndCreatedBy(timeEntry.id, project.createdBy).get().deleted
     }
 
     def 'should not allow to set page size bigger that 20'() {
@@ -68,11 +63,9 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             TimeEntry timeEntry1 = createTimeEntry("Time entry 1", project)
 
             TimeEntry timeEntry2 = createTimeEntry("Time entry 2", project)
-            project.addTimeEntry(timeEntry2)
 
-            projectRepository.save(project)
-            timeEntryRepository.save(timeEntry1)
-            timeEntryRepository.save(timeEntry2)
+            timeEntryRepository.insert(timeEntry1)
+            timeEntryRepository.insert(timeEntry2)
 
         and:
             timeEntryService.delete(timeEntry2.id, userId)
@@ -98,11 +91,9 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             TimeEntry timeEntry2 = createTimeEntry("Time entry 2", project)
             LocalDateTime secondEntryStartDate = timeEntry2.getStartDate()
             timeEntry2.setStartDate(secondEntryStartDate.plusSeconds(1))
-            project.addTimeEntry(timeEntry2)
 
-            projectRepository.save(project)
-            timeEntryRepository.save(timeEntry1)
-            timeEntryRepository.save(timeEntry2)
+            timeEntryRepository.insert(timeEntry1)
+            timeEntryRepository.insert(timeEntry2)
 
         when:
             List<TimeEntryDTO> result = timeEntryService.findAll(0, 5, userId).getContent()
@@ -121,17 +112,14 @@ class TimeEntryServiceIntegrationSpec extends Specification {
             TimeEntry timeEntry2 = createTimeEntry("Time entry 2", firstProject)
             LocalDateTime secondEntryStartDate = timeEntry2.getStartDate()
             timeEntry2.setStartDate(secondEntryStartDate.plusSeconds(1))
-            firstProject.addTimeEntry(timeEntry2)
 
-            projectRepository.save(firstProject)
-            timeEntryRepository.save(timeEntry1)
-            timeEntryRepository.save(timeEntry2)
+            timeEntryRepository.insert(timeEntry1)
+            timeEntryRepository.insert(timeEntry2)
 
         and:
             Project secondProject = projectCreator.createProject("Second project", userId)
             TimeEntry secondProjectTimeEntry = createTimeEntry("Second project Time entry 1", secondProject)
-            projectRepository.save(secondProject)
-            timeEntryRepository.save(secondProjectTimeEntry)
+            timeEntryRepository.insert(secondProjectTimeEntry)
 
         when:
             Page<TimeEntryDTO> result = timeEntryService.findAllByProject(firstProject.getId(), 0, 5, userId)
@@ -150,9 +138,8 @@ class TimeEntryServiceIntegrationSpec extends Specification {
 
             TimeEntry timeEntry2 = createTimeEntry("Time entry 2", project)
 
-            projectRepository.save(project)
-            timeEntryRepository.save(timeEntry1)
-            timeEntryRepository.save(timeEntry2)
+            timeEntryRepository.insert(timeEntry1)
+            timeEntryRepository.insert(timeEntry2)
 
         when:
             TimeEntryDTO result = timeEntryService.findCurrentlyActive(userId).get()
@@ -165,9 +152,9 @@ class TimeEntryServiceIntegrationSpec extends Specification {
         TimeEntry timeEntry = new TimeEntry(
                 description: text,
                 startDate: LocalDateTime.now(),
-                createdBy: userId
+                createdBy: userId,
+                projectId: project.id
         )
-        project.addTimeEntry(timeEntry)
         return timeEntry
     }
 }

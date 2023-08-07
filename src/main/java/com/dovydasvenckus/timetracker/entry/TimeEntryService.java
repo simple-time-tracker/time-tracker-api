@@ -5,12 +5,16 @@ import com.dovydasvenckus.timetracker.core.pagination.PageSizeResolver;
 import com.dovydasvenckus.timetracker.project.Project;
 import com.dovydasvenckus.timetracker.project.ProjectRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class TimeEntryService {
@@ -35,51 +39,66 @@ public class TimeEntryService {
 
     @Transactional(readOnly = true)
     Page<TimeEntryDTO> findAll(int page, int pageSize, UUID userId) {
-        return timeEntryRepository
+        int actualPageSize = pageSizeResolver.resolvePageSize(pageSize);
+        long totalCountOfUserEntries = timeEntryRepository.countEntries(userId, false);
+        List<TimeEntryDTO> entries = timeEntryRepository
                 .findAllByDeleted(
                         userId,
                         false,
-                        PageRequest.of(page, pageSizeResolver.resolvePageSize(pageSize))
-                )
-                .map(TimeEntryDTO::new);
+                        actualPageSize,
+                        page * actualPageSize
+                ).stream()
+                .map(TimeEntryDTO::new)
+            .collect(Collectors.toList());
+        Pageable pageRequest = PageRequest.of(page, actualPageSize);
+
+        return new PageImpl<>(entries, pageRequest, totalCountOfUserEntries);
     }
 
     @Transactional(readOnly = true)
     public Page<TimeEntryDTO> findAllByProject(long projectId, int page, int pageSize, UUID userId) {
-        return timeEntryRepository
-                .findAllByProject(
+        long totalCountOfUserEntries = timeEntryRepository.countEntriesByProject(projectId, userId);
+        List<TimeEntryDTO> entries = timeEntryRepository
+                .findAllByProjectPage(
                         projectId,
                         userId,
-                        PageRequest.of(page, pageSizeResolver.resolvePageSize(pageSize))
-                )
-                .map(TimeEntryDTO::new);
+                        pageSize,
+                        page * pageSize
+                ).stream()
+                .map(TimeEntryDTO::new)
+                .collect(Collectors.toList());
+
+        Pageable pageRequest = PageRequest.of(page, pageSize);
+
+        return new PageImpl<>(entries, pageRequest, totalCountOfUserEntries);
     }
 
     @Transactional
     public TimeEntry create(TimeEntryDTO timeEntryDTO, UUID userId) {
-        timeEntryDTO.setId(null);
-        TimeEntry timeEntry;
-        timeEntry = new TimeEntry(timeEntryDTO, userId);
-        Optional<Project> project = projectRepository.findByIdAndCreatedBy(
-                timeEntryDTO.getProject().getId(),
-                userId
-        );
-        project.ifPresent(timeEntry::setProject);
-        timeEntryRepository.save(timeEntry);
+        TimeEntry timeEntry = new TimeEntry(timeEntryDTO, userId);
+        timeEntryRepository.insert(timeEntry);
 
         return timeEntry;
     }
 
     @Transactional
     public void stop(TimeEntryDTO timeEntryDTO, UUID userId) {
-        timeEntryRepository.findByIdAndCreatedBy(timeEntryDTO.getId(), userId)
-                .ifPresent(entry -> entry.setEndDate(dateTimeService.now()));
+        Optional<TimeEntry> updatedEntry = timeEntryRepository.findByIdAndCreatedBy(timeEntryDTO.getId(), userId)
+            .map(timeEntry -> {
+                timeEntry.setEndDate(dateTimeService.now());
+                return timeEntry;
+            });
+        updatedEntry.ifPresent(timeEntryRepository::update);
     }
 
     @Transactional
     public void delete(Long id, UUID userId) {
-        timeEntryRepository.findByIdAndCreatedBy(id, userId)
-                .ifPresent(timeEntry -> timeEntry.setDeleted(true));
+        Optional<TimeEntry> updatedTimeEntry = timeEntryRepository.findByIdAndCreatedBy(id, userId)
+            .map(timeEntry -> {
+                timeEntry.setDeleted(true);
+                return timeEntry;
+            });
+        updatedTimeEntry.ifPresent(timeEntryRepository::update);
     }
 
     Optional<TimeEntryDTO> findCurrentlyActive(UUID userId) {
@@ -89,18 +108,18 @@ public class TimeEntryService {
 
     @Transactional
     public TimeEntry startTracking(Long projectId, String description, UUID userId) {
-        Optional<Project> project = projectRepository.findByIdAndCreatedBy(projectId, userId);
-        if (project.isPresent()) {
-            TimeEntry timeEntry = new TimeEntry();
-            timeEntry.setStartDate(dateTimeService.now());
-            timeEntry.setDescription(description);
-            timeEntry.setProject(project.get());
-            timeEntry.setCreatedBy(userId);
+        Project project = projectRepository.findByIdAndCreatedBy(projectId, userId)
+            //TODO #66 fix implement exception mapping to http response
+            .orElseThrow(() -> new RuntimeException("Project not found"));
 
-            timeEntryRepository.save(timeEntry);
+        TimeEntry timeEntry = new TimeEntry();
+        timeEntry.setStartDate(dateTimeService.now());
+        timeEntry.setDescription(description);
+        timeEntry.setProjectId(project.getId());
+        timeEntry.setCreatedBy(userId);
 
-            return timeEntry;
-        }
-        return null;
+        timeEntryRepository.insert(timeEntry);
+
+        return timeEntry;
     }
 }

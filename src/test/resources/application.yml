@@ -3,6 +3,11 @@ server:
   servlet:
     context-path: /api
 
+mybatis:
+  type-handlers-package: com.dovydasvenckus.timetracker.config.persistence.typehandlers
+  configuration:
+    map-underscore-to-camel-case: true
+
 spring:
   security:
     oauth2:
